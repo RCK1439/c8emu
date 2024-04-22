@@ -1,6 +1,7 @@
 #include "emu.h"
 #include "ram.h"
 
+#include <raylib.h>
 #include <stdio.h>
 
 emu_status_t emu_run(int argc, char **argv)
@@ -19,6 +20,24 @@ emu_status_t emu_run(int argc, char **argv)
         } return EMU_RAM_ERR;
         default: break;
     }
+
+#ifdef NDEBUG
+    SetTraceLogLevel(LOG_NONE);
+#endif
+    InitWindow(1024, 512, "c8emu");
+    InitAudioDevice();
+    SetTargetFPS(60);
+    
+    while (!WindowShouldClose()) {
+        BeginDrawing();
+        ClearBackground(BLACK);
+
+        DrawFPS(5, 5);
+        EndDrawing();
+    }
+
+    CloseAudioDevice();
+    CloseWindow();
 
     return EMU_OK;
 }
