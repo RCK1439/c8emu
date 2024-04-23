@@ -1,4 +1,5 @@
 #include "cpu.h"
+#include "constants.h"
 #include "instructions.h"
 #include "ram.h"
 #include "util.h"
@@ -6,17 +7,6 @@
 #include <raylib.h>
 #include <stdint.h>
 #include <assert.h>
-
-#define NUM_REGISTERS 16
-#define STACK_SIZE 32
-
-#define SCREEN_ADDRESS 0x0F00
-#define STACK_POINTER_ADDRESS 0x0FA0
-#define PROGRAM_COUNTER_ADDRESS 0x0200
-#define FONT_ADDRESS 0x50
-
-#define SCREEN_WIDTH 64
-#define SCREEN_HEIGHT 32
 
 typedef struct cpu_context_s {
     uint8_t v[NUM_REGISTERS];
@@ -81,8 +71,8 @@ static exec_t instr_executors[] = {
 void cpu_init(void)
 {
     ctx = (cpu_context_t) { 0 };
-    ctx.sp = STACK_POINTER_ADDRESS;
-    ctx.pc = PROGRAM_COUNTER_ADDRESS;
+    ctx.sp = ADDR_STACK;
+    ctx.pc = ADDR_PC;
 }
 
 void cpu_step(void)
@@ -106,7 +96,7 @@ static void exec_cls(opcode_t *op)
 {
     size_t px_addr;
 
-    for (px_addr = SCREEN_ADDRESS; px_addr < SCREEN_ADDRESS + (SCREEN_WIDTH * SCREEN_HEIGHT); px_addr++) {
+    for (px_addr = ADDR_SCREEN; px_addr < ADDR_SCREEN + (SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT); px_addr++) {
         ram_write(px_addr, 0x00);
     }
 
@@ -116,9 +106,9 @@ static void exec_cls(opcode_t *op)
 static void exec_ret(opcode_t *op)
 {
     /* we don't want to get stack underflow */
-    assert(ctx.sp - 1 >= STACK_POINTER_ADDRESS);
+    assert(ctx.sp - 1 >= ADDR_STACK);
 
-    ctx.pc = ram_read(STACK_POINTER_ADDRESS + ctx.sp - 1);
+    ctx.pc = ram_read(ADDR_STACK + ctx.sp - 1);
     ctx.sp -= sizeof(uint16_t);
 }
 
@@ -139,7 +129,7 @@ static void exec_jp(opcode_t *op)
 
 static void exec_call(opcode_t *op)
 {
-    ram_write(STACK_POINTER_ADDRESS + ctx.sp, ctx.pc);
+    ram_write(ADDR_STACK + ctx.sp, ctx.pc);
     ctx.sp += sizeof(uint16_t);
     ctx.pc = op->address;
 }
@@ -209,7 +199,7 @@ static void exec_ld(opcode_t *op)
         uint8_t digit;
 
         digit = ctx.v[op->x_reg];
-        ctx.i = FONT_ADDRESS + (5 * digit);
+        ctx.i = ADDR_FONT + (5 * digit);
         
         ctx.pc++;
     } else if (op->addr_mode == AM_BCD_VX) {
@@ -342,10 +332,10 @@ static void exec_drw(opcode_t *op)
     size_t r, c;
 
     ctx.v[0xF] = 0;
-    xp = ctx.v[op->x_reg] % SCREEN_WIDTH;
-    yp = ctx.v[op->y_reg] % SCREEN_HEIGHT;
+    xp = ctx.v[op->x_reg] % SCREEN_BUFFER_WIDTH;
+    yp = ctx.v[op->y_reg] % SCREEN_BUFFER_HEIGHT;
 
-    for (r = 0; r < SCREEN_HEIGHT; r++) {
+    for (r = 0; r < SCREEN_BUFFER_HEIGHT; r++) {
         sprite = ram_read_u8(ctx.i + (uint16_t)r);
         for (c = 0; c < 8; c++) {
             sprite_px = sprite & (0x80 >> c);
@@ -353,7 +343,7 @@ static void exec_drw(opcode_t *op)
                 continue;
             }
 
-            screen_px = (uint32_t*)ram_ptr(SCREEN_ADDRESS + ((xp + c) + (yp + r) * SCREEN_WIDTH));
+            screen_px = (uint32_t*)ram_ptr(ADDR_SCREEN + ((xp + c) + (yp + r) * SCREEN_BUFFER_WIDTH));
             if (*screen_px == 0xFFFFFFFF) {
                 ctx.v[0xF] = 1;
             }

@@ -1,14 +1,10 @@
 #include "emu.h"
 #include "ram.h"
 #include "cpu.h"
+#include "constants.h"
 
 #include <raylib.h>
 #include <stdio.h>
-
-#define WINDOW_WIDTH 1024
-#define WINDOW_HEIGHT 512
-
-#define SCALE WINDOW_WIDTH / 64
 
 static void draw_screen_buffer(void);
 
@@ -34,13 +30,11 @@ emu_status_t emu_run(int argc, char **argv)
 #ifdef NDEBUG
     SetTraceLogLevel(LOG_NONE);
 #endif
-    InitWindow(1024, 512, "c8emu");
+    InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "c8emu");
     InitAudioDevice();
-    SetTargetFPS(60);
+    SetTargetFPS(REFRESH_RATE);
     
     while (!WindowShouldClose()) {
-        cpu_step();
-
         BeginDrawing();
         ClearBackground(BLACK);
 
@@ -58,11 +52,13 @@ emu_status_t emu_run(int argc, char **argv)
 
 static void draw_screen_buffer(void)
 {
-    size_t x, y;
+    size_t x, y, addr;
 
-    for (y = 0; y < 64; y++) {
-        for (x = 0; x < 32; x++) {
-            if (ram_read_u8(0x0F00 + (x + y * 64))) {
+    for (y = 0; y < 32; y++) {
+        for (x = 0; x < 64; x++) {
+            addr = 0x0F000 + (x + y * 64);
+
+            if (ram_read_u8(addr)) {
                 DrawRectangle(x * SCALE, y * SCALE, SCALE, SCALE, GREEN);
             }
         }

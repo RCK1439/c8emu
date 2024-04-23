@@ -1,5 +1,6 @@
 #include "ram.h"
 #include "instructions.h"
+#include "constants.h"
 #ifndef NDEBUG
 #include "debug.h"
 #endif
@@ -7,8 +8,6 @@
 #include <memory.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-#define MEMORY_SIZE 4096
 
 typedef struct ram_context_s {
     uint8_t ram[MEMORY_SIZE];
