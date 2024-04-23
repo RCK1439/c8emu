@@ -89,7 +89,6 @@ void cpu_step(void)
 static void exec_raw(opcode_t *op)
 {
     /* Intentionally left empty */
-    ctx.pc++;
 }
 
 static void exec_cls(opcode_t *op)
@@ -99,8 +98,6 @@ static void exec_cls(opcode_t *op)
     for (px_addr = ADDR_SCREEN; px_addr < ADDR_SCREEN + (SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT); px_addr++) {
         ram_write(px_addr, 0x00);
     }
-
-    ctx.pc++;
 }
 
 static void exec_ret(opcode_t *op)
@@ -115,7 +112,6 @@ static void exec_ret(opcode_t *op)
 static void exec_sys(opcode_t *op)
 {
     /* Intentionally left empty */
-    ctx.pc++;
 }
 
 static void exec_jp(opcode_t *op)
@@ -139,14 +135,10 @@ static void exec_se(opcode_t *op)
     if (op->addr_mode == AM_VX_BYTE) {
         if (ctx.v[op->x_reg] == op->byte) {
             ctx.pc += 2;
-        } else {
-            ctx.pc++;
         }
     } else if (op->addr_mode == AM_VX_VY) {
         if (ctx.v[op->x_reg] == ctx.v[op->y_reg]) {
             ctx.pc += 2;
-        } else {
-            ctx.pc++;
         }
     }
 }
@@ -156,14 +148,10 @@ static void exec_sne(opcode_t *op)
     if (op->addr_mode == AM_VX_BYTE) {
         if (ctx.v[op->x_reg] != op->byte) {
             ctx.pc += 2;
-        } else {
-            ctx.pc++;
         }
     } else if (op->addr_mode == AM_VX_VY) {
         if (ctx.v[op->x_reg] != ctx.v[op->y_reg]) {
             ctx.pc += 2;
-        } else {
-            ctx.pc++;
         }
     }
 }
@@ -172,36 +160,26 @@ static void exec_ld(opcode_t *op)
 {
     if (op->addr_mode == AM_VX_BYTE) {
         ctx.v[op->x_reg] = op->byte;
-        ctx.pc++;
     } else if (op->addr_mode == AM_VX_VY) {
         ctx.v[op->x_reg] = ctx.v[op->y_reg];
-        ctx.pc++;
     } else if (op->addr_mode == AM_I_ADDR) {
         ctx.i = op->address;
-        ctx.pc++;
     } else if (op->addr_mode == AM_VX_DT) {
         ctx.v[op->x_reg] = ctx.dt;
-        ctx.pc++;
     } else if (op->addr_mode == AM_VX_KEY) {
         uint8_t key;
 
         while ((key = util_kp()) == 0xFF);
         ctx.v[op->x_reg] = key;
-
-        ctx.pc++;
     } else if (op->addr_mode == AM_DT_VX) {
         ctx.dt = ctx.v[op->x_reg];
-        ctx.pc++;
     } else if (op->addr_mode == AM_ST_VX) {
         ctx.st = ctx.v[op->y_reg];
-        ctx.pc++;
     } else if (op->addr_mode == AM_FONT_VX) {
         uint8_t digit;
 
         digit = ctx.v[op->x_reg];
         ctx.i = ADDR_FONT + (5 * digit);
-        
-        ctx.pc++;
     } else if (op->addr_mode == AM_BCD_VX) {
         uint8_t value;
 
@@ -213,20 +191,16 @@ static void exec_ld(opcode_t *op)
 
         value /= 10;
         ram_write_u8(ctx.i + 0, value % 10);
-
-        ctx.pc++;
     } else if (op->addr_mode == AM_ADDR_I_VX) {
         uint8_t x;
         for (x = 0; x < op->x_reg; x++) {
             ram_write(ctx.i + x, ctx.v[x]);
         }
-        ctx.pc++;
     } else if (op->addr_mode == AM_VX_ADDR_I) {
         uint8_t x;
         for (x = 0; x < op->x_reg; x++) {
             ctx.v[x] = ram_read(ctx.i + x);
         }
-        ctx.pc++;
     }
 }
 
@@ -234,7 +208,6 @@ static void exec_add(opcode_t *op)
 {
     if (op->addr_mode == AM_VX_BYTE) {
         ctx.v[op->x_reg] += (op->byte);
-        ctx.pc++;
     } else if (op->addr_mode == AM_VX_VY) {
         uint16_t result;
 
@@ -246,29 +219,24 @@ static void exec_add(opcode_t *op)
         }
 
         ctx.v[op->x_reg] = (uint8_t)(result & 0x00FF);
-        ctx.pc++;
     } else if (op->addr_mode == AM_I_VX) {
         ctx.i += (uint16_t)ctx.v[op->x_reg];
-        ctx.pc++;
     }
 }
 
 static void exec_or(opcode_t *op)
 {
     ctx.v[op->x_reg] |= ctx.v[op->y_reg];
-    ctx.pc++;
 }
 
 static void exec_and(opcode_t *op)
 {
     ctx.v[op->x_reg] &= ctx.v[op->y_reg];
-    ctx.pc++;
 }
 
 static void exec_xor(opcode_t *op)
 {
     ctx.v[op->x_reg] ^= ctx.v[op->y_reg];
-    ctx.pc++;
 }
 
 static void exec_sub(opcode_t *op)
@@ -280,7 +248,6 @@ static void exec_sub(opcode_t *op)
     }
 
     ctx.v[op->x_reg] -= ctx.v[op->y_reg];
-    ctx.pc++;
 }
 
 static void exec_shr(opcode_t *op)
@@ -292,7 +259,6 @@ static void exec_shr(opcode_t *op)
     }
 
     ctx.v[op->x_reg] >>= 1;
-    ctx.pc++;
 }
 
 static void exec_subn(opcode_t *op)
@@ -304,7 +270,6 @@ static void exec_subn(opcode_t *op)
     }
 
     ctx.v[op->x_reg] = ctx.v[op->y_reg] - ctx.v[op->x_reg];
-    ctx.pc++;
 }
 
 static void exec_shl(opcode_t *op)
@@ -316,13 +281,11 @@ static void exec_shl(opcode_t *op)
     }
 
     ctx.v[op->x_reg] <<= 1;
-    ctx.pc++;
 }
 
 static void exec_rnd(opcode_t *op)
 {
     ctx.v[op->x_reg] = (uint8_t)GetRandomValue(0, 255) & 0xFF;
-    ctx.pc++;
 }
 
 static void exec_drw(opcode_t *op)
@@ -356,8 +319,6 @@ static void exec_skp(opcode_t *op)
 {
     if (ctx.v[op->x_reg] == util_kp()) {
         ctx.pc += 2;
-    } else {
-        ctx.pc++;
     }
 }
 
@@ -365,7 +326,5 @@ static void exec_sknp(opcode_t *op)
 {
     if (ctx.v[op->x_reg] != util_kp()) {
         ctx.pc += 2;
-    } else {
-        ctx.pc++;
     }
 }
