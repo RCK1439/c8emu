@@ -13,6 +13,8 @@ typedef struct ram_context_s {
     uint8_t ram[MEMORY_SIZE];
 } ram_context_t;
 
+static void load_font(void);
+
 static ram_context_t ctx;
 
 ram_status_t ram_init(const char *rom_file)
@@ -45,43 +47,45 @@ ram_status_t ram_init(const char *rom_file)
     memcpy(ctx.ram + 0x0200, buffer, size * sizeof(uint8_t));
     free(buffer);
 
+    load_font();
+
     return RAM_OK;
 }
 
-void ram_write(uint16_t addr, uint16_t val)
-{
-    addr &= 0x0FFF;
-    ctx.ram[addr+0] = (uint8_t)((val & 0xFF00) >> 8);
-    ctx.ram[addr+1] = (uint8_t)((val & 0x00FF) >> 0);
-}
-
-uint16_t ram_read(uint16_t addr)
-{
-    uint16_t ret;
-    
-    addr &= 0x0FFF;
-    ret = 0x0000;
-
-    ret |= ((uint16_t)ctx.ram[addr+0] << 8) & 0xFF00;
-    ret |= ((uint16_t)ctx.ram[addr+1] << 0) & 0x00FF;
-
-    return ret;
-}
-
-void ram_write_u8(uint16_t addr, uint8_t val)
+void ram_write(uint16_t addr, uint8_t val)
 {
     addr &= 0x0FFF;
     ctx.ram[addr] = val;
 }
 
-uint8_t ram_read_u8(uint16_t addr)
-{
+uint8_t ram_read(uint16_t addr)
+{    
     addr &= 0x0FFF;
     return ctx.ram[addr];
 }
 
-uint8_t *ram_ptr(uint16_t addr)
+static void load_font(void)
 {
-    addr &= 0x0FFF;
-    return &ctx.ram[addr];
+    uint8_t i, fontset[FONTSET_SIZE] = {
+    	0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
+    	0x20, 0x60, 0x20, 0x20, 0x70, // 1
+    	0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
+    	0xF0, 0x10, 0xF0, 0x10, 0xF0, // 3
+    	0x90, 0x90, 0xF0, 0x10, 0x10, // 4
+    	0xF0, 0x80, 0xF0, 0x10, 0xF0, // 5
+    	0xF0, 0x80, 0xF0, 0x90, 0xF0, // 6
+    	0xF0, 0x10, 0x20, 0x40, 0x40, // 7
+    	0xF0, 0x90, 0xF0, 0x90, 0xF0, // 8
+    	0xF0, 0x90, 0xF0, 0x10, 0xF0, // 9
+    	0xF0, 0x90, 0xF0, 0x90, 0x90, // A
+    	0xE0, 0x90, 0xE0, 0x90, 0xE0, // B
+    	0xF0, 0x80, 0x80, 0x80, 0xF0, // C
+    	0xE0, 0x90, 0x90, 0x90, 0xE0, // D
+    	0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
+    	0xF0, 0x80, 0xF0, 0x80, 0x80  // F
+    };
+
+    for (i = 0; i < FONTSET_SIZE; i++) {
+        ctx.ram[ADDR_FONT + i] = fontset[i];
+    }
 }

@@ -6,8 +6,6 @@
 #include <raylib.h>
 #include <stdio.h>
 
-static void draw_screen_buffer(void);
-
 emu_status_t emu_run(int argc, char **argv)
 {
     if (argc < 2) {
@@ -35,10 +33,12 @@ emu_status_t emu_run(int argc, char **argv)
     SetTargetFPS(REFRESH_RATE);
     
     while (!WindowShouldClose()) {
+        cpu_step();
+        
         BeginDrawing();
         ClearBackground(BLACK);
 
-        draw_screen_buffer();
+        cpu_draw_buffer();
 
         DrawFPS(5, 5);
         EndDrawing();
@@ -48,19 +48,4 @@ emu_status_t emu_run(int argc, char **argv)
     CloseWindow();
 
     return EMU_OK;
-}
-
-static void draw_screen_buffer(void)
-{
-    size_t x, y, addr;
-
-    for (y = 0; y < 32; y++) {
-        for (x = 0; x < 64; x++) {
-            addr = 0x0F000 + (x + y * 64);
-
-            if (ram_read_u8(addr)) {
-                DrawRectangle(x * SCALE, y * SCALE, SCALE, SCALE, GREEN);
-            }
-        }
-    }
 }
