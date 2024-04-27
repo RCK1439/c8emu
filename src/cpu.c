@@ -27,8 +27,6 @@ typedef struct cpu_context_s {
 
 typedef void (*exec_t)(opcode_t *op);
 
-static void draw_debug_info(void);
-
 static void exec_raw(opcode_t *op);
 static void exec_cls(opcode_t *op);
 static void exec_ret(opcode_t *op);
@@ -50,6 +48,10 @@ static void exec_rnd(opcode_t *op);
 static void exec_drw(opcode_t *op);
 static void exec_skp(opcode_t *op);
 static void exec_sknp(opcode_t *op);
+
+#ifndef NDEBUG
+static void draw_debug_info(void);
+#endif
 
 static cpu_context_t ctx;
 static exec_t instr_executors[] = {
@@ -128,28 +130,6 @@ void cpu_draw_buffer(void)
 #ifndef NDEBUG
     draw_debug_info();
 #endif
-}
-
-static void draw_debug_info(void)
-{
-    uint8_t r;
-    int offset;
-
-    /* registers */
-    offset = 0;
-    for (r = 0; r < NUM_REGISTERS; r++) {
-        DrawText(TextFormat("V%X: %d", r, ctx.v[r]), 5, 5 + offset, 20, WHITE);
-        offset += 20;
-    }
-
-    /* index and program counter */
-    /* TODO */
-    DrawText(TextFormat("IDX: 0x%X", ctx.idx), 5 * 20, 5, 20, WHITE);
-    DrawText(TextFormat("PC: 0x%X", ctx.pc), 5 * 20, 25, 20, WHITE);
-
-    /* timers */
-    DrawText(TextFormat("DT: %d", ctx.dt), 15 * 20, 5, 20, WHITE);
-    DrawText(TextFormat("ST: %d", ctx.st), 15 * 20, 25, 20, WHITE);
 }
 
 static void exec_raw(opcode_t *op)
@@ -390,3 +370,26 @@ static void exec_sknp(opcode_t *op)
         ctx.pc += 2;
     }
 }
+
+#ifndef NDEBUG
+static void draw_debug_info(void)
+{
+    uint8_t r;
+    int offset;
+
+    /* registers */
+    offset = 0;
+    for (r = 0; r < NUM_REGISTERS; r++) {
+        DrawText(TextFormat("V%X: %d", r, ctx.v[r]), 5, 5 + offset, 20, WHITE);
+        offset += 20;
+    }
+
+    /* index and program counter */
+    DrawText(TextFormat("IDX: 0x%X", ctx.idx), 5 * 20, 5, 20, WHITE);
+    DrawText(TextFormat("PC: 0x%X", ctx.pc), 5 * 20, 25, 20, WHITE);
+
+    /* timers */
+    DrawText(TextFormat("DT: %d", ctx.dt), 15 * 20, 5, 20, WHITE);
+    DrawText(TextFormat("ST: %d", ctx.st), 15 * 20, 25, 20, WHITE);
+}
+#endif
