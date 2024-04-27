@@ -1,7 +1,7 @@
 #include "ram.h"
-#include "instructions.h"
 #include "constants.h"
 #include "debug.h"
+#include "instructions.h"
 
 #include <memory.h>
 #include <stdio.h>

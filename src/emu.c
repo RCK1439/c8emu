@@ -1,7 +1,7 @@
 #include "emu.h"
-#include "ram.h"
-#include "cpu.h"
 #include "constants.h"
+#include "cpu.h"
+#include "ram.h"
 
 #include <raylib.h>
 #include <stdio.h>

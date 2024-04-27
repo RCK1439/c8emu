@@ -4,8 +4,8 @@
 #ifndef NDEBUG
 #include "instructions.h"
 
-#include <stdint.h>
 #include <stddef.h>
+#include <stdint.h>
 
 #define DISASSEMBLE(rom_name, prog, size) disassemble(rom_name, prog, size)
 #define DEBUG_OPCODE(op) debug_opcode(op)

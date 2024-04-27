@@ -1,15 +1,15 @@
 #include "cpu.h"
 #include "constants.h"
+#include "debug.h"
 #include "instructions.h"
 #include "ram.h"
 #include "stack.h"
-#include "debug.h"
 
 #include <raylib.h>
-#include <stdint.h>
 #include <assert.h>
-#include <stdlib.h>
 #include <memory.h>
+#include <stdint.h>
+#include <stdlib.h>
 
 typedef struct cpu_context_s {
     uint8_t v[NUM_REGISTERS];
