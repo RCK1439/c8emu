@@ -2,7 +2,6 @@
 #include "constants.h"
 #include "instructions.h"
 #include "ram.h"
-#include "util.h"
 #include "stack.h"
 #include "debug.h"
 
