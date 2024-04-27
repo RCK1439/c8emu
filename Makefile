@@ -1,6 +1,6 @@
 CC = gcc
 
-CFLAGS = -Wall -Werror -Wpedantic
+CFLAGS = -Wall -Werror -pedantic -std=c99
 DBG = -ggdb -O0
 REL = -O3 -DNDEBUG
 

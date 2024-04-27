@@ -1,4 +1,5 @@
 #include "instructions.h"
+#include "debug.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,16 +17,20 @@ opcode_t decode_opcode(uint16_t op)
 
     switch (op & 0xF000) {
         case 0x0000: {
-            if (op == 0x00E0) {
-                code.instr = IN_CLS;
-                code.addr_mode = AM_NONE;
-            } else if (op == 0x00EE) {
-                code.instr = IN_RET;
-                code.addr_mode = AM_NONE;
-            } else {
-                code.instr = IN_RAW;
-                code.addr_mode = AM_OPCODE;
-                code.raw = op;
+            switch (op & 0x00FF) {
+                case 0xE0: {
+                    code.instr = IN_CLS;
+                    code.addr_mode = AM_NONE;
+                } break;
+                case 0xEE: {
+                    code.instr = IN_RET;
+                    code.addr_mode = AM_NONE;
+                } break;
+                default: {
+                    code.instr = IN_RAW;
+                    code.addr_mode = AM_OPCODE;
+                    code.raw = op;
+                } break;
             }
         } return code;
         case 0x1000: {
@@ -120,22 +125,26 @@ opcode_t decode_opcode(uint16_t op)
             code.nibble = N(op);
         } return code;
         case 0xE000: {
-            if (op == 0xE09E) {
-                code.instr = IN_SKP;
-                code.addr_mode = AM_VX;
-                code.x_reg = X(op);
-            } else if (op == 0xE0A1) {
-                code.instr = IN_SKNP;
-                code.addr_mode = AM_VX;
-                code.x_reg = X(op);
-            } else {
-                code.instr = IN_RAW;
-                code.addr_mode = AM_OPCODE;
-                code.raw = op;
+            switch (op & 0x00FF) {
+                case 0x9E: {
+                    code.instr = IN_SKP;
+                    code.addr_mode = AM_VX;
+                    code.x_reg = X(op);
+                } break;
+                case 0xA1: {
+                    code.instr = IN_SKNP;
+                    code.addr_mode = AM_VX;
+                    code.x_reg = X(op);
+                } break;
+                default: {
+                    code.instr = IN_RAW;
+                    code.addr_mode = AM_OPCODE;
+                    code.raw = op;
+                } break;
             }
         } return code;
         case 0xF000: {
-            switch (op & 0xF0FF) {
+            switch (op & 0x00FF) {
                 case 0x07: {
                     code.instr = IN_LD;
                     code.addr_mode = AM_VX_DT;

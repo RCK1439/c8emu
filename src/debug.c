@@ -1,6 +1,4 @@
 #include "debug.h"
-
-#ifndef NDEBUG
 #include "instructions.h"
 
 #include <stdio.h>
@@ -134,5 +132,3 @@ static void print_opcode(FILE *f, opcode_t op)
         case AM_VX_ADDR_I: fprintf(f, "  %s v%01X, [i]\n", in_str[op.instr], op.x_reg); break;
     }
 }
-
-#endif

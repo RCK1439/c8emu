@@ -6,6 +6,8 @@
 #include <raylib.h>
 #include <stdio.h>
 
+static void process_input(void);
+
 emu_status_t emu_run(int argc, char **argv)
 {
     if (argc < 2) {
@@ -33,14 +35,12 @@ emu_status_t emu_run(int argc, char **argv)
     SetTargetFPS(REFRESH_RATE);
     
     while (!WindowShouldClose()) {
+        process_input();
         cpu_step();
         
         BeginDrawing();
-        ClearBackground(BLACK);
-
-        cpu_draw_buffer();
-
-        DrawFPS(5, 5);
+            ClearBackground(BLACK);
+            cpu_draw_buffer();
         EndDrawing();
     }
 
@@ -48,4 +48,23 @@ emu_status_t emu_run(int argc, char **argv)
     CloseWindow();
 
     return EMU_OK;
+}
+
+static void process_input(void)
+{
+    const KeyboardKey keyboard_keys[NUM_KEYS] = {
+        KEY_ZERO, KEY_ONE, KEY_TWO, KEY_THREE,
+        KEY_FOUR, KEY_FIVE, KEY_SIX, KEY_SEVEN,
+        KEY_EIGHT, KEY_NINE, KEY_A, KEY_B,
+        KEY_C, KEY_D, KEY_E, KEY_F
+    };
+    uint8_t k;
+
+    for (k = 0; k < NUM_KEYS; k++) {
+        if (IsKeyDown(keyboard_keys[k])) {
+            cpu_setkey(k, 1);
+        } else {
+            cpu_setkey(k, 0);
+        }
+    }
 }

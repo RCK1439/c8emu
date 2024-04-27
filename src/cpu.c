@@ -28,6 +28,8 @@ typedef struct cpu_context_s {
 
 typedef void (*exec_t)(opcode_t *op);
 
+static void draw_debug_info(void);
+
 static void exec_raw(opcode_t *op);
 static void exec_cls(opcode_t *op);
 static void exec_ret(opcode_t *op);
@@ -107,6 +109,11 @@ void cpu_step(void)
     }
 }
 
+void cpu_setkey(uint8_t key, uint8_t val)
+{
+    ctx.keypad[key] = val;
+}
+
 void cpu_draw_buffer(void)
 {
     uint16_t x, y;
@@ -117,7 +124,33 @@ void cpu_draw_buffer(void)
                 DrawRectangle(x * SCALE, y * SCALE, SCALE, SCALE, GREEN);
             }
         }
-    }    
+    }
+
+#ifndef NDEBUG
+    draw_debug_info();
+#endif
+}
+
+static void draw_debug_info(void)
+{
+    uint8_t r;
+    int offset;
+
+    /* registers */
+    offset = 0;
+    for (r = 0; r < NUM_REGISTERS; r++) {
+        DrawText(TextFormat("V%X: %d", r, ctx.v[r]), 5, 5 + offset, 20, WHITE);
+        offset += 20;
+    }
+
+    /* index and program counter */
+    /* TODO */
+    DrawText(TextFormat("IDX: 0x%X", ctx.idx), 5 * 20, 5, 20, WHITE);
+    DrawText(TextFormat("PC: 0x%X", ctx.pc), 5 * 20, 25, 20, WHITE);
+
+    /* timers */
+    DrawText(TextFormat("DT: %d", ctx.dt), 15 * 20, 5, 20, WHITE);
+    DrawText(TextFormat("ST: %d", ctx.st), 15 * 20, 25, 20, WHITE);
 }
 
 static void exec_raw(opcode_t *op)
@@ -209,7 +242,7 @@ static void exec_ld(opcode_t *op)
     } else if (op->addr_mode == AM_DT_VX) {
         ctx.dt = ctx.v[op->x_reg];
     } else if (op->addr_mode == AM_ST_VX) {
-        ctx.st = ctx.v[op->y_reg];
+        ctx.st = ctx.v[op->x_reg];
     } else if (op->addr_mode == AM_FONT_VX) {
         uint8_t digit;
 
@@ -228,12 +261,12 @@ static void exec_ld(opcode_t *op)
         ram_write(ctx.idx, value % 10);
     } else if (op->addr_mode == AM_ADDR_I_VX) {
         uint8_t i;
-	    for (i = 0; i <= (op->x_reg); ++i) {
+	    for (i = 0; i <= op->x_reg; ++i) {
             ram_write(ctx.idx + i, ctx.v[i]);
 	    }
     } else if (op->addr_mode == AM_VX_ADDR_I) {
         uint8_t i;
-        for (i = 0; i <= (op->x_reg); i++) {
+        for (i = 0; i <= op->x_reg; i++) {
             ctx.v[i] = ram_read(ctx.idx + i);
         }
     }
@@ -242,20 +275,20 @@ static void exec_ld(opcode_t *op)
 static void exec_add(opcode_t *op)
 {
     if (op->addr_mode == AM_VX_BYTE) {
-        ctx.v[op->x_reg] += (op->byte);
+        ctx.v[op->x_reg] += op->byte;
     } else if (op->addr_mode == AM_VX_VY) {
         uint16_t sum;
 
-        sum = (uint16_t)ctx.v[op->x_reg] + (uint16_t)ctx.v[op->y_reg];
+        sum = ctx.v[op->x_reg] + ctx.v[op->y_reg];
         if (sum > 0x00FF) {
             ctx.v[0xF] = 1;
         } else {
             ctx.v[0xF] = 0;
         }
 
-        ctx.v[op->x_reg] = (uint8_t)(sum & 0x00FF);
+        ctx.v[op->x_reg] = sum & 0x00FF;
     } else if (op->addr_mode == AM_I_VX) {
-        ctx.idx += (uint16_t)ctx.v[op->x_reg];
+        ctx.idx += ctx.v[op->x_reg];
     }
 }
 

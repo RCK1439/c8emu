@@ -21,7 +21,7 @@ ram_status_t ram_init(const char *rom_file)
     size_t size;
     uint8_t *buffer;
 
-    ctx = (ram_context_t) { 0 };
+    memset(ctx.ram, 0x00, sizeof(ctx.ram));
     if ((rom = fopen(rom_file, "rb")) == NULL) {
         return RAM_FILE_ERR;
     }
