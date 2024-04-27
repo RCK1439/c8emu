@@ -4,6 +4,7 @@
 #include "ram.h"
 #include "util.h"
 #include "stack.h"
+#include "debug.h"
 
 #include <raylib.h>
 #include <stdint.h>
@@ -76,9 +77,14 @@ static exec_t instr_executors[] = {
 
 void cpu_init(void)
 {
-    ctx = (cpu_context_t) { 0 };
+    memset(ctx.v, 0x00, sizeof(ctx.v));
+    ctx.idx = 0;
     ctx.pc = ADDR_PC;
+    ctx.dt = 0;
+    ctx.st = 0;
     ctx.stack = stack_init();
+    memset(ctx.video, 0x00, sizeof(ctx.video));
+    memset(ctx.keypad, 0x00, sizeof(ctx.keypad));
 }
 
 void cpu_step(void)
@@ -210,25 +216,24 @@ static void exec_ld(opcode_t *op)
         digit = ctx.v[op->x_reg];
         ctx.idx = ADDR_FONT + (5 * digit);
     } else if (op->addr_mode == AM_BCD_VX) {
-        uint8_t value;
+	    uint8_t value;
 
         value = ctx.v[op->x_reg];
-        
         ram_write(ctx.idx + 2, value % 10);
-        value /= 10;
+	    value /= 10;
 
         ram_write(ctx.idx + 1, value % 10);
-        value /= 10;
+	    value /= 10;
 
-        ram_write(ctx.idx + 0, value % 10);
+        ram_write(ctx.idx, value % 10);
     } else if (op->addr_mode == AM_ADDR_I_VX) {
         uint8_t i;
-        for (i = 0; i <= op->x_reg; i++) {
+	    for (i = 0; i <= (op->x_reg); ++i) {
             ram_write(ctx.idx + i, ctx.v[i]);
-        }
+	    }
     } else if (op->addr_mode == AM_VX_ADDR_I) {
         uint8_t i;
-        for (i = 0; i <= op->x_reg; i++) {
+        for (i = 0; i <= (op->x_reg); i++) {
             ctx.v[i] = ram_read(ctx.idx + i);
         }
     }

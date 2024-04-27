@@ -1,9 +1,7 @@
 #include "ram.h"
 #include "instructions.h"
 #include "constants.h"
-#ifndef NDEBUG
 #include "debug.h"
-#endif
 
 #include <memory.h>
 #include <stdio.h>
@@ -40,9 +38,7 @@ ram_status_t ram_init(const char *rom_file)
     fread(buffer, sizeof(uint8_t), size, rom);
     fclose(rom);
 
-#ifndef NDEBUG
-    disassemble(rom_file, buffer, size);
-#endif
+    DISASSEMBLE(rom_file, buffer, size);
 
     memcpy(ctx.ram + 0x0200, buffer, size * sizeof(uint8_t));
     free(buffer);

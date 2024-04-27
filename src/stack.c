@@ -4,7 +4,12 @@
 
 stack_t stack_init(void)
 {
-    return (stack_t){ 0 };
+    const stack_t s = {
+        .data = { 0 },
+        .ptr = 0
+    };
+
+    return s;
 }
 
 void stack_push(stack_t *s, uint16_t val)

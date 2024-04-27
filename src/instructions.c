@@ -10,8 +10,6 @@
 #define KK(op) ((op) & 0x00FF)
 #define NNN(op) ((op) & 0x0FFF)
 
-#define BITS_CMP(v, b) (((v) & (b)) == (b))
-
 opcode_t decode_opcode(uint16_t op)
 {
     opcode_t code;
