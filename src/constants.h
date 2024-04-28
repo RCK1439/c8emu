@@ -13,12 +13,12 @@
 #define WINDOW_WIDTH 1024
 #define WINDOW_HEIGHT 512
 
-#define SCALE 16
-
 /* --- screen buffer details ----------------------------------------------- */
 
 #define SCREEN_BUFFER_WIDTH 64
 #define SCREEN_BUFFER_HEIGHT 32
+
+#define SCALE (WINDOW_WIDTH / SCREEN_BUFFER_WIDTH)
 
 #define REFRESH_RATE 60
 
