@@ -6,8 +6,10 @@
  */
 
 #include "debug.h"
+#include "constants.h"
 #include "instructions.h"
 
+#include <raylib.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -118,6 +120,39 @@ void debug_opcode(opcode_t *op)
     printf(" - n: %d\n", op->nibble);
     printf(" - nnn: %d\n", op->address);
     printf(" - raw: %d\n", op->raw);
+}
+
+void draw_debug_info(uint8_t *v, uint8_t dt, uint8_t st, uint16_t idx,
+    uint16_t pc, uint8_t *kp)
+{
+#define FONTSIZE 20
+
+    uint8_t i;
+    int offset, fps;
+
+    offset = MeasureText("Registers: ", FONTSIZE) + 10;
+    DrawText("Registers: ", 5, 5, FONTSIZE, WHITE);
+    for (i = 0; i < NUM_REGISTERS; i++) {
+        DrawText(TextFormat("V%X=%d", i, v[i]), 5, 25 + i * FONTSIZE, FONTSIZE, WHITE);
+    }
+
+    DrawText("Special Registers: ", offset, 5, FONTSIZE, WHITE);
+    DrawText(TextFormat("PC=0x%3X", pc), offset, 25, FONTSIZE, WHITE);
+    DrawText(TextFormat("IDX=0x%3X", idx), offset, 45, FONTSIZE, WHITE);
+    offset += MeasureText("Special Registers: ", FONTSIZE) + 10;
+
+    DrawText("Timers: ", offset, 5, FONTSIZE, WHITE);
+    DrawText(TextFormat("ST=%d", st), offset, 25, FONTSIZE, WHITE);
+    DrawText(TextFormat("DT=%d", dt), offset, 45, FONTSIZE, WHITE);
+    offset += MeasureText("Timers: ", FONTSIZE) + 10;
+
+    DrawText("Keypad: ", offset, 5, FONTSIZE, WHITE);
+    for (i = 0; i < NUM_KEYS; i++) {
+        DrawText(TextFormat("%X=%d", i, kp[i]), offset, 25 + i * FONTSIZE, FONTSIZE, WHITE);
+    }
+
+    fps = GetFPS();
+    SetWindowTitle(TextFormat("c8emu - %d FPS", fps));
 }
 
 /* --- utility functions --------------------------------------------------- */

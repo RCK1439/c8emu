@@ -67,15 +67,6 @@ static void exec_drw(opcode_t *op);
 static void exec_skp(opcode_t *op);
 static void exec_sknp(opcode_t *op);
 
-/* --- function prototypes ------------------------------------------------- */
-
-#ifndef NDEBUG
-/**
- * Draws debugging information about the CPU to the screen.
- */
-static void draw_debug_info(void);
-#endif
-
 /* --- global variables ---------------------------------------------------- */
 
 static cpu_context_t ctx;
@@ -154,9 +145,7 @@ void cpu_draw_buffer(void)
         }
     }
 
-#ifndef NDEBUG
-    draw_debug_info();
-#endif
+    DRAW_DEBUG_INFO(ctx.v, ctx.dt, ctx.st, ctx.idx, ctx.pc, ctx.keypad);
 }
 
 /* --- executor routines --------------------------------------------------- */
@@ -399,28 +388,3 @@ static void exec_sknp(opcode_t *op)
         ctx.pc += 2;
     }
 }
-
-/* --- utility functions --------------------------------------------------- */
-
-#ifndef NDEBUG
-static void draw_debug_info(void)
-{
-    uint8_t r;
-    int offset;
-
-    /* registers */
-    offset = 0;
-    for (r = 0; r < NUM_REGISTERS; r++) {
-        DrawText(TextFormat("V%X: %d", r, ctx.v[r]), 5, 5 + offset, 20, WHITE);
-        offset += 20;
-    }
-
-    /* index and program counter */
-    DrawText(TextFormat("IDX: 0x%X", ctx.idx), 5 * 20, 5, 20, WHITE);
-    DrawText(TextFormat("PC: 0x%X", ctx.pc), 5 * 20, 25, 20, WHITE);
-
-    /* timers */
-    DrawText(TextFormat("DT: %d", ctx.dt), 15 * 20, 5, 20, WHITE);
-    DrawText(TextFormat("ST: %d", ctx.st), 15 * 20, 25, 20, WHITE);
-}
-#endif
