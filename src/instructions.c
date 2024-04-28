@@ -1,8 +1,17 @@
+/**
+ * @file   instructions.c
+ * @brief  Implementation of the opcode decoder.
+ * @author Ruan C. Keet
+ * @date   2024-04-28
+ */
+
 #include "instructions.h"
 #include "debug.h"
 
 #include <stdio.h>
 #include <stdlib.h>
+
+/* --- macros -------------------------------------------------------------- */
 
 #define INSTR(op) (((op) & 0xF000) >> 12)
 #define X(op) (((op) & 0x0F00) >> 8)
@@ -10,6 +19,8 @@
 #define N(op) ((op) & 0x000F)
 #define KK(op) ((op) & 0x00FF)
 #define NNN(op) ((op) & 0x0FFF)
+
+/* --- instructions interface ---------------------------------------------- */
 
 opcode_t decode_opcode(uint16_t op)
 {

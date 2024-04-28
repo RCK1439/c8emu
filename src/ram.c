@@ -1,3 +1,10 @@
+/**
+ * @file   ram.c
+ * @brief  Implementation of the Chip-8 memory layout and context.
+ * @author Ruan C. Keet
+ * @date   2024-04-28
+ */
+
 #include "ram.h"
 #include "constants.h"
 #include "debug.h"
@@ -7,13 +14,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/* --- type definitions ---------------------------------------------------- */
+
+/**
+ * This struct defines the context for the Chip-8 memory.
+ */
 typedef struct ram_context_s {
     uint8_t ram[MEMORY_SIZE];
 } ram_context_t;
 
+/* --- function prototypes ------------------------------------------------- */
+
+/**
+ * Loads the Chip-8 fontset to the correct memory region in ram.
+ */
 static void load_font(void);
 
+/* --- global variables ---------------------------------------------------- */
+
 static ram_context_t ctx;
+
+/* --- ram interface ------------------------------------------------------- */
 
 ram_status_t ram_init(const char *rom_file)
 {
@@ -59,6 +80,8 @@ uint8_t ram_read(uint16_t addr)
     addr &= 0x0FFF;
     return ctx.ram[addr];
 }
+
+/* --- utility functions --------------------------------------------------- */
 
 static void load_font(void)
 {

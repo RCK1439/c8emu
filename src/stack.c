@@ -1,6 +1,15 @@
+/**
+ * @file   stack.c
+ * @brief  Implementation of the memory stack for Chip-8.
+ * @author Ruan C. Keet
+ * @file   2024-04-28
+ */
+
 #include "stack.h"
 
 #include <assert.h>
+
+/* --- stack interface ----------------------------------------------------- */
 
 stack_t stack_init(void)
 {

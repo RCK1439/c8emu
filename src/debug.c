@@ -1,3 +1,10 @@
+/**
+ * @file   debug.c
+ * @brief  Implementation of some useful debugging functions and macros.
+ * @author Ruan C. Keet
+ * @date   2024-04-28
+ */
+
 #include "debug.h"
 #include "instructions.h"
 
@@ -5,9 +12,23 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* --- constants ----------------------------------------------------------- */
+
 #define FILENAME_SIZE 256
 
+/* --- function prototypes ------------------------------------------------- */
+
+/**
+ * Prints `op` as a Chip-8 assembly instructions to `f`.
+ * 
+ * @param[in] f
+ *      The file to print `op` to.
+ * @param[in] op
+ *      The opcode to print out to the file.
+ */
 static void print_opcode(FILE *f, opcode_t op);
+
+/* --- debug interface ----------------------------------------------------- */
 
 void disassemble(const char *rom_name, uint8_t *prog, size_t size)
 {
@@ -98,6 +119,8 @@ void debug_opcode(opcode_t *op)
     printf(" - nnn: %d\n", op->address);
     printf(" - raw: %d\n", op->raw);
 }
+
+/* --- utility functions --------------------------------------------------- */
 
 static void print_opcode(FILE *f, opcode_t op)
 {

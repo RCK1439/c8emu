@@ -1,3 +1,10 @@
+/**
+ * @file   cpu.c
+ * @brief  Implementation of the Chip-8 execution instructions.
+ * @author Ruan C. Keet
+ * @date   2024-04-28
+ */
+
 #include "cpu.h"
 #include "constants.h"
 #include "debug.h"
@@ -11,6 +18,12 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+/* --- type definitions ---------------------------------------------------- */
+
+/**
+ * This struct defines the context for the processor. i.e. The registers,
+ * stack, video buffer and keypad.
+ */
 typedef struct cpu_context_s {
     uint8_t v[NUM_REGISTERS];
     
@@ -25,7 +38,12 @@ typedef struct cpu_context_s {
     uint8_t keypad[NUM_KEYS];
 } cpu_context_t;
 
+/**
+ * Defines a function signature for an executor routine.
+ */
 typedef void (*exec_t)(opcode_t *op);
+
+/* --- executor routines --------------------------------------------------- */
 
 static void exec_raw(opcode_t *op);
 static void exec_cls(opcode_t *op);
@@ -49,9 +67,16 @@ static void exec_drw(opcode_t *op);
 static void exec_skp(opcode_t *op);
 static void exec_sknp(opcode_t *op);
 
+/* --- function prototypes ------------------------------------------------- */
+
 #ifndef NDEBUG
+/**
+ * Draws debugging information about the CPU to the screen.
+ */
 static void draw_debug_info(void);
 #endif
+
+/* --- global variables ---------------------------------------------------- */
 
 static cpu_context_t ctx;
 static exec_t instr_executors[] = {
@@ -77,6 +102,8 @@ static exec_t instr_executors[] = {
     [IN_SKP] = exec_skp,
     [IN_SKNP] = exec_sknp
 };
+
+/* --- cpu interface ------------------------------------------------------- */
 
 void cpu_init(void)
 {
@@ -131,6 +158,8 @@ void cpu_draw_buffer(void)
     draw_debug_info();
 #endif
 }
+
+/* --- executor routines --------------------------------------------------- */
 
 static void exec_raw(opcode_t *op)
 {
@@ -370,6 +399,8 @@ static void exec_sknp(opcode_t *op)
         ctx.pc += 2;
     }
 }
+
+/* --- utility functions --------------------------------------------------- */
 
 #ifndef NDEBUG
 static void draw_debug_info(void)
