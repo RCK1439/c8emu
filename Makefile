@@ -30,4 +30,4 @@ $(OBJ_DIR)/%.o: src/%.c $(OBJ_DIR)
 	$(CC) $(CFLAGS) $< -c -o $@ $(INCL)
 
 clean:
-	rm -rf $(OBJ_DIR)/*.o bin/c8emu.exe
+	rm -rf $(OBJECTS) $(EXECUTABLE) $(wildcard *.dis)
