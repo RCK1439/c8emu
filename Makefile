@@ -1,31 +1,33 @@
 CC = gcc
 
-CFLAGS = -Wall -Werror -pedantic -std=c99
-DBG = -ggdb -O0
-REL = -O3 -DNDEBUG
+CFLAGS = -Wall -Werror -Wpedantic -std=c99
+LDFLAGS = # TODO: Make release and debug specific flags
 
-SRC = src/*.c
-BIN = bin
-EXE = $(BIN)/c8emu.exe
+BIN_DIR = bin
+OBJ_DIR = obj
+SOURCES = $(wildcard src/*.c)
+OBJECTS = $(patsubst src/%.c, $(OBJ_DIR)/%.o, $(SOURCES))
+EXECUTABLE = bin/c8emu.exe
 
 INCL = -Ivendor/raylib/include
 LINK = -Lvendor/raylib/lib
-LIBS = -lraylib -lwinmm -lgdi32 -lshell32 -luser32
+LIBS = -lraylib -lwinmm -lgdi32 -luser32 -lshell32
 
-$(BIN):
-	mkdir $(BIN)
+.PHONY: $(BIN_DIR) $(OBJ_DIR)
 
-.PHONY: all debug release clean
+all: $(SOURCES) $(EXECUTABLE)
 
-all:
-	debug
+$(BIN_DIR):
+	mkdir -p $(BIN_DIR)
 
-debug: $(BIN) |
-	$(CC) $(DBG) $(CFLAGS) $(INCL) $(LINK) -o $(EXE) $(SRC) $(LIBS)
+$(OBJ_DIR):
+	mkdir -p $(OBJ_DIR)
 
-release: $(BIN) |
-	$(CC) $(REL) $(CFLAGS) $(INCL) $(LINK) -o $(EXE) $(SRC) $(LIBS)
+$(EXECUTABLE): $(BIN_DIR) $(OBJECTS)
+	$(CC) $(LDFLAGS) $(OBJECTS) -o $@ $(LINK) $(LIBS)
+
+$(OBJ_DIR)/%.o: src/%.c $(OBJ_DIR)
+	$(CC) $(CFLAGS) $< -c -o $@ $(INCL)
 
 clean:
-	rm -f $(EXE) &&\
-	rm -f *.dis
+	rm -rf $(OBJ_DIR)/*.o bin/c8emu.exe
