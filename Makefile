@@ -13,8 +13,6 @@ INCL = -Ivendor/raylib/include
 LINK = -Lvendor/raylib/lib
 LIBS = -lraylib -lwinmm -lgdi32 -luser32 -lshell32
 
-.PHONY: $(BIN_DIR) $(OBJ_DIR)
-
 all: $(SOURCES) $(EXECUTABLE)
 
 $(BIN_DIR):
