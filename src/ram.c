@@ -35,12 +35,11 @@ static ram_context_t ctx;
 
 /* --- ram interface ------------------------------------------------------- */
 
-ram_status_t ram_init(const char *rom_file)
-{
+ram_status_t ram_init(const char *rom_file) {
     memset(ctx.ram, 0x00, sizeof(ctx.ram));
     
     FILE *rom;
-    if ((rom = fopen(rom_file, "rb")) == NULL) {
+    if (fopen_s(&rom, rom_file, "rb") != 0) {
         return RAM_FILE_ERR;
     }
 
@@ -67,22 +66,19 @@ ram_status_t ram_init(const char *rom_file)
     return RAM_OK;
 }
 
-void ram_write(uint16_t addr, uint8_t val)
-{
+void ram_write(uint16_t addr, uint8_t val) {
     addr &= 0x0FFF;
     ctx.ram[addr] = val;
 }
 
-uint8_t ram_read(uint16_t addr)
-{    
+uint8_t ram_read(uint16_t addr) {
     addr &= 0x0FFF;
     return ctx.ram[addr];
 }
 
 /* --- utility functions --------------------------------------------------- */
 
-static void load_font(void)
-{
+static void load_font(void) {
     const uint8_t fontset[FONTSET_SIZE] = {
     	0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
     	0x20, 0x60, 0x20, 0x20, 0x70, // 1

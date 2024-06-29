@@ -17,6 +17,7 @@
 /* --- constants ----------------------------------------------------------- */
 
 #define FILENAME_SIZE 256
+#define FONTSIZE 20
 
 /* --- function prototypes ------------------------------------------------- */
 
@@ -32,8 +33,7 @@ static void print_opcode(FILE *f, opcode_t op);
 
 /* --- debug interface ----------------------------------------------------- */
 
-void disassemble(const char *rom_name, uint8_t *prog, size_t size)
-{
+void disassemble(const char *rom_name, const uint8_t *const prog, size_t size) {
     char log_file_name[FILENAME_SIZE], *last_pos;
     size_t length;
 
@@ -47,7 +47,7 @@ void disassemble(const char *rom_name, uint8_t *prog, size_t size)
     snprintf(log_file_name + length - 4, FILENAME_SIZE, "%s", ".dis");
 
     FILE *log_file;
-    if ((log_file = fopen(log_file_name, "w")) == NULL) {
+    if (fopen_s(&log_file, log_file_name, "w") != 0) {
         fprintf(stderr, "failed to create %s\n", log_file_name);
         exit(1);
     }
@@ -62,8 +62,7 @@ void disassemble(const char *rom_name, uint8_t *prog, size_t size)
     fclose(log_file);
 }
 
-void debug_opcode(opcode_t *op)
-{
+void debug_opcode(const opcode_t *const op) {
     const char *in_str[] = {
         "IN_RAW",
         "IN_CLS",
@@ -120,12 +119,9 @@ void debug_opcode(opcode_t *op)
     printf(" - raw: %d\n", op->raw);
 }
 
-void draw_debug_info(uint8_t *v, uint8_t dt, uint8_t st, uint16_t idx,
-    uint16_t pc, uint8_t *kp)
-{
-#define FONTSIZE 20
-
+void draw_debug_info(const uint8_t *const v, uint8_t dt, uint8_t st, uint16_t idx, uint16_t pc, const uint8_t *const kp) {
     int32_t offset = MeasureText("Registers: ", FONTSIZE) + 10;
+    
     DrawText("Registers: ", 5, 5, FONTSIZE, WHITE);
     for (uint8_t i = 0; i < NUM_REGISTERS; i++) {
         DrawText(TextFormat("V%X=%d", i, v[i]), 5, 25 + i * FONTSIZE, FONTSIZE, WHITE);
@@ -152,8 +148,7 @@ void draw_debug_info(uint8_t *v, uint8_t dt, uint8_t st, uint16_t idx,
 
 /* --- utility functions --------------------------------------------------- */
 
-static void print_opcode(FILE *f, opcode_t op)
-{
+static void print_opcode(FILE *f, opcode_t op) {
     const char *in_str[] = {
         "raw", "cls", "ret",
         "sys", "jp", "call",

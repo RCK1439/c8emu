@@ -23,8 +23,7 @@ static void process_input(void);
 
 /* --- emulator interface -------------------------------------------------- */
 
-emu_status_t emu_run(int argc, char **argv)
-{
+emu_status_t emu_run(int argc, char **argv) {
     if (argc < 2) {
         fprintf(stderr, "usage: %s <rom_file>\n", argv[0]);
         return EMU_USAGE_ERR;
@@ -67,8 +66,7 @@ emu_status_t emu_run(int argc, char **argv)
 
 /* --- utility functions --------------------------------------------------- */
 
-static void process_input(void)
-{
+static void process_input(void) {
     const KeyboardKey keyboard_keys[NUM_KEYS] = {
         KEY_ZERO, KEY_ONE, KEY_TWO, KEY_THREE,
         KEY_FOUR, KEY_FIVE, KEY_SIX, KEY_SEVEN,

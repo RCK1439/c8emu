@@ -18,8 +18,7 @@
 
 /* --- instructions interface ---------------------------------------------- */
 
-opcode_t decode_opcode(uint16_t op)
-{
+opcode_t decode_opcode(uint16_t op) {
     opcode_t code;
 
     switch (op & 0xF000) {

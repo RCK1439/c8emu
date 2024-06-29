@@ -37,7 +37,7 @@ stack_t stack_init(void);
  * @param[in] val
  *      The value to push to `s`.
  */
-void stack_push(stack_t *s, uint16_t val);
+void stack_push(stack_t *const s, uint16_t val);
 
 /**
  * Pops the top value from `s`.
@@ -48,6 +48,6 @@ void stack_push(stack_t *s, uint16_t val);
  * @return
  *      The popped value from the stack.
  */
-uint16_t stack_pop(stack_t *s);
+uint16_t stack_pop(stack_t *const s);
 
 #endif /* STACK_H */
