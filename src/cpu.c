@@ -16,7 +16,6 @@
 #include <assert.h>
 #include <memory.h>
 #include <stdint.h>
-#include <stdlib.h>
 
 /* --- type definitions ---------------------------------------------------- */
 
@@ -41,31 +40,31 @@ typedef struct cpu_context_s {
 /**
  * Defines a function signature for an executor routine.
  */
-typedef void (*exec_t)(opcode_t *op);
+typedef void (*exec_t)(const opcode_t *const op);
 
 /* --- executor routines --------------------------------------------------- */
 
-static void exec_raw(opcode_t *op);
-static void exec_cls(opcode_t *op);
-static void exec_ret(opcode_t *op);
-static void exec_sys(opcode_t *op);
-static void exec_jp(opcode_t *op);
-static void exec_call(opcode_t *op);
-static void exec_se(opcode_t *op);
-static void exec_sne(opcode_t *op);
-static void exec_ld(opcode_t *op);
-static void exec_add(opcode_t *op);
-static void exec_or(opcode_t *op);
-static void exec_and(opcode_t *op);
-static void exec_xor(opcode_t *op);
-static void exec_sub(opcode_t *op);
-static void exec_shr(opcode_t *op);
-static void exec_subn(opcode_t *op);
-static void exec_shl(opcode_t *op);
-static void exec_rnd(opcode_t *op);
-static void exec_drw(opcode_t *op);
-static void exec_skp(opcode_t *op);
-static void exec_sknp(opcode_t *op);
+static void exec_raw(const opcode_t *const op);
+static void exec_cls(const opcode_t *const op);
+static void exec_ret(const opcode_t *const op);
+static void exec_sys(const opcode_t *const op);
+static void exec_jp(const opcode_t *const op);
+static void exec_call(const opcode_t *const op);
+static void exec_se(const opcode_t *const op);
+static void exec_sne(const opcode_t *const op);
+static void exec_ld(const opcode_t *const op);
+static void exec_add(const opcode_t *const op);
+static void exec_or(const opcode_t *const op);
+static void exec_and(const opcode_t *const op);
+static void exec_xor(const opcode_t *const op);
+static void exec_sub(const opcode_t *const op);
+static void exec_shr(const opcode_t *const op);
+static void exec_subn(const opcode_t *const op);
+static void exec_shl(const opcode_t *const op);
+static void exec_rnd(const opcode_t *const op);
+static void exec_drw(const opcode_t *const op);
+static void exec_skp(const opcode_t *const op);
+static void exec_sknp(const opcode_t *const op);
 
 /* --- global variables ---------------------------------------------------- */
 
@@ -110,13 +109,10 @@ void cpu_init(void)
 
 void cpu_step(void)
 {
-    uint16_t raw_op;
-    opcode_t opcode;
-
-    raw_op = (ram_read(ctx.pc) << 8) | ram_read(ctx.pc + 1);
+    const uint16_t raw_op = (ram_read(ctx.pc) << 8) | ram_read(ctx.pc + 1);
     ctx.pc += 2;
 
-    opcode = decode_opcode(raw_op);
+    const opcode_t opcode = decode_opcode(raw_op);
     instr_executors[opcode.instr](&opcode);
 
     if (ctx.dt > 0) {
@@ -135,10 +131,8 @@ void cpu_setkey(uint8_t key, uint8_t val)
 
 void cpu_draw_buffer(void)
 {
-    uint16_t x, y;
-
-    for (y = 0; y < SCREEN_BUFFER_HEIGHT; y++) {
-        for (x = 0; x < SCREEN_BUFFER_WIDTH; x++) {
+    for (uint16_t y = 0; y < SCREEN_BUFFER_HEIGHT; y++) {
+        for (uint16_t x = 0; x < SCREEN_BUFFER_WIDTH; x++) {
             if (ctx.video[x + y * SCREEN_BUFFER_WIDTH]) {
                 DrawRectangle(x * SCALE, y * SCALE, SCALE, SCALE, GREEN);
             }
@@ -150,27 +144,27 @@ void cpu_draw_buffer(void)
 
 /* --- executor routines --------------------------------------------------- */
 
-static void exec_raw(opcode_t *op)
+static void exec_raw(const opcode_t *const op)
 {
     /* Intentionally left empty */
 }
 
-static void exec_cls(opcode_t *op)
+static void exec_cls(const opcode_t *const op)
 {
     memset(ctx.video, 0x00, sizeof(ctx.video));
 }
 
-static void exec_ret(opcode_t *op)
+static void exec_ret(const opcode_t *const op)
 {
     ctx.pc = stack_pop(&ctx.stack);    
 }
 
-static void exec_sys(opcode_t *op)
+static void exec_sys(const opcode_t *const op)
 {
     /* Intentionally left empty */
 }
 
-static void exec_jp(opcode_t *op)
+static void exec_jp(const opcode_t *const op)
 {
     if (op->addr_mode == AM_ADDR) {
         ctx.pc = op->address;
@@ -179,13 +173,13 @@ static void exec_jp(opcode_t *op)
     }
 }
 
-static void exec_call(opcode_t *op)
+static void exec_call(const opcode_t *const op)
 {
     stack_push(&ctx.stack, ctx.pc);
     ctx.pc = op->address;
 }
 
-static void exec_se(opcode_t *op)
+static void exec_se(const opcode_t *const op)
 {
     if (op->addr_mode == AM_VX_BYTE) {
         if (ctx.v[op->x_reg] == op->byte) {
@@ -198,7 +192,7 @@ static void exec_se(opcode_t *op)
     }
 }
 
-static void exec_sne(opcode_t *op)
+static void exec_sne(const opcode_t *const op)
 {
     if (op->addr_mode == AM_VX_BYTE) {
         if (ctx.v[op->x_reg] != op->byte) {
@@ -211,7 +205,7 @@ static void exec_sne(opcode_t *op)
     }
 }
 
-static void exec_ld(opcode_t *op)
+static void exec_ld(const opcode_t *const op)
 {
     if (op->addr_mode == AM_VX_BYTE) {
         ctx.v[op->x_reg] = op->byte;
@@ -269,7 +263,7 @@ static void exec_ld(opcode_t *op)
     }
 }
 
-static void exec_add(opcode_t *op)
+static void exec_add(const opcode_t *const op)
 {
     if (op->addr_mode == AM_VX_BYTE) {
         ctx.v[op->x_reg] += op->byte;
@@ -289,22 +283,22 @@ static void exec_add(opcode_t *op)
     }
 }
 
-static void exec_or(opcode_t *op)
+static void exec_or(const opcode_t *const op)
 {
     ctx.v[op->x_reg] |= ctx.v[op->y_reg];
 }
 
-static void exec_and(opcode_t *op)
+static void exec_and(const opcode_t *const op)
 {
     ctx.v[op->x_reg] &= ctx.v[op->y_reg];
 }
 
-static void exec_xor(opcode_t *op)
+static void exec_xor(const opcode_t *const op)
 {
     ctx.v[op->x_reg] ^= ctx.v[op->y_reg];
 }
 
-static void exec_sub(opcode_t *op)
+static void exec_sub(const opcode_t *const op)
 {
     if (ctx.v[op->x_reg] > ctx.v[op->y_reg]) {
         ctx.v[0xF] = 1;
@@ -315,13 +309,13 @@ static void exec_sub(opcode_t *op)
     ctx.v[op->x_reg] -= ctx.v[op->y_reg];
 }
 
-static void exec_shr(opcode_t *op)
+static void exec_shr(const opcode_t *const op)
 {
     ctx.v[0xF] = ctx.v[op->x_reg] & 0x01;
     ctx.v[op->x_reg] >>= 1;
 }
 
-static void exec_subn(opcode_t *op)
+static void exec_subn(const opcode_t *const op)
 {
     if (ctx.v[op->y_reg] > ctx.v[op->x_reg]) {
         ctx.v[0xF] = 1;
@@ -332,31 +326,29 @@ static void exec_subn(opcode_t *op)
     ctx.v[op->x_reg] = ctx.v[op->y_reg] - ctx.v[op->x_reg];
 }
 
-static void exec_shl(opcode_t *op)
+static void exec_shl(const opcode_t *const op)
 {
     ctx.v[0xF] = (ctx.v[op->x_reg] & 0x80) >> 7;
     ctx.v[op->x_reg] <<= 1;
 }
 
-static void exec_rnd(opcode_t *op)
+static void exec_rnd(const opcode_t *const op)
 {
     ctx.v[op->x_reg] = GetRandomValue(0, 255) & op->byte;
 }
 
-static void exec_drw(opcode_t *op)
+static void exec_drw(const opcode_t *const op)
 {
-    uint8_t xp, yp, sprite, sprite_px, *screen_px, r, c, height;
-
-    height = op->nibble;
-    xp = ctx.v[op->x_reg] % SCREEN_BUFFER_WIDTH;
-    yp = ctx.v[op->y_reg] % SCREEN_BUFFER_HEIGHT;
+    const uint8_t height = op->nibble;
+    const uint8_t xp = ctx.v[op->x_reg] % SCREEN_BUFFER_WIDTH;
+    const uint8_t yp = ctx.v[op->y_reg] % SCREEN_BUFFER_HEIGHT;
 
     ctx.v[0xF] = 0;
-    for (r = 0; r < height; r++) {
-        sprite = ram_read(ctx.idx + r);
-        for (c = 0; c < 8; c++) {
-            sprite_px = sprite & (0x80 >> c);
-            screen_px = &ctx.video[(yp + r) * SCREEN_BUFFER_WIDTH + (xp + c)];
+    for (uint8_t r = 0; r < height; r++) {
+        const uint8_t sprite = ram_read(ctx.idx + r);
+        for (uint8_t c = 0; c < 8; c++) {
+            const uint8_t sprite_px = sprite & (0x80 >> c);
+            uint8_t *const screen_px = &ctx.video[(yp + r) * SCREEN_BUFFER_WIDTH + (xp + c)];
 
             if (sprite_px) {
                 if (*screen_px == 0xFF) {
@@ -369,22 +361,19 @@ static void exec_drw(opcode_t *op)
     }
 }
 
-static void exec_skp(opcode_t *op)
+static void exec_skp(const opcode_t *const op)
 {
-    uint8_t key;
-
-    key = ctx.v[op->x_reg];
+    const uint8_t key = ctx.v[op->x_reg];
     if (ctx.keypad[key]) {
         ctx.pc += 2;
     }
 }
 
-static void exec_sknp(opcode_t *op)
+static void exec_sknp(const opcode_t *const op)
 {
-    uint8_t key;
-
-    key = ctx.v[op->x_reg];
+    const uint8_t key = ctx.v[op->x_reg];
     if (!ctx.keypad[key]) {
         ctx.pc += 2;
     }
 }
+

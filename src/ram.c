@@ -8,7 +8,6 @@
 #include "ram.h"
 #include "constants.h"
 #include "debug.h"
-#include "instructions.h"
 
 #include <memory.h>
 #include <stdio.h>
@@ -38,19 +37,18 @@ static ram_context_t ctx;
 
 ram_status_t ram_init(const char *rom_file)
 {
-    FILE *rom;
-    size_t size;
-    uint8_t *buffer;
-
     memset(ctx.ram, 0x00, sizeof(ctx.ram));
+    
+    FILE *rom;
     if ((rom = fopen(rom_file, "rb")) == NULL) {
         return RAM_FILE_ERR;
     }
 
     fseek(rom, 0, SEEK_END);
-    size = (size_t)ftell(rom);
+    const size_t size = (size_t)ftell(rom);
     fseek(rom, 0, SEEK_SET);
 
+    uint8_t *buffer;
     if ((buffer = (uint8_t*)malloc(size * sizeof(uint8_t))) == NULL) {
         fclose(rom);
         return RAM_ALLOC_ERR;
@@ -85,7 +83,7 @@ uint8_t ram_read(uint16_t addr)
 
 static void load_font(void)
 {
-    uint8_t i, fontset[FONTSET_SIZE] = {
+    const uint8_t fontset[FONTSET_SIZE] = {
     	0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
     	0x20, 0x60, 0x20, 0x20, 0x70, // 1
     	0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
@@ -104,7 +102,7 @@ static void load_font(void)
     	0xF0, 0x80, 0xF0, 0x80, 0x80  // F
     };
 
-    for (i = 0; i < FONTSET_SIZE; i++) {
+    for (uint8_t i = 0; i < FONTSET_SIZE; i++) {
         ctx.ram[ADDR_FONT + i] = fontset[i];
     }
 }

@@ -35,10 +35,7 @@ static void print_opcode(FILE *f, opcode_t op);
 void disassemble(const char *rom_name, uint8_t *prog, size_t size)
 {
     char log_file_name[FILENAME_SIZE], *last_pos;
-    FILE *log_file;
-    size_t i, length;
-    uint16_t hex_code;
-    opcode_t opcode;
+    size_t length;
 
     if ((last_pos = strrchr(rom_name, '\\')) != NULL) {
         length = strnlen(++last_pos, FILENAME_SIZE);
@@ -49,15 +46,16 @@ void disassemble(const char *rom_name, uint8_t *prog, size_t size)
     }
     snprintf(log_file_name + length - 4, FILENAME_SIZE, "%s", ".dis");
 
+    FILE *log_file;
     if ((log_file = fopen(log_file_name, "w")) == NULL) {
         fprintf(stderr, "failed to create %s\n", log_file_name);
         exit(1);
     }
 
     fprintf(log_file, ".code\n");
-    for (i = 0; i < size; i += 2) {
-        hex_code = ((uint16_t)prog[i] << 8) | ((uint16_t)prog[i+1]);
-        opcode = decode_opcode(hex_code);
+    for (size_t i = 0; i < size; i += 2) {
+        const uint16_t hex_code = ((uint16_t)prog[i] << 8) | ((uint16_t)prog[i+1]);
+        const opcode_t opcode = decode_opcode(hex_code);
         print_opcode(log_file, opcode);
     }
 
@@ -127,12 +125,9 @@ void draw_debug_info(uint8_t *v, uint8_t dt, uint8_t st, uint16_t idx,
 {
 #define FONTSIZE 20
 
-    uint8_t i;
-    int offset, fps;
-
-    offset = MeasureText("Registers: ", FONTSIZE) + 10;
+    int32_t offset = MeasureText("Registers: ", FONTSIZE) + 10;
     DrawText("Registers: ", 5, 5, FONTSIZE, WHITE);
-    for (i = 0; i < NUM_REGISTERS; i++) {
+    for (uint8_t i = 0; i < NUM_REGISTERS; i++) {
         DrawText(TextFormat("V%X=%d", i, v[i]), 5, 25 + i * FONTSIZE, FONTSIZE, WHITE);
     }
 
@@ -147,11 +142,11 @@ void draw_debug_info(uint8_t *v, uint8_t dt, uint8_t st, uint16_t idx,
     offset += MeasureText("Timers: ", FONTSIZE) + 10;
 
     DrawText("Keypad: ", offset, 5, FONTSIZE, WHITE);
-    for (i = 0; i < NUM_KEYS; i++) {
+    for (uint8_t i = 0; i < NUM_KEYS; i++) {
         DrawText(TextFormat("%X=%d", i, kp[i]), offset, 25 + i * FONTSIZE, FONTSIZE, WHITE);
     }
 
-    fps = GetFPS();
+    const int32_t fps = GetFPS();
     SetWindowTitle(TextFormat("c8emu - %d FPS", fps));
 }
 

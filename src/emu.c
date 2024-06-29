@@ -75,9 +75,8 @@ static void process_input(void)
         KEY_EIGHT, KEY_NINE, KEY_A, KEY_B,
         KEY_C, KEY_D, KEY_E, KEY_F
     };
-    uint8_t k;
 
-    for (k = 0; k < NUM_KEYS; k++) {
+    for (uint8_t k = 0; k < NUM_KEYS; k++) {
         if (IsKeyDown(keyboard_keys[k])) {
             cpu_setkey(k, 1);
         } else {

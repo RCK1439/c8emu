@@ -32,3 +32,4 @@ uint16_t stack_pop(stack_t *s)
     assert(s->ptr > 0);
     return s->data[--(s->ptr)];
 }
+
