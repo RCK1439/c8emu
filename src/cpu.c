@@ -14,6 +14,7 @@
 
 #include <raylib.h>
 #include <assert.h>
+#include <stdbool.h>
 #include <memory.h>
 #include <stdint.h>
 
@@ -216,12 +217,11 @@ static void exec_ld(const opcode_t *const op)
     } else if (op->addr_mode == AM_VX_DT) {
         ctx.v[op->x_reg] = ctx.dt;
     } else if (op->addr_mode == AM_VX_KEY) {
-        uint8_t i, found;
-
-        found = 0;
-        for (i = 0; i < NUM_KEYS; i++) {
+        
+        bool found = false;
+        for (uint8_t i = 0; i < NUM_KEYS; i++) {
             if (ctx.keypad[i]) {
-                found = 1;
+                found = true;
                 ctx.v[op->x_reg] = i;
                 break;
             }
