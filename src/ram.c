@@ -39,7 +39,7 @@ ram_status_t ram_init(const char *rom_file) {
     memset(ctx.ram, 0x00, sizeof(ctx.ram));
     
     FILE *rom;
-    if (fopen_s(&rom, rom_file, "rb") != 0) {
+    if ((rom = fopen(rom_file, "rb")) == NULL) {
         return RAM_FILE_ERR;
     }
 

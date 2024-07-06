@@ -1,6 +1,6 @@
 CC = gcc
 
-CFLAGS = -Wall -Werror -Wpedantic -std=c99
+CFLAGS = -Wall -Werror -Wpedantic -Wextra -std=c99
 debug: LDFLAGS = -O0 -ggdb
 release: LDFLAGS = -O3 -DNDEBUG
 
@@ -8,11 +8,11 @@ BIN_DIR = bin
 OBJ_DIR = obj
 SOURCES = $(wildcard src/*.c)
 OBJECTS = $(patsubst src/%.c, $(OBJ_DIR)/%.o, $(SOURCES))
-EXECUTABLE = $(BIN_DIR)/c8emu.exe
+EXECUTABLE = $(BIN_DIR)/c8emu
 
 INCL = -Ivendor/raylib/include
 LINK = -Lvendor/raylib/lib
-LIBS = -lraylib -lwinmm -lgdi32 -luser32 -lshell32
+LIBS = -lraylib -lm
 
 .PHONY: all debug release
 

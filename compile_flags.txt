@@ -1,3 +1,9 @@
+-Wall
+-Wextra
+-Werror
+-Wpedantic
+-std=c99
+
 -Ivendor/raylib/include/
 -Lvendor/raylib/lib/
--lraylib
+-lraylib -lm

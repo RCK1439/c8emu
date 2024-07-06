@@ -38,16 +38,16 @@ void disassemble(const char *rom_name, const uint8_t *const prog, size_t size) {
     size_t length;
 
     if ((last_pos = strrchr(rom_name, '\\')) != NULL) {
-        length = strnlen(++last_pos, FILENAME_SIZE);
+        length = strlen(++last_pos);
         snprintf(log_file_name, FILENAME_SIZE, "%s", last_pos);
     } else {
-        length = strnlen(rom_name, FILENAME_SIZE);
+        length = strlen(rom_name);
         snprintf(log_file_name, FILENAME_SIZE, "%s", rom_name);
     }
     snprintf(log_file_name + length - 4, FILENAME_SIZE, "%s", ".dis");
 
     FILE *log_file;
-    if (fopen_s(&log_file, log_file_name, "w") != 0) {
+    if ((log_file = fopen(log_file_name, "w")) == NULL) {
         fprintf(stderr, "failed to create %s\n", log_file_name);
         exit(1);
     }
