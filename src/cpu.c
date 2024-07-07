@@ -18,6 +18,8 @@
 #include <memory.h>
 #include <stdint.h>
 
+#define unused __attribute__((unused))
+
 /* --- type definitions ---------------------------------------------------- */
 
 /**
@@ -141,19 +143,19 @@ void cpu_draw_buffer(void) {
 
 /* --- executor routines --------------------------------------------------- */
 
-static void exec_raw(__attribute__((unused)) const opcode_t *const op) {
+static void exec_raw(unused const opcode_t *const op) {
     /* Intentionally left empty */
 }
 
-static void exec_cls(__attribute__((unused)) const opcode_t *const op) {
+static void exec_cls(unused const opcode_t *const op) {
     memset(ctx.video, 0x00, sizeof(ctx.video));
 }
 
-static void exec_ret(__attribute__((unused)) const opcode_t *const op) {
+static void exec_ret(unused const opcode_t *const op) {
     ctx.pc = stack_pop(&ctx.stack);    
 }
 
-static void exec_sys(__attribute__((unused)) const opcode_t *const op) {
+static void exec_sys(unused const opcode_t *const op) {
     /* Intentionally left empty */
 }
 
