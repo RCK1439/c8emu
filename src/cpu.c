@@ -26,7 +26,7 @@
  * This struct defines the context for the processor. i.e. The registers,
  * stack, video buffer and keypad.
  */
-typedef struct cpu_context_s {
+typedef struct CPUContext {
     uint8_t v[NUM_REGISTERS];
     
     uint16_t idx;
@@ -35,304 +35,356 @@ typedef struct cpu_context_s {
     uint8_t dt;
     uint8_t st;
 
-    stack_t stack;
+    Stack stack;
     uint8_t video[SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT];
     uint8_t keypad[NUM_KEYS];
-} cpu_context_t;
+} CPUContext;
 
 /**
  * Defines a function signature for an executor routine.
  */
-typedef void (*exec_t)(const opcode_t *const op);
+typedef void (*ExecutorFunction)(const OpCode *const op);
 
 /* --- executor routines --------------------------------------------------- */
 
-static void exec_raw(const opcode_t *const op);
-static void exec_cls(const opcode_t *const op);
-static void exec_ret(const opcode_t *const op);
-static void exec_sys(const opcode_t *const op);
-static void exec_jp(const opcode_t *const op);
-static void exec_call(const opcode_t *const op);
-static void exec_se(const opcode_t *const op);
-static void exec_sne(const opcode_t *const op);
-static void exec_ld(const opcode_t *const op);
-static void exec_add(const opcode_t *const op);
-static void exec_or(const opcode_t *const op);
-static void exec_and(const opcode_t *const op);
-static void exec_xor(const opcode_t *const op);
-static void exec_sub(const opcode_t *const op);
-static void exec_shr(const opcode_t *const op);
-static void exec_subn(const opcode_t *const op);
-static void exec_shl(const opcode_t *const op);
-static void exec_rnd(const opcode_t *const op);
-static void exec_drw(const opcode_t *const op);
-static void exec_skp(const opcode_t *const op);
-static void exec_sknp(const opcode_t *const op);
+static void ExecRAW(const OpCode *const op);
+static void ExecCLS(const OpCode *const op);
+static void ExecRET(const OpCode *const op);
+static void ExecSYS(const OpCode *const op);
+static void ExecJP(const OpCode *const op);
+static void ExecCALL(const OpCode *const op);
+static void ExecSE(const OpCode *const op);
+static void ExecSNE(const OpCode *const op);
+static void ExecLD(const OpCode *const op);
+static void ExecADD(const OpCode *const op);
+static void ExecOR(const OpCode *const op);
+static void ExecAND(const OpCode *const op);
+static void ExecXOR(const OpCode *const op);
+static void ExecSUB(const OpCode *const op);
+static void ExecSHR(const OpCode *const op);
+static void ExecSUBN(const OpCode *const op);
+static void ExecSHL(const OpCode *const op);
+static void ExecRND(const OpCode *const op);
+static void ExecDRW(const OpCode *const op);
+static void ExecSKP(const OpCode *const op);
+static void ExecSKNP(const OpCode *const op);
 
 /* --- global variables ---------------------------------------------------- */
 
-static cpu_context_t ctx;
-static exec_t instr_executors[] = {
-    [IN_RAW] = exec_raw,
-    [IN_CLS] = exec_cls,
-    [IN_RET] = exec_ret,
-    [IN_SYS] = exec_sys,
-    [IN_JP] = exec_jp,
-    [IN_CALL] = exec_call,
-    [IN_SE] = exec_se,
-    [IN_SNE] = exec_sne,
-    [IN_LD] = exec_ld,
-    [IN_ADD] = exec_add,
-    [IN_OR] = exec_or,
-    [IN_AND] = exec_and,
-    [IN_XOR] = exec_xor,
-    [IN_SUB] = exec_sub,
-    [IN_SHR] = exec_shr,
-    [IN_SUBN] = exec_subn,
-    [IN_SHL] = exec_shl,
-    [IN_RND] = exec_rnd,
-    [IN_DRW] = exec_drw,
-    [IN_SKP] = exec_skp,
-    [IN_SKNP] = exec_sknp
+static CPUContext s_CPU;
+static ExecutorFunction s_Executors[] = {
+    [IN_RAW] = ExecRAW,
+    [IN_CLS] = ExecCLS,
+    [IN_RET] = ExecRET,
+    [IN_SYS] = ExecSYS,
+    [IN_JP] = ExecJP,
+    [IN_CALL] = ExecCALL,
+    [IN_SE] = ExecSE,
+    [IN_SNE] = ExecSNE,
+    [IN_LD] = ExecLD,
+    [IN_ADD] = ExecADD,
+    [IN_OR] = ExecOR,
+    [IN_AND] = ExecAND,
+    [IN_XOR] = ExecXOR,
+    [IN_SUB] = ExecSUB,
+    [IN_SHR] = ExecSHR,
+    [IN_SUBN] = ExecSUBN,
+    [IN_SHL] = ExecSHL,
+    [IN_RND] = ExecRND,
+    [IN_DRW] = ExecDRW,
+    [IN_SKP] = ExecSKP,
+    [IN_SKNP] = ExecSKNP
 };
 
 /* --- cpu interface ------------------------------------------------------- */
 
-void cpu_init(void) {
-    memset(ctx.v, 0x00, sizeof(ctx.v));
-    ctx.idx = 0;
-    ctx.pc = ADDR_PC;
-    ctx.dt = 0;
-    ctx.st = 0;
-    ctx.stack = stack_init();
-    memset(ctx.video, 0x00, sizeof(ctx.video));
-    memset(ctx.keypad, 0x00, sizeof(ctx.keypad));
+void InitCPU(void)
+{
+    memset(s_CPU.v, 0x00, sizeof(s_CPU.v));
+    s_CPU.idx = 0;
+    s_CPU.pc = ADDR_PC;
+    s_CPU.dt = 0;
+    s_CPU.st = 0;
+    s_CPU.stack = InitStack();
+    memset(s_CPU.video, 0x00, sizeof(s_CPU.video));
+    memset(s_CPU.keypad, 0x00, sizeof(s_CPU.keypad));
 }
 
-void cpu_step(void) {
-    const uint16_t raw_op = (ram_read(ctx.pc) << 8) | ram_read(ctx.pc + 1);
-    ctx.pc += 2;
+void CPUStep(void)
+{
+    const uint16_t raw_op = (RAMRead(s_CPU.pc) << 8) | RAMRead(s_CPU.pc + 1);
+    s_CPU.pc += 2;
 
-    const opcode_t opcode = decode_opcode(raw_op);
-    instr_executors[opcode.instr](&opcode);
+    const OpCode opcode = DecodeOpCode(raw_op);
+    s_Executors[opcode.instr](&opcode);
 
-    if (ctx.dt > 0) {
-        ctx.dt--;
-    }
+    if (s_CPU.dt > 0)
+        s_CPU.dt--;
 
-    if (ctx.st > 0) {
-        ctx.st--;
-    }
+    if (s_CPU.st > 0)
+        s_CPU.st--;
 }
 
-void cpu_setkey(uint8_t key, uint8_t val) {
-    ctx.keypad[key] = val;
+void CPUSetKey(uint8_t key, uint8_t val)
+{
+    s_CPU.keypad[key] = val;
 }
 
-void cpu_draw_buffer(void) {
-    for (uint16_t y = 0; y < SCREEN_BUFFER_HEIGHT; y++) {
-        for (uint16_t x = 0; x < SCREEN_BUFFER_WIDTH; x++) {
-            if (ctx.video[x + y * SCREEN_BUFFER_WIDTH]) {
+void CPUDrawBuffer(void)
+{
+    for (uint16_t y = 0; y < SCREEN_BUFFER_HEIGHT; y++)
+        for (uint16_t x = 0; x < SCREEN_BUFFER_WIDTH; x++)
+            if (s_CPU.video[x + y * SCREEN_BUFFER_WIDTH])
                 DrawRectangle(x * SCALE, y * SCALE, SCALE, SCALE, GREEN);
-            }
-        }
-    }
 
-    DRAW_DEBUG_INFO(ctx.v, ctx.dt, ctx.st, ctx.idx, ctx.pc, ctx.keypad);
+    DRAW_DEBUG_INFO(s_CPU.v, s_CPU.dt, s_CPU.st, s_CPU.idx, s_CPU.pc, s_CPU.keypad);
 }
 
 /* --- executor routines --------------------------------------------------- */
 
-static void exec_raw(unused const opcode_t *const op) {
+static void ExecRAW(unused const OpCode *const op)
+{
     /* Intentionally left empty */
 }
 
-static void exec_cls(unused const opcode_t *const op) {
-    memset(ctx.video, 0x00, sizeof(ctx.video));
+static void ExecCLS(unused const OpCode *const op)
+{
+    memset(s_CPU.video, 0x00, sizeof(s_CPU.video));
 }
 
-static void exec_ret(unused const opcode_t *const op) {
-    ctx.pc = stack_pop(&ctx.stack);    
+static void ExecRET(unused const OpCode *const op)
+{
+    s_CPU.pc = StackPop(&s_CPU.stack);    
 }
 
-static void exec_sys(unused const opcode_t *const op) {
+static void ExecSYS(unused const OpCode *const op)
+{
     /* Intentionally left empty */
 }
 
-static void exec_jp(const opcode_t *const op) {
-    if (op->addr_mode == AM_ADDR) {
-        ctx.pc = op->address;
-    } else if (op->addr_mode == AM_V0_ADDR) {
-        ctx.pc = ctx.v[0x0] + op->address;
+static void ExecJP(const OpCode *const op)
+{
+    if (op->addr_mode == AM_ADDR)
+    {
+        s_CPU.pc = op->address;
+    }
+    else if (op->addr_mode == AM_V0_ADDR)
+    {
+        s_CPU.pc = s_CPU.v[0x0] + op->address;
     }
 }
 
-static void exec_call(const opcode_t *const op) {
-    stack_push(&ctx.stack, ctx.pc);
-    ctx.pc = op->address;
+static void ExecCALL(const OpCode *const op)
+{
+    StackPush(&s_CPU.stack, s_CPU.pc);
+    s_CPU.pc = op->address;
 }
 
-static void exec_se(const opcode_t *const op) {
-    if (op->addr_mode == AM_VX_BYTE) {
-        if (ctx.v[op->x_reg] == op->byte) {
-            ctx.pc += 2;
-        }
-    } else if (op->addr_mode == AM_VX_VY) {
-        if (ctx.v[op->x_reg] == ctx.v[op->y_reg]) {
-            ctx.pc += 2;
-        }
+static void ExecSE(const OpCode *const op)
+{
+    if (op->addr_mode == AM_VX_BYTE)
+    {
+        if (s_CPU.v[op->x_reg] == op->byte)
+            s_CPU.pc += 2;
+    }
+    else if (op->addr_mode == AM_VX_VY)
+    {
+        if (s_CPU.v[op->x_reg] == s_CPU.v[op->y_reg])
+            s_CPU.pc += 2;
     }
 }
 
-static void exec_sne(const opcode_t *const op) {
-    if (op->addr_mode == AM_VX_BYTE) {
-        if (ctx.v[op->x_reg] != op->byte) {
-            ctx.pc += 2;
-        }
-    } else if (op->addr_mode == AM_VX_VY) {
-        if (ctx.v[op->x_reg] != ctx.v[op->y_reg]) {
-            ctx.pc += 2;
-        }
+static void ExecSNE(const OpCode *const op)
+{
+    if (op->addr_mode == AM_VX_BYTE)
+    {
+        if (s_CPU.v[op->x_reg] != op->byte)
+            s_CPU.pc += 2;
+    }
+    else if (op->addr_mode == AM_VX_VY)
+    {
+        if (s_CPU.v[op->x_reg] != s_CPU.v[op->y_reg])
+            s_CPU.pc += 2;
     }
 }
 
-static void exec_ld(const opcode_t *const op) {
-    if (op->addr_mode == AM_VX_BYTE) {
-        ctx.v[op->x_reg] = op->byte;
-    } else if (op->addr_mode == AM_VX_VY) {
-        ctx.v[op->x_reg] = ctx.v[op->y_reg];
-    } else if (op->addr_mode == AM_I_ADDR) {
-        ctx.idx = op->address;
-    } else if (op->addr_mode == AM_VX_DT) {
-        ctx.v[op->x_reg] = ctx.dt;
-    } else if (op->addr_mode == AM_VX_KEY) {
-        
+static void ExecLD(const OpCode *const op)
+{
+    if (op->addr_mode == AM_VX_BYTE)
+    {
+        s_CPU.v[op->x_reg] = op->byte;
+    }
+    else if (op->addr_mode == AM_VX_VY)
+    {
+        s_CPU.v[op->x_reg] = s_CPU.v[op->y_reg];
+    }
+    else if (op->addr_mode == AM_I_ADDR)
+    {
+        s_CPU.idx = op->address;
+    }
+    else if (op->addr_mode == AM_VX_DT)
+    {
+        s_CPU.v[op->x_reg] = s_CPU.dt;
+    }
+    else if (op->addr_mode == AM_VX_KEY)
+    {    
         bool found = false;
-        for (uint8_t i = 0; i < NUM_KEYS; i++) {
-            if (ctx.keypad[i]) {
+        for (uint8_t i = 0; i < NUM_KEYS; i++)
+        {
+            if (s_CPU.keypad[i]) 
+            {
                 found = true;
-                ctx.v[op->x_reg] = i;
+                s_CPU.v[op->x_reg] = i;
                 break;
             }
         }
 
-        if (!found) {
-            ctx.pc -= 2;
-        }
-    } else if (op->addr_mode == AM_DT_VX) {
-        ctx.dt = ctx.v[op->x_reg];
-    } else if (op->addr_mode == AM_ST_VX) {
-        ctx.st = ctx.v[op->x_reg];
-    } else if (op->addr_mode == AM_FONT_VX) {
-        uint8_t digit;
-
-        digit = ctx.v[op->x_reg];
-        ctx.idx = ADDR_FONT + (5 * digit);
-    } else if (op->addr_mode == AM_BCD_VX) {
+        if (!found)
+            s_CPU.pc -= 2;
+    }
+    else if (op->addr_mode == AM_DT_VX)
+    {
+        s_CPU.dt = s_CPU.v[op->x_reg];
+    }
+    else if (op->addr_mode == AM_ST_VX)
+    {
+        s_CPU.st = s_CPU.v[op->x_reg];
+    }
+    else if (op->addr_mode == AM_FONT_VX)
+    {
+        const uint8_t digit = s_CPU.v[op->x_reg];
+        s_CPU.idx = ADDR_FONT + (5 * digit);
+    }
+    else if (op->addr_mode == AM_BCD_VX)
+    {
 	    uint8_t value;
 
-        value = ctx.v[op->x_reg];
-        ram_write(ctx.idx + 2, value % 10);
+        value = s_CPU.v[op->x_reg];
+        RAMWrite(s_CPU.idx + 2, value % 10);
 	    value /= 10;
 
-        ram_write(ctx.idx + 1, value % 10);
+        RAMWrite(s_CPU.idx + 1, value % 10);
 	    value /= 10;
 
-        ram_write(ctx.idx, value % 10);
-    } else if (op->addr_mode == AM_ADDR_I_VX) {
-        uint8_t i;
-	    for (i = 0; i <= op->x_reg; ++i) {
-            ram_write(ctx.idx + i, ctx.v[i]);
-	    }
-    } else if (op->addr_mode == AM_VX_ADDR_I) {
-        uint8_t i;
-        for (i = 0; i <= op->x_reg; i++) {
-            ctx.v[i] = ram_read(ctx.idx + i);
+        RAMWrite(s_CPU.idx, value % 10);
+    }
+    else if (op->addr_mode == AM_ADDR_I_VX)
+    {
+	    for (uint8_t i = 0; i <= op->x_reg; ++i)
+            RAMWrite(s_CPU.idx + i, s_CPU.v[i]);
+    }
+    else if (op->addr_mode == AM_VX_ADDR_I)
+    {
+        for (uint8_t i = 0; i <= op->x_reg; i++)
+            s_CPU.v[i] = RAMRead(s_CPU.idx + i);
+    }
+}
+
+static void ExecADD(const OpCode *const op)
+{
+    if (op->addr_mode == AM_VX_BYTE)
+    {
+        s_CPU.v[op->x_reg] += op->byte;
+    }
+    else if (op->addr_mode == AM_VX_VY)
+    {
+        const uint16_t sum = s_CPU.v[op->x_reg] + s_CPU.v[op->y_reg];
+        if (sum > 0x00FF)
+        {
+            s_CPU.v[0xF] = 1;
         }
-    }
-}
-
-static void exec_add(const opcode_t *const op) {
-    if (op->addr_mode == AM_VX_BYTE) {
-        ctx.v[op->x_reg] += op->byte;
-    } else if (op->addr_mode == AM_VX_VY) {
-        uint16_t sum;
-
-        sum = ctx.v[op->x_reg] + ctx.v[op->y_reg];
-        if (sum > 0x00FF) {
-            ctx.v[0xF] = 1;
-        } else {
-            ctx.v[0xF] = 0;
+        else
+        {
+            s_CPU.v[0xF] = 0;
         }
 
-        ctx.v[op->x_reg] = sum & 0x00FF;
-    } else if (op->addr_mode == AM_I_VX) {
-        ctx.idx += ctx.v[op->x_reg];
+        s_CPU.v[op->x_reg] = sum & 0x00FF;
+    }
+    else if (op->addr_mode == AM_I_VX)
+    {
+        s_CPU.idx += s_CPU.v[op->x_reg];
     }
 }
 
-static void exec_or(const opcode_t *const op) {
-    ctx.v[op->x_reg] |= ctx.v[op->y_reg];
+static void ExecOR(const OpCode *const op)
+{
+    s_CPU.v[op->x_reg] |= s_CPU.v[op->y_reg];
 }
 
-static void exec_and(const opcode_t *const op) {
-    ctx.v[op->x_reg] &= ctx.v[op->y_reg];
+static void ExecAND(const OpCode *const op)
+{
+    s_CPU.v[op->x_reg] &= s_CPU.v[op->y_reg];
 }
 
-static void exec_xor(const opcode_t *const op) {
-    ctx.v[op->x_reg] ^= ctx.v[op->y_reg];
+static void ExecXOR(const OpCode *const op)
+{
+    s_CPU.v[op->x_reg] ^= s_CPU.v[op->y_reg];
 }
 
-static void exec_sub(const opcode_t *const op) {
-    if (ctx.v[op->x_reg] > ctx.v[op->y_reg]) {
-        ctx.v[0xF] = 1;
-    } else {
-        ctx.v[0xF] = 0;
+static void ExecSUB(const OpCode *const op)
+{
+    if (s_CPU.v[op->x_reg] > s_CPU.v[op->y_reg])
+    {
+        s_CPU.v[0xF] = 1;
+    }
+    else
+    {
+        s_CPU.v[0xF] = 0;
     }
 
-    ctx.v[op->x_reg] -= ctx.v[op->y_reg];
+    s_CPU.v[op->x_reg] -= s_CPU.v[op->y_reg];
 }
 
-static void exec_shr(const opcode_t *const op) {
-    ctx.v[0xF] = ctx.v[op->x_reg] & 0x01;
-    ctx.v[op->x_reg] >>= 1;
+static void ExecSHR(const OpCode *const op)
+{
+    s_CPU.v[0xF] = s_CPU.v[op->x_reg] & 0x01;
+    s_CPU.v[op->x_reg] >>= 1;
 }
 
-static void exec_subn(const opcode_t *const op) {
-    if (ctx.v[op->y_reg] > ctx.v[op->x_reg]) {
-        ctx.v[0xF] = 1;
-    } else {
-        ctx.v[0xF] = 0;
+static void ExecSUBN(const OpCode *const op)
+{
+    if (s_CPU.v[op->y_reg] > s_CPU.v[op->x_reg])
+    {
+        s_CPU.v[0xF] = 1;
+    }
+    else
+    {
+        s_CPU.v[0xF] = 0;
     }
 
-    ctx.v[op->x_reg] = ctx.v[op->y_reg] - ctx.v[op->x_reg];
+    s_CPU.v[op->x_reg] = s_CPU.v[op->y_reg] - s_CPU.v[op->x_reg];
 }
 
-static void exec_shl(const opcode_t *const op) {
-    ctx.v[0xF] = (ctx.v[op->x_reg] & 0x80) >> 7;
-    ctx.v[op->x_reg] <<= 1;
+static void ExecSHL(const OpCode *const op)
+{
+    s_CPU.v[0xF] = (s_CPU.v[op->x_reg] & 0x80) >> 7;
+    s_CPU.v[op->x_reg] <<= 1;
 }
 
-static void exec_rnd(const opcode_t *const op) {
-    ctx.v[op->x_reg] = GetRandomValue(0, 255) & op->byte;
+static void ExecRND(const OpCode *const op)
+{
+    s_CPU.v[op->x_reg] = GetRandomValue(0, 255) & op->byte;
 }
 
-static void exec_drw(const opcode_t *const op) {
+static void ExecDRW(const OpCode *const op)
+{
     const uint8_t height = op->nibble;
-    const uint8_t xp = ctx.v[op->x_reg] % SCREEN_BUFFER_WIDTH;
-    const uint8_t yp = ctx.v[op->y_reg] % SCREEN_BUFFER_HEIGHT;
+    const uint8_t xp = s_CPU.v[op->x_reg] % SCREEN_BUFFER_WIDTH;
+    const uint8_t yp = s_CPU.v[op->y_reg] % SCREEN_BUFFER_HEIGHT;
 
-    ctx.v[0xF] = 0;
-    for (uint8_t r = 0; r < height; r++) {
-        const uint8_t sprite = ram_read(ctx.idx + r);
-        for (uint8_t c = 0; c < 8; c++) {
+    s_CPU.v[0xF] = 0;
+    for (uint8_t r = 0; r < height; r++)
+    {
+        const uint8_t sprite = RAMRead(s_CPU.idx + r);
+        for (uint8_t c = 0; c < 8; c++)
+        {
             const uint8_t sprite_px = sprite & (0x80 >> c);
-            uint8_t *const screen_px = &ctx.video[(yp + r) * SCREEN_BUFFER_WIDTH + (xp + c)];
+            uint8_t *const screen_px = &s_CPU.video[(yp + r) * SCREEN_BUFFER_WIDTH + (xp + c)];
 
-            if (sprite_px) {
-                if (*screen_px == 0xFF) {
-                    ctx.v[0xF] = 1;
-                }
+            if (sprite_px)
+            {
+                if (*screen_px == 0xFF)
+                    s_CPU.v[0xF] = 1;
 
                 *screen_px ^= 0xFF;
             }
@@ -340,17 +392,17 @@ static void exec_drw(const opcode_t *const op) {
     }
 }
 
-static void exec_skp(const opcode_t *const op) {
-    const uint8_t key = ctx.v[op->x_reg];
-    if (ctx.keypad[key]) {
-        ctx.pc += 2;
-    }
+static void ExecSKP(const OpCode *const op)
+{
+    const uint8_t key = s_CPU.v[op->x_reg];
+    if (s_CPU.keypad[key])
+        s_CPU.pc += 2;
 }
 
-static void exec_sknp(const opcode_t *const op) {
-    const uint8_t key = ctx.v[op->x_reg];
-    if (!ctx.keypad[key]) {
-        ctx.pc += 2;
-    }
+static void ExecSKNP(const OpCode *const op)
+{
+    const uint8_t key = s_CPU.v[op->x_reg];
+    if (!s_CPU.keypad[key])
+        s_CPU.pc += 2;
 }
 

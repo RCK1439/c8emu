@@ -21,6 +21,7 @@
  * @return
  *      The exit status of the emulator.
  */
-int main(int argc, char **argv) {
-    return emu_run(argc, argv);
+int32_t main(int32_t argc, char **argv)
+{
+    return EmulatorRun(argc, argv);
 }

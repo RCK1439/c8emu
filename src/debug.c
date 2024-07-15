@@ -29,40 +29,47 @@
  * @param[in] op
  *      The opcode to print out to the file.
  */
-static void print_opcode(FILE *f, opcode_t op);
+static void PrintOpCode(FILE *const f, OpCode op);
 
 /* --- debug interface ----------------------------------------------------- */
 
-void disassemble(const char *rom_name, const uint8_t *const prog, size_t size) {
+void Disassemble(const char *rom_name, const uint8_t *const prog, size_t size)
+{
     char log_file_name[FILENAME_SIZE], *last_pos;
     size_t length;
 
-    if ((last_pos = strrchr(rom_name, '\\')) != NULL) {
+    if ((last_pos = strrchr(rom_name, '\\')) != NULL)
+    {
         length = strlen(++last_pos);
         snprintf(log_file_name, FILENAME_SIZE, "%s", last_pos);
-    } else {
+    }
+    else
+    {
         length = strlen(rom_name);
         snprintf(log_file_name, FILENAME_SIZE, "%s", rom_name);
     }
     snprintf(log_file_name + length - 4, FILENAME_SIZE, "%s", ".dis");
 
     FILE *log_file;
-    if ((log_file = fopen(log_file_name, "w")) == NULL) {
+    if ((log_file = fopen(log_file_name, "w")) == NULL)
+    {
         fprintf(stderr, "failed to create %s\n", log_file_name);
         exit(1);
     }
 
     fprintf(log_file, ".code\n");
-    for (size_t i = 0; i < size; i += 2) {
+    for (size_t i = 0; i < size; i += 2)
+    {
         const uint16_t hex_code = ((uint16_t)prog[i] << 8) | ((uint16_t)prog[i+1]);
-        const opcode_t opcode = decode_opcode(hex_code);
-        print_opcode(log_file, opcode);
+        const OpCode opcode = DecodeOpCode(hex_code);
+        PrintOpCode(log_file, opcode);
     }
 
     fclose(log_file);
 }
 
-void debug_opcode(const opcode_t *const op) {
+void DebugOpCode(const OpCode *const op)
+{
     const char *in_str[] = {
         "IN_RAW",
         "IN_CLS",
@@ -119,13 +126,13 @@ void debug_opcode(const opcode_t *const op) {
     printf(" - raw: %d\n", op->raw);
 }
 
-void draw_debug_info(const uint8_t *const v, uint8_t dt, uint8_t st, uint16_t idx, uint16_t pc, const uint8_t *const kp) {
+void DrawDebugInfo(const uint8_t *const v, uint8_t dt, uint8_t st, uint16_t idx, uint16_t pc, const uint8_t *const kp)
+{
     int32_t offset = MeasureText("Registers: ", FONTSIZE) + 10;
     
     DrawText("Registers: ", 5, 5, FONTSIZE, WHITE);
-    for (uint8_t i = 0; i < NUM_REGISTERS; i++) {
+    for (uint8_t i = 0; i < NUM_REGISTERS; i++)
         DrawText(TextFormat("V%X=%d", i, v[i]), 5, 25 + i * FONTSIZE, FONTSIZE, WHITE);
-    }
 
     DrawText("Special Registers: ", offset, 5, FONTSIZE, WHITE);
     DrawText(TextFormat("PC=0x%3X", pc), offset, 25, FONTSIZE, WHITE);
@@ -138,9 +145,8 @@ void draw_debug_info(const uint8_t *const v, uint8_t dt, uint8_t st, uint16_t id
     offset += MeasureText("Timers: ", FONTSIZE) + 10;
 
     DrawText("Keypad: ", offset, 5, FONTSIZE, WHITE);
-    for (uint8_t i = 0; i < NUM_KEYS; i++) {
+    for (uint8_t i = 0; i < NUM_KEYS; i++)
         DrawText(TextFormat("%X=%d", i, kp[i]), offset, 25 + i * FONTSIZE, FONTSIZE, WHITE);
-    }
 
     const int32_t fps = GetFPS();
     SetWindowTitle(TextFormat("c8emu - %d FPS", fps));
@@ -148,7 +154,8 @@ void draw_debug_info(const uint8_t *const v, uint8_t dt, uint8_t st, uint16_t id
 
 /* --- utility functions --------------------------------------------------- */
 
-static void print_opcode(FILE *f, opcode_t op) {
+static void PrintOpCode(FILE *const f, OpCode op)
+{
     const char *in_str[] = {
         "raw", "cls", "ret",
         "sys", "jp", "call",
@@ -159,7 +166,8 @@ static void print_opcode(FILE *f, opcode_t op) {
         "drw", "skp", "sknp"
     };
 
-    switch (op.addr_mode) {
+    switch (op.addr_mode)
+    {
         case AM_NONE: fprintf(f, "  %s\n", in_str[op.instr]); break;
         case AM_OPCODE: fprintf(f, "  %s 0x%04X\n", in_str[op.instr], op.raw); break;
         case AM_ADDR: fprintf(f, "  %s 0x%03X\n", in_str[op.instr], op.address); break;

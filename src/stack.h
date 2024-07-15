@@ -14,10 +14,10 @@
 
 /* --- type definitions ---------------------------------------------------- */
 
-typedef struct stack_s {
+typedef struct Stack {
     uint16_t data[STACK_SIZE];
     uint8_t ptr;
-} stack_t;
+} Stack;
 
 /* --- stack interface ----------------------------------------------------- */
 
@@ -27,7 +27,7 @@ typedef struct stack_s {
  * @return
  *      A handle to an empty stack.
  */
-stack_t stack_init(void);
+Stack InitStack(void);
 
 /**
  * Pushes `val` to `s`.
@@ -37,7 +37,7 @@ stack_t stack_init(void);
  * @param[in] val
  *      The value to push to `s`.
  */
-void stack_push(stack_t *const s, uint16_t val);
+void StackPush(Stack *const s, uint16_t val);
 
 /**
  * Pops the top value from `s`.
@@ -48,6 +48,6 @@ void stack_push(stack_t *const s, uint16_t val);
  * @return
  *      The popped value from the stack.
  */
-uint16_t stack_pop(stack_t *const s);
+uint16_t StackPop(Stack *const s);
 
 #endif /* STACK_H */

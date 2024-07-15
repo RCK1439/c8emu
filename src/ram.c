@@ -13,44 +13,36 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/* --- type definitions ---------------------------------------------------- */
-
-/**
- * This struct defines the context for the Chip-8 memory.
- */
-typedef struct ram_context_s {
-    uint8_t ram[MEMORY_SIZE];
-} ram_context_t;
-
 /* --- function prototypes ------------------------------------------------- */
 
 /**
  * Loads the Chip-8 fontset to the correct memory region in ram.
  */
-static void load_font(void);
+static void LoadFont(void);
 
 /* --- global variables ---------------------------------------------------- */
 
-static ram_context_t ctx;
+static uint8_t s_Memory[MEMORY_SIZE];
 
 /* --- ram interface ------------------------------------------------------- */
 
-ram_status_t ram_init(const char *rom_file) {
-    memset(ctx.ram, 0x00, sizeof(ctx.ram));
+MemoryStatus InitRAM(const char *rom_file)
+{
+    memset(s_Memory, 0x00, sizeof(s_Memory));
     
     FILE *rom;
-    if ((rom = fopen(rom_file, "rb")) == NULL) {
-        return RAM_FILE_ERR;
-    }
+    if ((rom = fopen(rom_file, "rb")) == NULL)
+        return MEM_FILE_ERR;
 
     fseek(rom, 0, SEEK_END);
     const size_t size = (size_t)ftell(rom);
     fseek(rom, 0, SEEK_SET);
 
     uint8_t *buffer;
-    if ((buffer = (uint8_t*)malloc(size * sizeof(uint8_t))) == NULL) {
+    if ((buffer = (uint8_t*)malloc(size * sizeof(uint8_t))) == NULL)
+    {
         fclose(rom);
-        return RAM_ALLOC_ERR;
+        return MEM_ALLOC_ERR;
     }
 
     fread(buffer, sizeof(uint8_t), size, rom);
@@ -58,27 +50,30 @@ ram_status_t ram_init(const char *rom_file) {
 
     DISASSEMBLE(rom_file, buffer, size);
 
-    memcpy(ctx.ram + 0x0200, buffer, size * sizeof(uint8_t));
+    memcpy(s_Memory + 0x0200, buffer, size * sizeof(uint8_t));
     free(buffer);
 
-    load_font();
+    LoadFont();
 
-    return RAM_OK;
+    return MEM_OK;
 }
 
-void ram_write(uint16_t addr, uint8_t val) {
+void RAMWrite(uint16_t addr, uint8_t val)
+{
     addr &= 0x0FFF;
-    ctx.ram[addr] = val;
+    s_Memory[addr] = val;
 }
 
-uint8_t ram_read(uint16_t addr) {
+uint8_t RAMRead(uint16_t addr)
+{
     addr &= 0x0FFF;
-    return ctx.ram[addr];
+    return s_Memory[addr];
 }
 
 /* --- utility functions --------------------------------------------------- */
 
-static void load_font(void) {
+static void LoadFont(void)
+{
     const uint8_t fontset[FONTSET_SIZE] = {
     	0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
     	0x20, 0x60, 0x20, 0x20, 0x70, // 1
@@ -98,7 +93,6 @@ static void load_font(void) {
     	0xF0, 0x80, 0xF0, 0x80, 0x80  // F
     };
 
-    for (uint8_t i = 0; i < FONTSET_SIZE; i++) {
-        ctx.ram[ADDR_FONT + i] = fontset[i];
-    }
+    for (uint8_t i = 0; i < FONTSET_SIZE; i++)
+        s_Memory[ADDR_FONT + i] = fontset[i];
 }

@@ -8,13 +8,15 @@
 #ifndef EMU_H
 #define EMU_H
 
+#include <stdint.h>
+
 /* --- type definitions ---------------------------------------------------- */
 
-typedef enum emu_status_s {
+typedef enum EmulatorStatus {
     EMU_OK,
     EMU_USAGE_ERR,
     EMU_RAM_ERR,
-} emu_status_t;
+} EmulatorStatus;
 
 /* --- emulator interface -------------------------------------------------- */
 
@@ -29,6 +31,6 @@ typedef enum emu_status_s {
  * @return
  *      The exit status of the emulator.
  */
-emu_status_t emu_run(int argc, char **argv);
+EmulatorStatus EmulatorRun(int32_t argc, char **argv);
 
 #endif /* EMU_H */

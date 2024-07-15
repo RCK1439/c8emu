@@ -16,7 +16,7 @@
  * This enum describes the different assembly instructions that the Chip-8
  * can execute.
  */
-typedef enum instructions_s {
+typedef enum Instruction {
     IN_RAW,
     IN_CLS,
     IN_RET,
@@ -38,13 +38,13 @@ typedef enum instructions_s {
     IN_DRW,
     IN_SKP,
     IN_SKNP
-} instructions_t;
+} Instruction;
 
 /**
  * This enum describes the different addressing modes for some of the
  * instructions.
  */
-typedef enum address_mode_s {
+typedef enum AddressMode {
     AM_NONE,
     AM_OPCODE,
     AM_ADDR,
@@ -63,15 +63,15 @@ typedef enum address_mode_s {
     AM_BCD_VX,
     AM_ADDR_I_VX,
     AM_VX_ADDR_I
-} address_mode_t;
+} AddressMode;
 
 /**
  * Defines an opcode with its necessary parameters in order to be executed by
  * the CPU.
  */
-typedef struct opcode_s {
-    instructions_t instr;
-    address_mode_t addr_mode;
+typedef struct OpCode {
+    Instruction instr;
+    AddressMode addr_mode;
     
     uint8_t x_reg;
     uint8_t y_reg;
@@ -80,7 +80,7 @@ typedef struct opcode_s {
 
     uint16_t address;
     uint16_t raw;
-} opcode_t;
+} OpCode;
 
 /* --- instructions interface ---------------------------------------------- */
 
@@ -93,6 +93,6 @@ typedef struct opcode_s {
  * @return
  *      The decoded opcode.
  */
-opcode_t decode_opcode(uint16_t op);
+OpCode DecodeOpCode(uint16_t op);
 
 #endif /* INSTRUCTIONS_H */

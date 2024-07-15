@@ -16,9 +16,9 @@
 
 /* --- macros -------------------------------------------------------------- */
 
-#define DISASSEMBLE(rom_name, prog, size) disassemble(rom_name, prog, size)
-#define DEBUG_OPCODE(op) debug_opcode(op)
-#define DRAW_DEBUG_INFO(v, dt, st, idx, pc, kp) draw_debug_info(v, dt, st, idx, pc, kp);
+#define DISASSEMBLE(rom_name, prog, size) Disassemble(rom_name, prog, size)
+#define DEBUG_OPCODE(op) DebugOpCode(op)
+#define DRAW_DEBUG_INFO(v, dt, st, idx, pc, kp) DrawDebugInfo(v, dt, st, idx, pc, kp);
 
 /* --- debug interface ----------------------------------------------------- */
 
@@ -32,7 +32,7 @@
  * @param[in] size
  *      The size of the loaded ROM.
  */
-void disassemble(const char *rom_name, const uint8_t *const prog, size_t size);
+void Disassemble(const char *rom_name, const uint8_t *const prog, size_t size);
 
 /**
  * Prints the entire opcode to `stdout`.
@@ -40,7 +40,7 @@ void disassemble(const char *rom_name, const uint8_t *const prog, size_t size);
  * @param[in] op
  *      A pointer to the opcode to debug.
  */
-void debug_opcode(const opcode_t *const op);
+void DebugOpCode(const OpCode *const op);
 
 /**
  * Draws debugging information about the CPU to the screen.
@@ -58,7 +58,7 @@ void debug_opcode(const opcode_t *const op);
  * @param[in] kp
  *      The keypad.
  */
-void draw_debug_info(const uint8_t *const v, uint8_t dt, uint8_t st, uint16_t idx, uint16_t pc, const uint8_t *const kp);
+void DrawDebugInfo(const uint8_t *const v, uint8_t dt, uint8_t st, uint16_t idx, uint16_t pc, const uint8_t *const kp);
 
 #else
 #define DISASSEMBLE(rom_name, prog, size)
