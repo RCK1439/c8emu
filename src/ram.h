@@ -16,11 +16,11 @@
 /**
  * This enum describes the ram status when initializing.
  */
-typedef enum MemoryStatus {
+typedef enum memory_status_s {
     MEM_OK,
     MEM_FILE_ERR,
     MEM_ALLOC_ERR
-} MemoryStatus;
+} memory_status_t;
 
 /* --- ram interface ------------------------------------------------------- */
 
@@ -33,7 +33,7 @@ typedef enum MemoryStatus {
  * @return
  *      The status code after the ram has been initialized.
  */
-MemoryStatus InitRAM(const char *rom_file);
+memory_status_t ram_init(const char *rom_file);
 
 /**
  * Writes `val` to memory at `addr`.
@@ -43,7 +43,7 @@ MemoryStatus InitRAM(const char *rom_file);
  * @param[in] val
  *      The value to write to memory.
  */
-void RAMWrite(uint16_t addr, uint8_t val);
+void ram_write(uint16_t addr, uint8_t val);
 
 /**
  * Reads the contents of the memory at `addr`.
@@ -54,6 +54,7 @@ void RAMWrite(uint16_t addr, uint8_t val);
  * @return
  *      The value at `addr`.
  */
-uint8_t RAMRead(uint16_t addr);
+uint8_t ram_read(uint16_t addr);
 
 #endif /* RAM_H */
+

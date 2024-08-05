@@ -13,12 +13,12 @@
 /**
  * Initializes the cpu to its "boot" state.
  */
-void InitCPU(void);
+void cpu_init(void);
 
 /**
  * Performs a single CPU cycle.
  */
-void CPUStep(void);
+void cpu_step(void);
 
 /**
  * Sets the keypad at `key` to `val`.
@@ -28,11 +28,12 @@ void CPUStep(void);
  * @param[in] val
  *      The value to set `key` to.
  */
-void CPUSetKey(uint8_t key, uint8_t val);
+void cpu_set_key(uint8_t key, uint8_t val);
 
 /**
  * Draws the video buffer to the window.
  */
-void CPUDrawBuffer(void);
+void cpu_draw_buffer(void);
 
 #endif /* CPU_H */
+

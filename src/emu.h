@@ -12,11 +12,11 @@
 
 /* --- type definitions ---------------------------------------------------- */
 
-typedef enum EmulatorStatus {
+typedef enum emulator_status_s {
     EMU_OK,
     EMU_USAGE_ERR,
     EMU_RAM_ERR,
-} EmulatorStatus;
+} emulator_status_t;
 
 /* --- emulator interface -------------------------------------------------- */
 
@@ -31,6 +31,6 @@ typedef enum EmulatorStatus {
  * @return
  *      The exit status of the emulator.
  */
-EmulatorStatus EmulatorRun(int32_t argc, char **argv);
+emulator_status_t emu_run(int32_t argc, char **argv);
 
 #endif /* EMU_H */
