@@ -3,16 +3,17 @@
 
 #include <stdint.h>
 
-typedef enum memory_status_s {
+typedef enum MemoryResult
+{
     MEM_OK,
     MEM_FILE_ERR,
     MEM_ALLOC_ERR
-} memory_status_t;
+} MemoryResult;
 
-memory_status_t ram_init(const char *rom_file);
+MemoryResult InitRAM(const char *romFile);
 
-void ram_write(uint16_t addr, uint8_t val);
-uint8_t ram_read(uint16_t addr);
+void RAMWrite(uint16_t addr, uint8_t val);
+uint8_t RAMRead(uint16_t addr);
 
 #endif /* RAM_H */
 

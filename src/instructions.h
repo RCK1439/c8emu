@@ -3,7 +3,8 @@
 
 #include <stdint.h>
 
-typedef enum instruction_s {
+typedef enum Instruction
+{
     IN_RAW,
     IN_CLS,
     IN_RET,
@@ -25,9 +26,10 @@ typedef enum instruction_s {
     IN_DRW,
     IN_SKP,
     IN_SKNP
-} instruction_t;
+} Instruction;
 
-typedef enum address_mode_s {
+typedef enum AddressMode
+{
     AM_NONE,
     AM_OPCODE,
     AM_ADDR,
@@ -46,22 +48,23 @@ typedef enum address_mode_s {
     AM_BCD_VX,
     AM_ADDR_I_VX,
     AM_VX_ADDR_I
-} address_mode_t;
+} AddressMode;
 
-typedef struct opcode_s {
-    instruction_t instr;
-    address_mode_t addr_mode;
+typedef struct OpCode
+{
+    Instruction instr;
+    AddressMode addressMode;
     
-    uint8_t x_reg;
-    uint8_t y_reg;
+    uint8_t x;
+    uint8_t y;
     uint8_t byte;
     uint8_t nibble;
 
     uint16_t address;
     uint16_t raw;
-} opcode_t;
+} OpCode;
 
-opcode_t decode_opcode(uint16_t op);
+OpCode DecodeOpCode(uint16_t op);
 
 #endif /* INSTRUCTIONS_H */
 

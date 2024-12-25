@@ -6,25 +6,30 @@
 #include <raylib.h>
 #include <stdio.h>
 
-static void process_input(void);
+static void ProcessInput(void);
 
-emulator_status_t emu_run(int32_t argc, char **argv) {
-    if (argc < 2) {
+EmulatorResult RunEmulator(int32_t argc, char **argv)
+{
+    if (argc < 2)
+    {
         fprintf(stderr, "usage: %s <rom_file>\n", argv[0]);
         return EMU_USAGE_ERR;
     }
 
-    switch (ram_init(argv[1])) {
-        case MEM_FILE_ERR: {
+    switch (InitRAM(argv[1]))
+    {
+        case MEM_FILE_ERR:
+        {
             fprintf(stderr, "couldn't load rom: %s\n", argv[1]);
         } return EMU_RAM_ERR;
-        case MEM_ALLOC_ERR: {
+        case MEM_ALLOC_ERR:
+        {
             fprintf(stderr, "couldn't allocate rom buffer\n");
         } return EMU_RAM_ERR;
         default: break;
     }
 
-    cpu_init();
+    InitCPU();
 
 #ifdef NDEBUG
     SetTraceLogLevel(LOG_NONE);
@@ -33,13 +38,14 @@ emulator_status_t emu_run(int32_t argc, char **argv) {
     InitAudioDevice();
     SetTargetFPS(REFRESH_RATE);
     
-    while (!WindowShouldClose()) {
-        process_input();
-        cpu_step();
+    while (!WindowShouldClose())
+    {
+        ProcessInput();
+        StepCPU();
         
         BeginDrawing();
             ClearBackground(BLACK);
-            cpu_draw_buffer();
+            DrawCPUBuffer();
         EndDrawing();
     }
 
@@ -49,7 +55,8 @@ emulator_status_t emu_run(int32_t argc, char **argv) {
     return EMU_OK;
 }
 
-static void process_input(void) {
+static void ProcessInput(void)
+{
     const KeyboardKey keyboard_keys[NUM_KEYS] = {
         KEY_ZERO,
         KEY_ONE,
@@ -69,11 +76,15 @@ static void process_input(void) {
         KEY_F
     };
 
-    for (uint8_t k = 0; k < NUM_KEYS; k++) {
-        if (IsKeyDown(keyboard_keys[k])) {
-            cpu_set_key(k, 1);
-        } else {
-            cpu_set_key(k, 0);
+    for (uint8_t k = 0; k < NUM_KEYS; k++)
+    {
+        if (IsKeyDown(keyboard_keys[k]))
+        {
+            SetCPUKey(k, 1);
+        }
+        else
+        {
+            SetCPUKey(k, 0);
         }
     }
 }

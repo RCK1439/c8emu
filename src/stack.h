@@ -1,19 +1,20 @@
 #ifndef STACK_H
 #define STACK_H
 
-#include "constants.h"
-
 #include <stdint.h>
 
-typedef struct stack_s {
+#define STACK_SIZE 32
+
+typedef struct CallStack
+{
     uint16_t data[STACK_SIZE];
-    uint8_t ptr;
-} stack_t;
+    uint8_t  ptr;
+} CallStack;
 
-stack_t stack_init(void);
+CallStack CreateStack(void);
 
-void stack_push(stack_t *const s, uint16_t val);
-uint16_t stack_pop(stack_t *const s);
+void StackPush(CallStack *const s, uint16_t val);
+uint16_t StackPop(CallStack *const s);
 
 #endif /* STACK_H */
 

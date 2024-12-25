@@ -3,12 +3,13 @@
 
 #include <stdint.h>
 
-typedef enum emulator_status_s {
+typedef enum EmulatorResult
+{
     EMU_OK,
     EMU_USAGE_ERR,
     EMU_RAM_ERR,
-} emulator_status_t;
+} EmulatorResult;
 
-emulator_status_t emu_run(int32_t argc, char **argv);
+EmulatorResult RunEmulator(int32_t argc, char **argv);
 
 #endif /* EMU_H */

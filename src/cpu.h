@@ -3,13 +3,13 @@
 
 #include <stdint.h>
 
-void cpu_init(void);
+void InitCPU(void);
 
-void cpu_step(void);
+void StepCPU(void);
 
-void cpu_set_key(uint8_t key, uint8_t val);
+void SetCPUKey(uint8_t key, uint8_t val);
 
-void cpu_draw_buffer(void);
+void DrawCPUBuffer(void);
 
 #endif /* CPU_H */
 

@@ -7,73 +7,89 @@
 #define KK(op) ((op) & 0x00FF)
 #define NNN(op) ((op) & 0x0FFF)
 
-opcode_t decode_opcode(uint16_t op) {
-    opcode_t code;
+OpCode DecodeOpCode(uint16_t op)
+{
+    OpCode code;
 
-    switch (op & 0xF000) {
-        case 0x0000: {
-            switch (op & 0x00FF) {
-                case 0xE0: {
+    switch (op & 0xF000)
+    {
+        case 0x0000:
+        {
+            switch (op & 0x00FF)
+            {
+                case 0xE0:
+                {
                     code.instr = IN_CLS;
-                    code.addr_mode = AM_NONE;
+                    code.addressMode = AM_NONE;
                 } break;
-                case 0xEE: {
+                case 0xEE:
+                {
                     code.instr = IN_RET;
-                    code.addr_mode = AM_NONE;
+                    code.addressMode = AM_NONE;
                 } break;
-                default: {
+                default:
+                {
                     code.instr = IN_RAW;
-                    code.addr_mode = AM_OPCODE;
+                    code.addressMode = AM_OPCODE;
                     code.raw = op;
                 } break;
             }
         } return code;
-        case 0x1000: {
+        case 0x1000:
+        {
             code.instr = IN_JP;
-            code.addr_mode = AM_ADDR;
+            code.addressMode = AM_ADDR;
             code.address = NNN(op);
         } return code;
-        case 0x2000: {
+        case 0x2000:
+        {
             code.instr = IN_CALL;
-            code.addr_mode = AM_ADDR;
+            code.addressMode = AM_ADDR;
             code.address = NNN(op);
         } return code;
-        case 0x3000: {
+        case 0x3000:
+        {
             code.instr = IN_SE;
-            code.addr_mode = AM_VX_BYTE;
-            code.x_reg = X(op);
+            code.addressMode = AM_VX_BYTE;
+            code.x = X(op);
             code.byte = KK(op);
         } return code;
-        case 0x4000: {
+        case 0x4000:
+        {
             code.instr = IN_SNE;
-            code.addr_mode = AM_VX_BYTE;
-            code.x_reg = X(op);
+            code.addressMode = AM_VX_BYTE;
+            code.x = X(op);
             code.byte = KK(op);
         } return code;
-        case 0x5000: {
+        case 0x5000:
+        {
             code.instr = IN_SE;
-            code.addr_mode = AM_VX_VY;
-            code.x_reg = X(op);
-            code.y_reg = Y(op);
+            code.addressMode = AM_VX_VY;
+            code.x = X(op);
+            code.y = Y(op);
         } return code;
-        case 0x6000: {
+        case 0x6000:
+        {
             code.instr = IN_LD;
-            code.addr_mode = AM_VX_BYTE;
-            code.x_reg = X(op);
+            code.addressMode = AM_VX_BYTE;
+            code.x = X(op);
             code.byte = KK(op);
         } return code;
-        case 0x7000: {
+        case 0x7000:
+        {
             code.instr = IN_ADD;
-            code.addr_mode = AM_VX_BYTE;
-            code.x_reg = X(op);
+            code.addressMode = AM_VX_BYTE;
+            code.x = X(op);
             code.byte = KK(op);
         } return code;
-        case 0x8000: {
-            code.addr_mode = AM_VX_VY;
-            code.x_reg = X(op);
-            code.y_reg = Y(op);
+        case 0x8000:
+        {
+            code.addressMode = AM_VX_VY;
+            code.x = X(op);
+            code.y = Y(op);
             
-            switch (op & 0x000F) {
+            switch (op & 0x000F)
+            {
                 case 0x0: code.instr = IN_LD; break;
                 case 0x1: code.instr = IN_OR; break;
                 case 0x2: code.instr = IN_AND; break;
@@ -83,118 +99,142 @@ opcode_t decode_opcode(uint16_t op) {
                 case 0x6: code.instr = IN_SHR; break;
                 case 0x7: code.instr = IN_SUBN; break;
                 case 0xE: code.instr = IN_SHL; break;
-                default: {
+                default:
+                {
                     code.instr = IN_RAW;
-                    code.addr_mode = AM_OPCODE;
+                    code.addressMode = AM_OPCODE;
                     code.raw = op;
                 } break;
             }
         } return code;
-        case 0x9000: {
+        case 0x9000:
+        {
             code.instr = IN_SNE;
-            code.addr_mode = AM_VX_VY;
-            code.x_reg = X(op);
-            code.y_reg = Y(op);
+            code.addressMode = AM_VX_VY;
+            code.x = X(op);
+            code.y = Y(op);
         } return code;
-        case 0xA000: {
+        case 0xA000:
+        {
             code.instr = IN_LD;
-            code.addr_mode = AM_I_ADDR;
+            code.addressMode = AM_I_ADDR;
             code.address = NNN(op);
         } return code;
-        case 0xB000: {
+        case 0xB000:
+        {
             code.instr = IN_JP;
-            code.addr_mode = AM_V0_ADDR;
+            code.addressMode = AM_V0_ADDR;
             code.address = NNN(op);
         } return code;
-        case 0xC000: {
+        case 0xC000:
+        {
             code.instr = IN_RND;
-            code.addr_mode = AM_VX_BYTE;
-            code.x_reg = X(op);
+            code.addressMode = AM_VX_BYTE;
+            code.x = X(op);
             code.byte = KK(op);
         } return code;
-        case 0xD000: {
+        case 0xD000:
+        {
             code.instr = IN_DRW;
-            code.addr_mode = AM_VX_VY_N;
-            code.x_reg = X(op);
-            code.y_reg = Y(op);
+            code.addressMode = AM_VX_VY_N;
+            code.x = X(op);
+            code.y = Y(op);
             code.nibble = N(op);
         } return code;
-        case 0xE000: {
-            switch (op & 0x00FF) {
-                case 0x9E: {
+        case 0xE000:
+        {
+            switch (op & 0x00FF)
+            {
+                case 0x9E:
+                {
                     code.instr = IN_SKP;
-                    code.addr_mode = AM_VX;
-                    code.x_reg = X(op);
+                    code.addressMode = AM_VX;
+                    code.x = X(op);
                 } break;
-                case 0xA1: {
+                case 0xA1:
+                {
                     code.instr = IN_SKNP;
-                    code.addr_mode = AM_VX;
-                    code.x_reg = X(op);
+                    code.addressMode = AM_VX;
+                    code.x = X(op);
                 } break;
-                default: {
+                default:
+                {
                     code.instr = IN_RAW;
-                    code.addr_mode = AM_OPCODE;
+                    code.addressMode = AM_OPCODE;
                     code.raw = op;
                 } break;
             }
         } return code;
-        case 0xF000: {
-            switch (op & 0x00FF) {
-                case 0x07: {
+        case 0xF000:
+        {
+            switch (op & 0x00FF)
+            {
+                case 0x07:
+                {
                     code.instr = IN_LD;
-                    code.addr_mode = AM_VX_DT;
-                    code.x_reg = X(op);
+                    code.addressMode = AM_VX_DT;
+                    code.x = X(op);
                 } break;
-                case 0x0A: {
+                case 0x0A:
+                {
                     code.instr = IN_LD;
-                    code.addr_mode = AM_VX_KEY;
-                    code.x_reg = X(op);
+                    code.addressMode = AM_VX_KEY;
+                    code.x = X(op);
                 } break;
-                case 0x15: {
+                case 0x15:
+                {
                     code.instr = IN_LD;
-                    code.addr_mode = AM_DT_VX;
-                    code.x_reg = X(op);
+                    code.addressMode = AM_DT_VX;
+                    code.x = X(op);
                 } break;
-                case 0x18: {
+                case 0x18:
+                {
                     code.instr = IN_LD;
-                    code.addr_mode = AM_ST_VX;
-                    code.x_reg = X(op);
+                    code.addressMode = AM_ST_VX;
+                    code.x = X(op);
                 } break;
-                case 0x1E: {
+                case 0x1E:
+                {
                     code.instr = IN_ADD;
-                    code.addr_mode = AM_I_VX;
-                    code.x_reg = X(op);
+                    code.addressMode = AM_I_VX;
+                    code.x = X(op);
                 } break;
-                case 0x29: {
+                case 0x29:
+                {
                     code.instr = IN_LD;
-                    code.addr_mode = AM_FONT_VX;
-                    code.x_reg = X(op);
+                    code.addressMode = AM_FONT_VX;
+                    code.x = X(op);
                 } break;
-                case 0x33: {
+                case 0x33:
+                {
                     code.instr = IN_LD;
-                    code.addr_mode = AM_BCD_VX;
-                    code.x_reg = X(op);
+                    code.addressMode = AM_BCD_VX;
+                    code.x = X(op);
                 } break;
-                case 0x55: {
+                case 0x55:
+                {
                     code.instr = IN_LD;
-                    code.addr_mode = AM_ADDR_I_VX;
-                    code.x_reg = X(op);
+                    code.addressMode = AM_ADDR_I_VX;
+                    code.x = X(op);
                 } break;
-                case 0x65: {
+                case 0x65:
+                {
                     code.instr = IN_LD;
-                    code.addr_mode = AM_VX_ADDR_I;
-                    code.x_reg = X(op);
+                    code.addressMode = AM_VX_ADDR_I;
+                    code.x = X(op);
                 } break;
-                default: {
+                default:
+                {
                     code.instr = IN_RAW;
-                    code.addr_mode = AM_OPCODE;
+                    code.addressMode = AM_OPCODE;
                     code.raw = op;
                 } break;
             }
         } return code;
-        default: {
+        default:
+        {
             code.instr = IN_RAW;
-            code.addr_mode = AM_OPCODE;
+            code.addressMode = AM_OPCODE;
             code.raw = op;
         } return code;
     }

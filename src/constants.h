@@ -11,7 +11,6 @@
 
 #define REFRESH_RATE 60
 
-#define STACK_SIZE 32
 #define MEMORY_SIZE (4 * 1024)
 #define FONTSET_SIZE 80
 
