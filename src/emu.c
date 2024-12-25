@@ -1,10 +1,3 @@
-/**
- * @file   emu.c
- * @brief  Implementation of the emulator.
- * @author Ruan C. Keet
- * @date   2024-04-28
- */
-
 #include "emu.h"
 #include "constants.h"
 #include "cpu.h"
@@ -13,15 +6,7 @@
 #include <raylib.h>
 #include <stdio.h>
 
-/* --- functions prototypes ------------------------------------------------ */
-
-/**
- * Processes input from the keyboard by the user. This will set the
- * corresponding key in the cpu to `1` if a key has been pressed.
- */
 static void process_input(void);
-
-/* --- emulator interface -------------------------------------------------- */
 
 emulator_status_t emu_run(int32_t argc, char **argv) {
     if (argc < 2) {
@@ -63,8 +48,6 @@ emulator_status_t emu_run(int32_t argc, char **argv) {
 
     return EMU_OK;
 }
-
-/* --- utility functions --------------------------------------------------- */
 
 static void process_input(void) {
     const KeyboardKey keyboard_keys[NUM_KEYS] = {

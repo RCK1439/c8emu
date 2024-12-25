@@ -1,10 +1,3 @@
-/**
- * @file   debug.c
- * @brief  Implementation of some useful debugging functions and macros.
- * @author Ruan C. Keet
- * @date   2024-04-28
- */
-
 #include "debug.h"
 #include "constants.h"
 #include "instructions.h"
@@ -14,24 +7,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* --- constants ----------------------------------------------------------- */
-
 #define FILENAME_SIZE 256
 #define FONTSIZE 20
 
-/* --- function prototypes ------------------------------------------------- */
-
-/**
- * Prints `op` as a Chip-8 assembly instructions to `f`.
- * 
- * @param[in] f
- *      The file to print `op` to.
- * @param[in] op
- *      The opcode to print out to the file.
- */
 static void log_opcode(FILE *const f, opcode_t op);
-
-/* --- debug interface ----------------------------------------------------- */
 
 void disassemble(const char *rom_name, const uint8_t *const prog, size_t size) {
     char log_file_name[FILENAME_SIZE], *last_pos;
@@ -145,8 +124,6 @@ void draw_debug_info(const uint8_t *const v, uint8_t dt, uint8_t st, uint16_t id
     const int32_t fps = GetFPS();
     SetWindowTitle(TextFormat("c8emu - %d FPS", fps));
 }
-
-/* --- utility functions --------------------------------------------------- */
 
 static void log_opcode(FILE *const f, opcode_t op) {
     const char *in_str[] = {

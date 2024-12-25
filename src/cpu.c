@@ -1,10 +1,3 @@
-/**
- * @file   cpu.c
- * @brief  Implementation of the Chip-8 execution instructions.
- * @author Ruan C. Keet
- * @date   2024-04-28
- */
-
 #include "cpu.h"
 #include "constants.h"
 #include "debug.h"
@@ -20,12 +13,6 @@
 
 #define unused __attribute__((unused))
 
-/* --- type definitions ---------------------------------------------------- */
-
-/**
- * This struct defines the context for the processor. i.e. The registers,
- * stack, video buffer and keypad.
- */
 typedef struct cpu_s {
     uint8_t v[NUM_REGISTERS];
     
@@ -40,12 +27,7 @@ typedef struct cpu_s {
     uint8_t keypad[NUM_KEYS];
 } cpu_t;
 
-/**
- * Defines a function signature for an executor routine.
- */
 typedef void (*exec_t)(const opcode_t *const op);
-
-/* --- executor routines --------------------------------------------------- */
 
 static void raw(const opcode_t *const op);
 static void cls(const opcode_t *const op);
@@ -68,8 +50,6 @@ static void rnd(const opcode_t *const op);
 static void drw(const opcode_t *const op);
 static void skp(const opcode_t *const op);
 static void sknp(const opcode_t *const op);
-
-/* --- global variables ---------------------------------------------------- */
 
 static cpu_t cpu;
 static exec_t executors[] = {
@@ -95,8 +75,6 @@ static exec_t executors[] = {
     [IN_SKP] = skp,
     [IN_SKNP] = sknp
 };
-
-/* --- cpu interface ------------------------------------------------------- */
 
 void cpu_init(void) {
     memset(cpu.v, 0x00, sizeof(cpu.v));
@@ -140,8 +118,6 @@ void cpu_draw_buffer(void) {
 
     DRAW_DEBUG_INFO(cpu.v, cpu.dt, cpu.st, cpu.idx, cpu.pc, cpu.keypad);
 }
-
-/* --- executor routines --------------------------------------------------- */
 
 static void raw(unused const opcode_t *const op) {
     /* Intentionally left empty */
