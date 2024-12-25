@@ -4,7 +4,6 @@
 
 #include <memory.h>
 #include <stdio.h>
-#include <stdlib.h>
 
 #define MEMORY_SIZE (4 * 1024)
 #define FONTSET_SIZE 80

@@ -5,9 +5,7 @@
 #include "stack.h"
 
 #include <raylib.h>
-#include <stdbool.h>
 #include <memory.h>
-#include <stdint.h>
 
 #define NUM_REGISTERS 16
 #define NUM_KEYS 16

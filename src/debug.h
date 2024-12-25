@@ -5,7 +5,6 @@
 #include "emulator/instructions.h"
 
 #include <stddef.h>
-#include <stdint.h>
 
 #define DISASSEMBLE(rom_name, prog, size) Disassemble(rom_name, prog, size)
 #define DEBUG_OPCODE(op) DebugOpCode(op)
