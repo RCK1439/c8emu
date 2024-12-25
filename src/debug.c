@@ -1,11 +1,12 @@
 #include "debug.h"
-#include "constants.h"
-#include "instructions.h"
 
 #include <raylib.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#define NUM_KEYS 16
+#define NUM_REGISTERS 16
 
 #define FILENAME_SIZE 256
 #define FONTSIZE 20

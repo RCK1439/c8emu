@@ -1,13 +1,14 @@
 #include "chip8.h"
-#include "constants.h"
-#include "cpu.h"
-#include "ram.h"
+#include "emulator/cpu.h"
+#include "emulator/ram.h"
 
 #include <raylib.h>
 #include <stdio.h>
 
 #define WINDOW_WIDTH 1024
 #define WINDOW_HEIGHT 512
+
+#define NUM_KEYS 16
 
 #define REFRESH_RATE 60
 

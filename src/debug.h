@@ -2,7 +2,7 @@
 #define DEBUG_H
 
 #ifndef NDEBUG
-#include "instructions.h"
+#include "emulator/instructions.h"
 
 #include <stddef.h>
 #include <stdint.h>

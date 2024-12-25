@@ -1,5 +1,4 @@
 #include "cpu.h"
-#include "constants.h"
 #include "debug.h"
 #include "instructions.h"
 #include "ram.h"
@@ -9,6 +8,13 @@
 #include <stdbool.h>
 #include <memory.h>
 #include <stdint.h>
+
+#define NUM_REGISTERS 16
+#define NUM_KEYS 16
+
+#define SCREEN_BUFFER_WIDTH 64
+#define SCREEN_BUFFER_HEIGHT 32
+#define SCALE 16
 
 #define unused __attribute__((unused))
 

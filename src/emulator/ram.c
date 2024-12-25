@@ -1,11 +1,13 @@
 #include "ram.h"
-#include "constants.h"
 #include "debug.h"
 #include "util.h"
 
 #include <memory.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+#define MEMORY_SIZE (4 * 1024)
+#define FONTSET_SIZE 80
 
 static void LoadChip8Font(void);
 
