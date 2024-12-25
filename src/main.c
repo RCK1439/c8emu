@@ -1,7 +1,6 @@
-#include "emu.h"
+#include "chip8.h"
 
-int32_t main(int32_t argc, char **argv)
+int main(int argc, char **argv)
 {
-    return RunEmulator(argc, argv);
+    return InvokeChip8(argc, argv);
 }
-

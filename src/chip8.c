@@ -1,4 +1,4 @@
-#include "emu.h"
+#include "chip8.h"
 #include "constants.h"
 #include "cpu.h"
 #include "ram.h"
@@ -6,14 +6,19 @@
 #include <raylib.h>
 #include <stdio.h>
 
+#define WINDOW_WIDTH 1024
+#define WINDOW_HEIGHT 512
+
+#define REFRESH_RATE 60
+
 static void ProcessInput(void);
 
-EmulatorResult RunEmulator(int32_t argc, char **argv)
+Chip8ExitCode InvokeChip8(int32_t argc, char **argv)
 {
     if (argc < 2)
     {
         fprintf(stderr, "usage: %s <rom_file>\n", argv[0]);
-        return EMU_USAGE_ERR;
+        return C8_USAGE_ERR;
     }
 
     switch (InitRAM(argv[1]))
@@ -21,11 +26,11 @@ EmulatorResult RunEmulator(int32_t argc, char **argv)
         case MEM_FILE_ERR:
         {
             fprintf(stderr, "couldn't load rom: %s\n", argv[1]);
-        } return EMU_RAM_ERR;
+        } return C8_RAM_ERR;
         case MEM_ALLOC_ERR:
         {
             fprintf(stderr, "couldn't allocate rom buffer\n");
-        } return EMU_RAM_ERR;
+        } return C8_RAM_ERR;
         default: break;
     }
 
@@ -52,12 +57,12 @@ EmulatorResult RunEmulator(int32_t argc, char **argv)
     CloseAudioDevice();
     CloseWindow();
 
-    return EMU_OK;
+    return C8_OK;
 }
 
 static void ProcessInput(void)
 {
-    const KeyboardKey keyboard_keys[NUM_KEYS] = {
+    const KeyboardKey keys[NUM_KEYS] = {
         KEY_ZERO,
         KEY_ONE,
         KEY_TWO,
@@ -78,7 +83,7 @@ static void ProcessInput(void)
 
     for (uint8_t k = 0; k < NUM_KEYS; k++)
     {
-        if (IsKeyDown(keyboard_keys[k]))
+        if (IsKeyDown(keys[k]))
         {
             SetCPUKey(k, 1);
         }
