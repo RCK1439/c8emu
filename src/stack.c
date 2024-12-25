@@ -1,6 +1,5 @@
 #include "stack.h"
-
-#include <assert.h>
+#include "util.h"
 
 CallStack CreateStack(void)
 {
@@ -14,12 +13,12 @@ CallStack CreateStack(void)
 
 void StackPush(CallStack *const s, uint16_t val)
 {
-    assert(s->ptr < STACK_SIZE);
+    C8_ASSERT(s->ptr < STACK_SIZE, "Cannot push; call stack is full");
     s->data[(s->ptr)++] = val;
 }
 
 uint16_t StackPop(CallStack *const s)
 {
-    assert(s->ptr > 0);
+    C8_ASSERT(s->ptr > 0, "Cannot pop; call stack is empty");
     return s->data[--(s->ptr)];
 }

@@ -6,7 +6,6 @@
 #include "stack.h"
 
 #include <raylib.h>
-#include <assert.h>
 #include <stdbool.h>
 #include <memory.h>
 #include <stdint.h>

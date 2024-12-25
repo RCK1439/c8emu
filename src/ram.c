@@ -1,6 +1,7 @@
 #include "ram.h"
 #include "constants.h"
 #include "debug.h"
+#include "util.h"
 
 #include <memory.h>
 #include <stdio.h>
@@ -24,20 +25,14 @@ MemoryResult InitRAM(const char *romFile)
     const size_t size = (size_t)ftell(rom);
     fseek(rom, 0, SEEK_SET);
 
-    uint8_t *buffer;
-    if ((buffer = (uint8_t*)malloc(size * sizeof(uint8_t))) == NULL)
-    {
-        fclose(rom);
-        return MEM_ALLOC_ERR;
-    }
-
+    uint8_t *buffer = C8_MALLOC(uint8_t, size);
     fread(buffer, sizeof(uint8_t), size, rom);
     fclose(rom);
 
     DISASSEMBLE(romFile, buffer, size);
 
     memcpy(memory + 0x0200, buffer, size * sizeof(uint8_t));
-    free(buffer);
+    C8_FREE(buffer);
 
     LoadChip8Font();
 
