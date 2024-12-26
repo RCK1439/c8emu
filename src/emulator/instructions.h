@@ -55,13 +55,13 @@ typedef struct OpCode
     Instruction instr;
     AddressMode addressMode;
     
+    uint16_t address;
+    uint16_t raw;
+
     uint8_t x;
     uint8_t y;
     uint8_t byte;
     uint8_t nibble;
-
-    uint16_t address;
-    uint16_t raw;
 } OpCode;
 
 OpCode DecodeOpCode(uint16_t op);

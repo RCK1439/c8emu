@@ -18,6 +18,10 @@
 
 typedef struct CPU
 {
+    uint8_t   video[SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT];
+    CallStack stack;
+
+    uint8_t   keypad[NUM_KEYS];
     uint8_t   v[NUM_REGISTERS];
     
     uint16_t  idx;
@@ -25,10 +29,6 @@ typedef struct CPU
 
     uint8_t   dt;
     uint8_t   st;
-
-    CallStack stack;
-    uint8_t   video[SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT];
-    uint8_t   keypad[NUM_KEYS];
 } CPU;
 
 typedef void (*Executor)(const OpCode *const op);
