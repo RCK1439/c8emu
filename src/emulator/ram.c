@@ -16,7 +16,7 @@ MemoryResult InitRAM(const char *romFile)
 {
     memset(memory, 0x00, sizeof(memory));
     
-    FILE *rom;
+    FILE *rom = NULL;
     if ((rom = fopen(romFile, "rb")) == NULL)
     {
         return MEM_FILE_ERR;
@@ -26,7 +26,7 @@ MemoryResult InitRAM(const char *romFile)
     const size_t size = (size_t)ftell(rom);
     fseek(rom, 0, SEEK_SET);
 
-    uint8_t *buffer = C8_MALLOC(uint8_t, size);
+    uint8_t *const buffer = C8_MALLOC(uint8_t, size);
     fread(buffer, sizeof(uint8_t), size, rom);
     fclose(rom);
 

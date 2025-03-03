@@ -11,13 +11,13 @@ CallStack CreateStack(void)
     return s;
 }
 
-void StackPush(CallStack *const s, uint16_t val)
+void StackPush(CallStack *s, uint16_t val)
 {
     C8_ASSERT(s->ptr < STACK_SIZE, "Cannot push; call stack is full");
     s->data[(s->ptr)++] = val;
 }
 
-uint16_t StackPop(CallStack *const s)
+uint16_t StackPop(CallStack *s)
 {
     C8_ASSERT(s->ptr > 0, "Cannot pop; call stack is empty");
     return s->data[--(s->ptr)];

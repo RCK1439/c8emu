@@ -6,7 +6,7 @@
 
 void *CheckedMalloc(size_t numBytes)
 {
-    void *p = malloc(numBytes);
+    void *const p = malloc(numBytes);
     if (!p)
     {
         Panic("Out of memory!");

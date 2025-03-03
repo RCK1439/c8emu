@@ -31,29 +31,29 @@ typedef struct CPU
     uint8_t   st;
 } CPU;
 
-typedef void (*Executor)(const OpCode *const op);
+typedef void (*Executor)(const OpCode *op);
 
-static void Raw(const OpCode *const op);
-static void Cls(const OpCode *const op);
-static void Ret(const OpCode *const op);
-static void Sys(const OpCode *const op);
-static void Jp(const OpCode *const op);
-static void Call(const OpCode *const op);
-static void Se(const OpCode *const op);
-static void Sne(const OpCode *const op);
-static void Ld(const OpCode *const op);
-static void Add(const OpCode *const op);
-static void Or(const OpCode *const op);
-static void And(const OpCode *const op);
-static void Xor(const OpCode *const op);
-static void Sub(const OpCode *const op);
-static void Shr(const OpCode *const op);
-static void Subn(const OpCode *const op);
-static void Shl(const OpCode *const op);
-static void Rnd(const OpCode *const op);
-static void Drw(const OpCode *const op);
-static void Skp(const OpCode *const op);
-static void Sknp(const OpCode *const op);
+static void Raw(const OpCode *op);
+static void Cls(const OpCode *op);
+static void Ret(const OpCode *op);
+static void Sys(const OpCode *op);
+static void Jp(const OpCode *op);
+static void Call(const OpCode *op);
+static void Se(const OpCode *op);
+static void Sne(const OpCode *op);
+static void Ld(const OpCode *op);
+static void Add(const OpCode *op);
+static void Or(const OpCode *op);
+static void And(const OpCode *op);
+static void Xor(const OpCode *op);
+static void Sub(const OpCode *op);
+static void Shr(const OpCode *op);
+static void Subn(const OpCode *op);
+static void Shl(const OpCode *op);
+static void Rnd(const OpCode *op);
+static void Drw(const OpCode *op);
+static void Skp(const OpCode *op);
+static void Sknp(const OpCode *op);
 
 static CPU cpu;
 static Executor executors[] = {
@@ -132,27 +132,27 @@ void DrawCPUBuffer(void)
     DRAW_DEBUG_INFO(cpu.v, cpu.dt, cpu.st, cpu.idx, cpu.pc, cpu.keypad);
 }
 
-static void Raw(unused const OpCode *const op)
+static void Raw(unused const OpCode *op)
 {
     /* Intentionally left empty */
 }
 
-static void Cls(unused const OpCode *const op)
+static void Cls(unused const OpCode *op)
 {
     memset(cpu.video, 0x00, sizeof(cpu.video));
 }
 
-static void Ret(unused const OpCode *const op)
+static void Ret(unused const OpCode *op)
 {
     cpu.pc = StackPop(&cpu.stack);    
 }
 
-static void Sys(unused const OpCode *const op)
+static void Sys(unused const OpCode *op)
 {
     /* Intentionally left empty */
 }
 
-static void Jp(const OpCode *const op)
+static void Jp(const OpCode *op)
 {
     if (op->addressMode == AM_ADDR)
     {
@@ -164,13 +164,13 @@ static void Jp(const OpCode *const op)
     }
 }
 
-static void Call(const OpCode *const op)
+static void Call(const OpCode *op)
 {
     StackPush(&cpu.stack, cpu.pc);
     cpu.pc = op->address;
 }
 
-static void Se(const OpCode *const op)
+static void Se(const OpCode *op)
 {
     if (op->addressMode == AM_VX_BYTE)
     {
@@ -188,7 +188,7 @@ static void Se(const OpCode *const op)
     }
 }
 
-static void Sne(const OpCode *const op)
+static void Sne(const OpCode *op)
 {
     if (op->addressMode == AM_VX_BYTE)
     {
@@ -206,7 +206,7 @@ static void Sne(const OpCode *const op)
     }
 }
 
-static void Ld(const OpCode *const op)
+static void Ld(const OpCode *op)
 {
     if (op->addressMode == AM_VX_BYTE)
     {
@@ -282,7 +282,7 @@ static void Ld(const OpCode *const op)
     }
 }
 
-static void Add(const OpCode *const op)
+static void Add(const OpCode *op)
 {
     if (op->addressMode == AM_VX_BYTE)
     {
@@ -308,22 +308,22 @@ static void Add(const OpCode *const op)
     }
 }
 
-static void Or(const OpCode *const op)
+static void Or(const OpCode *op)
 {
     cpu.v[op->x] |= cpu.v[op->y];
 }
 
-static void And(const OpCode *const op)
+static void And(const OpCode *op)
 {
     cpu.v[op->x] &= cpu.v[op->y];
 }
 
-static void Xor(const OpCode *const op)
+static void Xor(const OpCode *op)
 {
     cpu.v[op->x] ^= cpu.v[op->y];
 }
 
-static void Sub(const OpCode *const op)
+static void Sub(const OpCode *op)
 {
     if (cpu.v[op->x] > cpu.v[op->y])
     {
@@ -337,13 +337,13 @@ static void Sub(const OpCode *const op)
     cpu.v[op->x] -= cpu.v[op->y];
 }
 
-static void Shr(const OpCode *const op)
+static void Shr(const OpCode *op)
 {
     cpu.v[0xF] = cpu.v[op->x] & 0x01;
     cpu.v[op->x] >>= 1;
 }
 
-static void Subn(const OpCode *const op)
+static void Subn(const OpCode *op)
 {
     if (cpu.v[op->y] > cpu.v[op->x])
     {
@@ -357,18 +357,18 @@ static void Subn(const OpCode *const op)
     cpu.v[op->x] = cpu.v[op->y] - cpu.v[op->x];
 }
 
-static void Shl(const OpCode *const op)
+static void Shl(const OpCode *op)
 {
     cpu.v[0xF] = (cpu.v[op->x] & 0x80) >> 7;
     cpu.v[op->x] <<= 1;
 }
 
-static void Rnd(const OpCode *const op)
+static void Rnd(const OpCode *op)
 {
     cpu.v[op->x] = GetRandomValue(0, 255) & op->byte;
 }
 
-static void Drw(const OpCode *const op)
+static void Drw(const OpCode *op)
 {
     const uint8_t height = op->nibble;
     const uint8_t xp = cpu.v[op->x] % SCREEN_BUFFER_WIDTH;
@@ -396,7 +396,7 @@ static void Drw(const OpCode *const op)
     }
 }
 
-static void Skp(const OpCode *const op)
+static void Skp(const OpCode *op)
 {
     const uint8_t key = cpu.v[op->x];
     if (cpu.keypad[key])
@@ -405,7 +405,7 @@ static void Skp(const OpCode *const op)
     }
 }
 
-static void Sknp(const OpCode *const op)
+static void Sknp(const OpCode *op)
 {
     const uint8_t key = cpu.v[op->x];
     if (!cpu.keypad[key])

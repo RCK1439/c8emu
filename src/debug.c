@@ -11,12 +11,12 @@
 #define FILENAME_SIZE 256
 #define FONTSIZE 20
 
-static void LogOpCode(FILE *const f, OpCode op);
+static void LogOpCode(FILE *f, OpCode op);
 
-void Disassemble(const char *romName, const uint8_t *const prog, size_t size)
+void Disassemble(const char *romName, const uint8_t *prog, size_t size)
 {
-    char logFileName[FILENAME_SIZE], *lastPos;
-    size_t length;
+    char logFileName[FILENAME_SIZE] = { 0 }, *lastPos = NULL;
+    size_t length = 0;
 
     if ((lastPos = strrchr(romName, '\\')) != NULL)
     {
@@ -30,7 +30,7 @@ void Disassemble(const char *romName, const uint8_t *const prog, size_t size)
     }
     snprintf(logFileName + length - 4, FILENAME_SIZE, "%s", ".dis");
 
-    FILE *logFile;
+    FILE *logFile = NULL;
     if ((logFile = fopen(logFileName, "w")) == NULL)
     {
         fprintf(stderr, "failed to create %s\n", logFileName);
@@ -48,7 +48,7 @@ void Disassemble(const char *romName, const uint8_t *const prog, size_t size)
     fclose(logFile);
 }
 
-void DebugOpCode(const OpCode *const op)
+void DebugOpCode(const OpCode *op)
 {
     const char *in_str[] = {
         "IN_RAW",
@@ -106,7 +106,7 @@ void DebugOpCode(const OpCode *const op)
     printf(" - raw: %d\n", op->raw);
 }
 
-void DrawDebugInfo(const uint8_t *const v, uint8_t dt, uint8_t st, uint16_t idx, uint16_t pc, const uint8_t *const kp)
+void DrawDebugInfo(const uint8_t *v, uint8_t dt, uint8_t st, uint16_t idx, uint16_t pc, const uint8_t *kp)
 {
     int32_t offset = MeasureText("Registers: ", FONTSIZE) + 10;
     
@@ -136,7 +136,7 @@ void DrawDebugInfo(const uint8_t *const v, uint8_t dt, uint8_t st, uint16_t idx,
     SetWindowTitle(TextFormat("c8emu - %d FPS", fps));
 }
 
-static void LogOpCode(FILE *const f, OpCode op)
+static void LogOpCode(FILE *f, OpCode op)
 {
     const char *in_str[] = {
         "raw", "cls", "ret",

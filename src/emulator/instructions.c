@@ -9,7 +9,7 @@
 
 OpCode DecodeOpCode(uint16_t op)
 {
-    OpCode code;
+    OpCode code = { 0 };
 
     switch (op & 0xF000)
     {

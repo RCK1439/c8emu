@@ -13,8 +13,8 @@ typedef struct CallStack
 
 CallStack CreateStack(void);
 
-void StackPush(CallStack *const s, uint16_t val);
-uint16_t StackPop(CallStack *const s);
+void StackPush(CallStack *s, uint16_t val);
+uint16_t StackPop(CallStack *s);
 
 #endif /* STACK_H */
 
