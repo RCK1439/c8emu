@@ -13,9 +13,9 @@
 
 #if defined(C8_DEBUG)
 
-static void LogOpCode(FILE *f, OpCode op);
+static void c8LogOpCode(FILE *f, Chip8OpCode op);
 
-void Disassemble(const char *romName, const uint8_t *prog, size_t size)
+void c8Disassemble(const char *romName, const u8 *prog, size_t size)
 {
     char logFileName[FILENAME_SIZE] = { 0 }, *lastPos = NULL;
     size_t length = 0;
@@ -42,15 +42,15 @@ void Disassemble(const char *romName, const uint8_t *prog, size_t size)
     fprintf(logFile, ".code\n");
     for (size_t i = 0; i < size; i += 2)
     {
-        const uint16_t hexCode = ((uint16_t)prog[i] << 8) | ((uint16_t)prog[i+1]);
-        const OpCode opcode = DecodeOpCode(hexCode);
-        LogOpCode(logFile, opcode);
+        const u16 hexCode = ((u16)prog[i] << 8) | ((u16)prog[i+1]);
+        const Chip8OpCode opcode = c8DecodeOpCode(hexCode);
+        c8LogOpCode(logFile, opcode);
     }
 
     fclose(logFile);
 }
 
-void DebugOpCode(const OpCode *op)
+void c8DebugOpCode(const Chip8OpCode *op)
 {
     const char *in_str[] = {
         "IN_RAW",
@@ -108,12 +108,12 @@ void DebugOpCode(const OpCode *op)
     printf(" - raw: %d\n", op->raw);
 }
 
-void DrawDebugInfo(const uint8_t *v, uint8_t dt, uint8_t st, uint16_t idx, uint16_t pc, const uint8_t *kp)
+void c8DrawDebugInfo(const u8 *v, u8 dt, u8 st, u16 idx, u16 pc, const u8 *kp)
 {
-    int32_t offset = MeasureText("Registers: ", FONTSIZE) + 10;
+    i32 offset = MeasureText("Registers: ", FONTSIZE) + 10;
     
     DrawText("Registers: ", 5, 5, FONTSIZE, WHITE);
-    for (uint8_t i = 0; i < NUM_REGISTERS; i++)
+    for (u8 i = 0; i < NUM_REGISTERS; i++)
     {
         DrawText(TextFormat("V%X=%d", i, v[i]), 5, 25 + i * FONTSIZE, FONTSIZE, WHITE);
     }
@@ -129,16 +129,16 @@ void DrawDebugInfo(const uint8_t *v, uint8_t dt, uint8_t st, uint16_t idx, uint1
     offset += MeasureText("Timers: ", FONTSIZE) + 10;
 
     DrawText("Keypad: ", offset, 5, FONTSIZE, WHITE);
-    for (uint8_t i = 0; i < NUM_KEYS; i++)
+    for (u8 i = 0; i < NUM_KEYS; i++)
     {
         DrawText(TextFormat("%X=%d", i, kp[i]), offset, 25 + i * FONTSIZE, FONTSIZE, WHITE);
     }
 
-    const int32_t fps = GetFPS();
+    const i32 fps = GetFPS();
     SetWindowTitle(TextFormat("c8emu - %d FPS", fps));
 }
 
-static void LogOpCode(FILE *f, OpCode op)
+static void c8LogOpCode(FILE *f, Chip8OpCode op)
 {
     const char *in_str[] = {
         "raw", "cls", "ret",

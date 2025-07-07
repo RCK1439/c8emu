@@ -1,9 +1,9 @@
 #ifndef INSTRUCTIONS_H
 #define INSTRUCTIONS_H
 
-#include <stdint.h>
+#include "core/types.h"
 
-typedef enum Instruction
+typedef enum Chip8Instr
 {
     IN_RAW,
     IN_CLS,
@@ -26,9 +26,9 @@ typedef enum Instruction
     IN_DRW,
     IN_SKP,
     IN_SKNP
-} Instruction;
+} Chip8Instr;
 
-typedef enum AddressMode
+typedef enum Chip8AddrMode
 {
     AM_NONE,
     AM_OPCODE,
@@ -48,23 +48,23 @@ typedef enum AddressMode
     AM_BCD_VX,
     AM_ADDR_I_VX,
     AM_VX_ADDR_I
-} AddressMode;
+} Chip8AddrMode;
 
-typedef struct OpCode
+typedef struct Chip8OpCode
 {
-    Instruction instr;
-    AddressMode addressMode;
+    Chip8Instr instr;
+    Chip8AddrMode addressMode;
     
-    uint16_t address;
-    uint16_t raw;
+    u16 address;
+    u16 raw;
 
-    uint8_t x;
-    uint8_t y;
-    uint8_t byte;
-    uint8_t nibble;
-} OpCode;
+    u8 x;
+    u8 y;
+    u8 byte;
+    u8 nibble;
+} Chip8OpCode;
 
-OpCode DecodeOpCode(uint16_t op);
+Chip8OpCode c8DecodeOpCode(u16 op);
 
 #endif /* INSTRUCTIONS_H */
 

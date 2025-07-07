@@ -4,22 +4,22 @@
 #include "core/platform.h"
 
 #if defined(C8_DEBUG)
+#include "core/types.h"
+
 #include "emulator/instructions.h"
 
-#include <stddef.h>
+#define DISASSEMBLE(rom_name, prog, size)       c8Disassemble(rom_name, prog, size)
+#define DEBUG_OPCODE(op)                        c8DebugOpCode(op)
+#define DRAW_DEBUG_INFO(v, dt, st, idx, pc, kp) c8DrawDebugInfo(v, dt, st, idx, pc, kp);
 
-#define DISASSEMBLE(rom_name, prog, size) Disassemble(rom_name, prog, size)
-#define DEBUG_OPCODE(op) DebugOpCode(op)
-#define DRAW_DEBUG_INFO(v, dt, st, idx, pc, kp) DrawDebugInfo(v, dt, st, idx, pc, kp);
-
-void Disassemble(const char *romName, const uint8_t *prog, size_t size);
-void DebugOpCode(const OpCode *op);
-void DrawDebugInfo(const uint8_t *v, uint8_t dt, uint8_t st, uint16_t idx, uint16_t pc, const uint8_t *kp);
+void c8Disassemble(const char *romName, const u8 *prog, size_t size);
+void c8DebugOpCode(const Chip8OpCode *op);
+void c8DrawDebugInfo(const u8 *v, u8 dt, u8 st, u16 idx, u16 pc, const u8 *kp);
 
 #else
-#define DISASSEMBLE(rom_name, prog, size)
-#define DEBUG_OPCODE(op)
-#define DRAW_DEBUG_INFO(v, dt, st, idx, pc, kp)
+#define DISASSEMBLE(rom_name, prog, size)       (void)0
+#define DEBUG_OPCODE(op)                        (void)0
+#define DRAW_DEBUG_INFO(v, dt, st, idx, pc, kp) (void)0
 #endif
 
 #endif /* DEBUG_H */

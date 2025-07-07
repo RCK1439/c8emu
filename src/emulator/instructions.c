@@ -1,15 +1,15 @@
 #include "instructions.h"
 
 #define INSTR(op) (((op) & 0xF000) >> 12)
-#define X(op) (((op) & 0x0F00) >> 8)
-#define Y(op) (((op) & 0x00F0) >> 4)
-#define N(op) ((op) & 0x000F)
-#define KK(op) ((op) & 0x00FF)
-#define NNN(op) ((op) & 0x0FFF)
+#define X(op)     (((op) & 0x0F00) >> 8)
+#define Y(op)     (((op) & 0x00F0) >> 4)
+#define N(op)     ((op) & 0x000F)
+#define KK(op)    ((op) & 0x00FF)
+#define NNN(op)   ((op) & 0x0FFF)
 
-OpCode DecodeOpCode(uint16_t op)
+Chip8OpCode c8DecodeOpCode(u16 op)
 {
-    OpCode code = { 0 };
+    Chip8OpCode code = { 0 };
 
     switch (op & 0xF000)
     {
