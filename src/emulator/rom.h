@@ -1,13 +1,13 @@
 #ifndef ROM_H
 #define ROM_H
 
-#include "core/types.h"
+#include "specifications.h"
 
-#define MAX_ROM_SIZE ((4 * 1024) - 512)
+#include "core/types.h"
 
 typedef struct Chip8ROM
 {
-    u8     data[MAX_ROM_SIZE];
+    u8     data[C8_MAX_ROM_SIZE];
     size_t size;
 } Chip8ROM;
 

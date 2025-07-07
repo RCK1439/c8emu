@@ -30,5 +30,5 @@ Chip8ROM c8LoadROM(const char *romFile)
 void c8UnloadROM(Chip8ROM rom)
 {
     C8_LOG_WARNING("ROM unloaded");
-    memset(rom.data, 0x00, MAX_ROM_SIZE);
+    memset(rom.data, 0x00, C8_MAX_ROM_SIZE);
 }

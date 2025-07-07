@@ -14,7 +14,7 @@ Chip8CallStack c8InitStack(void)
 
 void c8StackPush(Chip8CallStack *s, u16 val)
 {
-    C8_ASSERT(s->ptr < STACK_SIZE, "Cannot push; call stack is full");
+    C8_ASSERT(s->ptr < C8_CALLSTACK_SIZE, "Cannot push; call stack is full");
     s->data[(s->ptr)++] = val;
 }
 

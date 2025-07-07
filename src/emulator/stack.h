@@ -1,13 +1,13 @@
 #ifndef STACK_H
 #define STACK_H
 
-#include "core/types.h"
+#include "specifications.h"
 
-#define STACK_SIZE 32
+#include "core/types.h"
 
 typedef struct Chip8CallStack
 {
-    u16 data[STACK_SIZE];
+    u16 data[C8_CALLSTACK_SIZE];
     u8  ptr;
 } Chip8CallStack;
 

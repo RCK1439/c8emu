@@ -6,8 +6,6 @@
 
 #include <raylib.h>
 
-#define NUM_KEYS 16
-
 struct Chip8
 {
     Chip8CPU cpu;
@@ -52,7 +50,7 @@ void c8EmulatorOnRender(const Chip8* emulator)
 
 static void c8ProcessInput(Chip8 *emulator)
 {
-    const KeyboardKey keys[NUM_KEYS] = {
+    const KeyboardKey keys[C8_NUM_KEYS] = {
         KEY_ZERO,
         KEY_ONE,
         KEY_TWO,
@@ -71,7 +69,7 @@ static void c8ProcessInput(Chip8 *emulator)
         KEY_F
     };
 
-    for (u8 k = 0; k < NUM_KEYS; k++)
+    for (u8 k = 0; k < C8_NUM_KEYS; k++)
     {
         if (IsKeyDown(keys[k]))
         {

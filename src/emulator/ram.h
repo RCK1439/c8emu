@@ -2,18 +2,11 @@
 #define RAM_H
 
 #include "rom.h"
-
-#define ADDR_ROM    0x0200
-#define ADDR_SCREEN 0x0F00
-#define ADDR_STACK  0x0FA0
-#define ADDR_PC     0x0200
-#define ADDR_FONT   0x0050
-
-#define MEMORY_SIZE (4 * 1024)
+#include "specifications.h"
 
 typedef struct Chip8RAM
 {
-    u8 memory[MEMORY_SIZE];
+    u8 memory[C8_MEMORY_SIZE];
 } Chip8RAM;
 
 Chip8RAM c8InitRAM(void);

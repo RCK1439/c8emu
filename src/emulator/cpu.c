@@ -9,6 +9,8 @@
 #include <raylib.h>
 #include <memory.h>
 
+#define SCALE 16
+
 typedef void (*Chip8Exec)(Chip8CPU *cpu, Chip8RAM *ram, const Chip8OpCode *op);
 
 static void c8Raw(Chip8CPU *cpu, Chip8RAM *ram, const Chip8OpCode *op);
@@ -66,7 +68,7 @@ Chip8CPU c8InitCPU(void)
     memset(cpu.keypad, 0x00, sizeof(cpu.keypad));
     memset(cpu.v, 0x00, sizeof(cpu.v));
     cpu.idx = 0;
-    cpu.pc = ADDR_PC;
+    cpu.pc = C8_ADDR_PC;
     cpu.dt = 0;
     cpu.st = 0;
 
@@ -99,11 +101,11 @@ void c8SetCPUKey(Chip8CPU *cpu, u8 key, u8 val)
 
 void c8DrawCPUBuffer(const Chip8CPU *cpu)
 {
-    for (u16 y = 0; y < SCREEN_BUFFER_HEIGHT; y++)
+    for (u16 y = 0; y < C8_SCREEN_BUFFER_HEIGHT; y++)
     {
-        for (u16 x = 0; x < SCREEN_BUFFER_WIDTH; x++)
+        for (u16 x = 0; x < C8_SCREEN_BUFFER_WIDTH; x++)
         {
-            if (cpu->video[x + y * SCREEN_BUFFER_WIDTH])
+            if (cpu->video[x + y * C8_SCREEN_BUFFER_WIDTH])
             {
                 DrawRectangle(x * SCALE, y * SCALE, SCALE, SCALE, GREEN);
             }
@@ -208,7 +210,7 @@ static void c8Ld(Chip8CPU *cpu, Chip8RAM *ram, const Chip8OpCode *op)
     else if (op->addressMode == AM_VX_KEY)
     {
         Chip8Bool found = C8_FALSE;
-        for (u8 i = 0; i < NUM_KEYS; i++)
+        for (u8 i = 0; i < C8_NUM_KEYS; i++)
         {
             if (cpu->keypad[i])
             {
@@ -234,7 +236,7 @@ static void c8Ld(Chip8CPU *cpu, Chip8RAM *ram, const Chip8OpCode *op)
     else if (op->addressMode == AM_FONT_VX)
     {
         const u8 digit = cpu->v[op->x];
-        cpu->idx = ADDR_FONT + (5 * digit);
+        cpu->idx = C8_ADDR_FONT + (5 * digit);
     }
     else if (op->addressMode == AM_BCD_VX)
     {
@@ -351,8 +353,8 @@ static void c8Rnd(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 static void c8Drw(Chip8CPU *cpu, Chip8RAM *ram, const Chip8OpCode *op)
 {
     const u8 height = op->nibble;
-    const u8 xp = cpu->v[op->x] % SCREEN_BUFFER_WIDTH;
-    const u8 yp = cpu->v[op->y] % SCREEN_BUFFER_HEIGHT;
+    const u8 xp = cpu->v[op->x] % C8_SCREEN_BUFFER_WIDTH;
+    const u8 yp = cpu->v[op->y] % C8_SCREEN_BUFFER_HEIGHT;
 
     cpu->v[0xF] = 0;
     for (u8 r = 0; r < height; r++)
@@ -361,7 +363,7 @@ static void c8Drw(Chip8CPU *cpu, Chip8RAM *ram, const Chip8OpCode *op)
         for (u8 c = 0; c < 8; c++)
         {
             const u8 spritePx = sprite & (0x80 >> c);
-            u8 *const screenPx = &cpu->video[(yp + r) * SCREEN_BUFFER_WIDTH + (xp + c)];
+            u8 *const screenPx = &cpu->video[(yp + r) * C8_SCREEN_BUFFER_WIDTH + (xp + c)];
 
             if (spritePx)
             {

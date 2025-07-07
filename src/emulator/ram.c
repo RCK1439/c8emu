@@ -2,8 +2,6 @@
 
 #include <memory.h>
 
-#define FONTSET_SIZE 80
-
 static void c8LoadFont(Chip8RAM *ram);
 
 Chip8RAM c8InitRAM(void)
@@ -18,7 +16,7 @@ Chip8RAM c8InitRAM(void)
 
 void c8UploadROMToRAM(Chip8RAM *ram, Chip8ROM rom)
 {
-    memcpy(ram->memory + ADDR_ROM, rom.data, rom.size);
+    memcpy(ram->memory + C8_ADDR_ROM, rom.data, rom.size);
 }
 
 void c8RAMWrite(Chip8RAM *ram, u16 addr, u8 val)
@@ -35,7 +33,7 @@ u8 c8RAMRead(const Chip8RAM *ram, u16 addr)
 
 static void c8LoadFont(Chip8RAM *ram)
 {
-    const u8 fontset[FONTSET_SIZE] = {
+    const u8 fontset[C8_FONTSET_SIZE] = {
     	0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
     	0x20, 0x60, 0x20, 0x20, 0x70, // 1
     	0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
@@ -54,9 +52,9 @@ static void c8LoadFont(Chip8RAM *ram)
     	0xF0, 0x80, 0xF0, 0x80, 0x80  // F
     };
 
-    for (u8 i = 0; i < FONTSET_SIZE; i++)
+    for (u8 i = 0; i < C8_FONTSET_SIZE; i++)
     {
-        ram->memory[ADDR_FONT + i] = fontset[i];
+        ram->memory[C8_ADDR_FONT + i] = fontset[i];
     }
 }
 
