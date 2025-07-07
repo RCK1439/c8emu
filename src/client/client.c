@@ -1,4 +1,5 @@
 #include "client.h"
+#include "config.h"
 
 #include "core/log.h"
 #include "core/memory.h"
@@ -8,11 +9,6 @@
 
 #include <raylib.h>
 #include <stdio.h>
-
-#define WINDOW_WIDTH 1024
-#define WINDOW_HEIGHT 512
-
-#define REFRESH_RATE 60
 
 struct Chip8Client
 {
@@ -50,9 +46,9 @@ Chip8Client *c8InitClient(i32 argc, char **argv)
     client->isRunning = C8_TRUE;
     client->debug = C8_FALSE;
 
-    InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "c8emu");
+    InitWindow(C8_WINDOW_WIDTH, C8_WINDOW_HEIGHT, C8_WINDOW_TITLE);
     InitAudioDevice();
-    SetTargetFPS(REFRESH_RATE);
+    SetTargetFPS(C8_TARGET_FPS);
 
     c8LoadROMInEmulator(client->emulator, argv[1]);
     return client;

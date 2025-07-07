@@ -133,9 +133,6 @@ void c8DrawDebugInfo(const u8 *v, u8 dt, u8 st, u16 idx, u16 pc, const u8 *kp)
     {
         DrawText(TextFormat("%X=%d", i, kp[i]), offset, 25 + i * FONTSIZE, FONTSIZE, WHITE);
     }
-
-    const i32 fps = GetFPS();
-    SetWindowTitle(TextFormat("c8emu - %d FPS", fps));
 }
 
 static void c8LogOpCode(FILE *f, Chip8OpCode op)
