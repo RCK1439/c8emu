@@ -3,6 +3,7 @@
 #include "ram.h"
 
 #include "core/memory.h"
+#include "renderer/renderer.h"
 
 #include <raylib.h>
 
@@ -43,9 +44,9 @@ void c8EmulatorOnUpdate(Chip8 *emulator)
     c8StepCPU(&emulator->cpu, &emulator->ram);
 }
 
-void c8EmulatorOnRender(const Chip8* emulator)
+void c8EmulatorOnRender(const Chip8* emulator, Chip8Renderer *renderer)
 {
-    c8DrawCPUBuffer(&emulator->cpu);
+    c8DrawBuffer(renderer, emulator->cpu.video, C8_SCREEN_BUFFER_WIDTH, C8_SCREEN_BUFFER_HEIGHT);
 }
 
 static void c8ProcessInput(Chip8 *emulator)

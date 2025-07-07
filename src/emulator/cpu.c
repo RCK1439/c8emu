@@ -111,8 +111,6 @@ void c8DrawCPUBuffer(const Chip8CPU *cpu)
             }
         }
     }
-
-    DRAW_DEBUG_INFO(cpu->v, cpu->dt, cpu->st, cpu->idx, cpu->pc, cpu->keypad);
 }
 
 static void c8Raw(UNUSED Chip8CPU *cpu, UNUSED Chip8RAM *ram, UNUSED const Chip8OpCode *op)

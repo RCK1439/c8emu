@@ -15,6 +15,7 @@ typedef enum Chip8ErrorCode
     ERR_FAILED_TO_OPEN_FILE = 2,
     ERR_FAILED_TO_READ_ROM = 3,
     ERR_OUT_OF_MEMORY = 4,
+    ERR_FAILED_TO_LOAD_TARGET = 5,
 } Chip8ErrorCode;
 
 void c8Panic(Chip8ErrorCode code, const char *fmt, ...);

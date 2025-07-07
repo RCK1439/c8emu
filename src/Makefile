@@ -13,8 +13,9 @@ BIN_DIR = ../bin
 CLIENT_DIR = $(SRC_DIR)/client
 CORE_DIR = $(SRC_DIR)/core
 EMULATOR_DIR = $(SRC_DIR)/emulator
+RENDERER_DIR = $(SRC_DIR)/renderer
 
-SRC_FILES = $(wildcard $(SRC_DIR)/*.c $(CLIENT_DIR)/*.c $(CORE_DIR)/*.c $(EMULATOR_DIR)/*.c)
+SRC_FILES = $(wildcard $(SRC_DIR)/*.c $(CLIENT_DIR)/*.c $(CORE_DIR)/*.c $(EMULATOR_DIR)/*.c $(RENDERER_DIR)/*.c)
 OBJ_FILES = $(patsubst %.c, $(BIN_DIR)/%.o, $(SRC_FILES))
 
 TARGET = $(BIN_DIR)/c8emu

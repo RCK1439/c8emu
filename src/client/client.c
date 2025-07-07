@@ -7,14 +7,17 @@
 
 #include "emulator/chip8.h"
 
+#include "renderer/renderer.h"
+
 #include <raylib.h>
 #include <stdio.h>
 
 struct Chip8Client
 {
-    Chip8    *emulator;
-    Chip8Bool isRunning;
-    Chip8Bool debug;
+    Chip8         *emulator;
+    Chip8Renderer *renderer;
+    Chip8Bool      isRunning;
+    Chip8Bool      debug;
 };
 
 static void c8ClientOnUpdate(Chip8Client *client);
@@ -41,14 +44,15 @@ Chip8Client *c8InitClient(i32 argc, char **argv)
     C8_LOG_INFO("Logging initialized");
 #endif
 
-    Chip8Client *const client = C8_MALLOC(Chip8Client, 1);
-    client->emulator = c8InitEmulator();
-    client->isRunning = C8_TRUE;
-    client->debug = C8_FALSE;
-
     InitWindow(C8_WINDOW_WIDTH, C8_WINDOW_HEIGHT, C8_WINDOW_TITLE);
     InitAudioDevice();
     SetTargetFPS(C8_TARGET_FPS);
+
+    Chip8Client *const client = C8_MALLOC(Chip8Client, 1);
+    client->emulator = c8InitEmulator();
+    client->renderer = c8InitRenderer();
+    client->isRunning = C8_TRUE;
+    client->debug = C8_FALSE;
 
     c8LoadROMInEmulator(client->emulator, argv[1]);
     return client;
@@ -65,10 +69,12 @@ void c8RunClient(Chip8Client *client)
 
 void c8CloseClient(Chip8Client *client)
 {
+    c8CloseRenderer(client->renderer);
+    c8CloseEmulator(client->emulator);
+    
     CloseAudioDevice();
     CloseWindow();
 
-    c8CloseEmulator(client->emulator);
     C8_FREE(client);
 
 #if defined(C8_DEBUG)
@@ -78,6 +84,11 @@ void c8CloseClient(Chip8Client *client)
 
 static void c8ClientOnUpdate(Chip8Client *client)
 {
+    if (IsKeyPressed(KEY_F3))
+    {
+        c8ToggleDebugOverlay(client->renderer);
+    }
+
     c8EmulatorOnUpdate(client->emulator);
 
     client->isRunning = !WindowShouldClose();
@@ -85,10 +96,16 @@ static void c8ClientOnUpdate(Chip8Client *client)
 
 static void c8ClientOnRender(const Chip8Client *client)
 {
-    BeginDrawing();
-    ClearBackground(BLACK);
-        c8EmulatorOnRender(client->emulator);
-    EndDrawing();
+    if (c8DebugOverlayEnabled(client->renderer))
+    {
+        c8AddDebugText(client->renderer, "Client:");
+        c8AddDebugText(client->renderer, "- Resolution: %dx%d", GetScreenWidth(), GetScreenHeight());
+        c8AddDebugText(client->renderer, "- %d FPS (%.2fms)", GetFPS(), GetFrameTime() * 1000.0f);
+    }
+
+    c8RendererBegin(client->renderer); 
+        c8EmulatorOnRender(client->emulator, client->renderer);
+    c8RendererEnd(client->renderer);
 }
 
 #if defined(C8_DEBUG)
