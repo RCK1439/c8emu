@@ -1,6 +1,7 @@
 #include "rom.h"
 
 #include "core/error.h"
+#include "core/log.h"
 #include "core/memory.h"
 
 #include <stdio.h>
@@ -23,6 +24,7 @@ Chip8ROM c8LoadROM(const char *romFile)
     fread(rom.data, sizeof(uint8_t), rom.size, file);
     fclose(file);
 
+    C8_LOG_INFO("ROM, %s, successfully loaded", romFile);
     return rom;
 }
 

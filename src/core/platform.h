@@ -19,4 +19,10 @@
 #   define C8_DEBUG
 #endif
 
+#if defined(C8_PLATFORM_WINDOWS)
+#   define SIZE_T_FMT "%llu"
+#elif defined(C8_PLATFORM_LINUX) || defined(C8_PLATFORM_APPLE)
+#   define SIZE_T_FMT "%lu"
+#endif
+
 #endif /* PLATFORM_H */

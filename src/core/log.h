@@ -3,6 +3,8 @@
 
 #include "platform.h"
 
+#include <stdarg.h>
+
 #if defined(C8_DEBUG)
 #   define C8_LOG_INFO(...)    c8LogInfo(__VA_ARGS__)
 #   define C8_LOG_WARNING(...) c8LogWarning(__VA_ARGS__)
@@ -22,5 +24,10 @@ void c8LogInfo(const char *fmt, ...);
 void c8LogWarning(const char *fmt, ...);
 void c8LogError(const char *fmt, ...);
 void c8LogFatal(const char *fmt, ...);
+
+void c8LogInfoArgs(const char *fmt, va_list args);
+void c8LogWarningArgs(const char *fmt, va_list args);
+void c8LogErrorArgs(const char *fmt, va_list args);
+void c8LogFatalArgs(const char *fmt, va_list args);
 
 #endif /* LOG_H */

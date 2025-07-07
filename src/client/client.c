@@ -1,5 +1,6 @@
 #include "client.h"
 
+#include "core/log.h"
 #include "core/memory.h"
 #include "core/platform.h"
 
@@ -23,6 +24,8 @@ struct Chip8Client
 static void c8ClientOnUpdate(Chip8Client *client);
 static void c8ClientOnRender(const Chip8Client *client);
 
+static void c8RaylibLogger(int logLevel, const char *fmt, va_list args);
+
 Chip8Client *c8InitClient(i32 argc, char **argv)
 {
     if (argc < 2)
@@ -31,14 +34,20 @@ Chip8Client *c8InitClient(i32 argc, char **argv)
         return NULL;
     }
 
+#if defined(C8_RELEASE)
+    SetTraceLogLevel(LOG_NONE);
+#else
+    c8InitLogging();
+    SetTraceLogCallback(c8RaylibLogger);
+
+    C8_LOG_INFO("Logging initialized");
+#endif
+
     Chip8Client *const client = C8_MALLOC(Chip8Client, 1);
     client->emulator = c8InitEmulator();
     client->isRunning = C8_TRUE;
     client->debug = C8_FALSE;
 
-#if !defined(C8_DEBUG)
-    SetTraceLogLevel(LOG_NONE);
-#endif
     InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "c8emu");
     InitAudioDevice();
     SetTargetFPS(REFRESH_RATE);
@@ -63,6 +72,10 @@ void c8CloseClient(Chip8Client *client)
 
     c8CloseEmulator(client->emulator);
     C8_FREE(client);
+
+#if defined(C8_DEBUG)
+    c8CloseLogging();
+#endif
 }
 
 static void c8ClientOnUpdate(Chip8Client *client)
@@ -79,3 +92,23 @@ static void c8ClientOnRender(const Chip8Client *client)
         c8EmulatorOnRender(client->emulator);
     EndDrawing();
 }
+
+static void c8RaylibLogger(int logLevel, const char *fmt, va_list args)
+{
+    switch (logLevel)
+    {
+        case LOG_INFO:
+            c8LogInfoArgs(fmt, args);
+            break;
+        case LOG_WARNING:
+            c8LogWarning(fmt, args);
+            break;
+        case LOG_ERROR:
+            c8LogErrorArgs(fmt, args);
+            break;
+        case LOG_FATAL:
+            c8LogFatalArgs(fmt, args);
+            break;
+    }
+}
+
