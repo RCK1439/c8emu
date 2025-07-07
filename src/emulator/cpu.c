@@ -4,33 +4,10 @@
 #include "instructions.h"
 #include "stack.h"
 
-#include "core/memory.h"
 #include "core/types.h"
 
 #include <raylib.h>
 #include <memory.h>
-
-#define NUM_REGISTERS 16
-#define NUM_KEYS 16
-
-#define SCREEN_BUFFER_WIDTH 64
-#define SCREEN_BUFFER_HEIGHT 32
-#define SCALE 16
-
-struct Chip8CPU
-{
-    u8             video[SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT];
-    Chip8CallStack stack;
-    
-    u8             keypad[NUM_KEYS];
-    u8             v[NUM_REGISTERS];
-    
-    u16            idx;
-    u16            pc;
-
-    u8             dt;
-    u8             st;
-};
 
 typedef void (*Chip8Exec)(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op);
 
@@ -80,25 +57,20 @@ static Chip8Exec executors[] = {
     [IN_SKNP] = c8Sknp
 };
 
-Chip8CPU *c8InitCPU(void)
+Chip8CPU c8InitCPU(void)
 {
-    Chip8CPU *const cpu = C8_MALLOC(Chip8CPU, 1);
+    Chip8CPU cpu = { 0 };
 
-    memset(cpu->video, 0x00, sizeof(cpu->video));
-    cpu->stack = c8InitStack();
-    memset(cpu->keypad, 0x00, sizeof(cpu->keypad));
-    memset(cpu->v, 0x00, sizeof(cpu->v));
-    cpu->idx = 0;
-    cpu->pc = ADDR_PC;
-    cpu->dt = 0;
-    cpu->st = 0;
+    memset(cpu.video, 0x00, sizeof(cpu.video));
+    cpu.stack = c8InitStack();
+    memset(cpu.keypad, 0x00, sizeof(cpu.keypad));
+    memset(cpu.v, 0x00, sizeof(cpu.v));
+    cpu.idx = 0;
+    cpu.pc = ADDR_PC;
+    cpu.dt = 0;
+    cpu.st = 0;
 
     return cpu;
-}
-
-void c8CloseCPU(Chip8CPU *cpu)
-{
-    C8_FREE(cpu);
 }
 
 void c8StepCPU(Chip8CPU *cpu, Chip8RAM *ram)

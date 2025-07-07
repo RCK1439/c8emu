@@ -11,6 +11,8 @@
 #define FILENAME_SIZE 256
 #define FONTSIZE 20
 
+#if defined(C8_DEBUG)
+
 static void LogOpCode(FILE *f, OpCode op);
 
 void Disassemble(const char *romName, const uint8_t *prog, size_t size)
@@ -170,4 +172,5 @@ static void LogOpCode(FILE *f, OpCode op)
         case AM_VX_ADDR_I: fprintf(f, "  %s v%01X, [i]\n", in_str[op.instr], op.x); break;
     }
 }
+#endif
 

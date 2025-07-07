@@ -10,8 +10,8 @@
 
 struct Chip8
 {
-    Chip8CPU *cpu;
-    Chip8RAM *ram;
+    Chip8CPU cpu;
+    Chip8RAM ram;
 };
 
 static void c8ProcessInput(Chip8 *emulator);
@@ -27,15 +27,13 @@ Chip8 *c8InitEmulator(void)
 
 void c8CloseEmulator(Chip8 *emulator)
 {
-    c8CloseRAM(emulator->ram);
-    c8CloseCPU(emulator->cpu);
     C8_FREE(emulator);
 }
 
 Chip8Bool c8LoadROMInEmulator(Chip8 *emulator, const char *romFile)
 {
     const Chip8ROM rom = c8LoadROM(romFile);
-    c8UploadROMToRAM(emulator->ram, rom);
+    c8UploadROMToRAM(&emulator->ram, rom);
     c8UnloadROM(rom);
 
     return C8_TRUE;
@@ -44,12 +42,12 @@ Chip8Bool c8LoadROMInEmulator(Chip8 *emulator, const char *romFile)
 void c8EmulatorOnUpdate(Chip8 *emulator)
 {
     c8ProcessInput(emulator);
-    c8StepCPU(emulator->cpu, emulator->ram);
+    c8StepCPU(&emulator->cpu, &emulator->ram);
 }
 
 void c8EmulatorOnRender(const Chip8* emulator)
 {
-    c8DrawCPUBuffer(emulator->cpu);
+    c8DrawCPUBuffer(&emulator->cpu);
 }
 
 static void c8ProcessInput(Chip8 *emulator)
@@ -77,11 +75,11 @@ static void c8ProcessInput(Chip8 *emulator)
     {
         if (IsKeyDown(keys[k]))
         {
-            c8SetCPUKey(emulator->cpu, k, 1);
+            c8SetCPUKey(&emulator->cpu, k, 1);
         }
         else
         {
-            c8SetCPUKey(emulator->cpu, k, 0);
+            c8SetCPUKey(&emulator->cpu, k, 0);
         }
     }
 }

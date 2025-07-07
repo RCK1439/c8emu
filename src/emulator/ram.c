@@ -1,37 +1,24 @@
 #include "ram.h"
 
-#include "core/memory.h"
-
 #include <memory.h>
 
-#define MEMORY_SIZE (4 * 1024)
 #define FONTSET_SIZE 80
-
-struct Chip8RAM
-{
-    u8 memory[MEMORY_SIZE];
-};
 
 static void c8LoadFont(Chip8RAM *ram);
 
-Chip8RAM *c8InitRAM(void)
+Chip8RAM c8InitRAM(void)
 {
-    Chip8RAM *const ram = C8_MALLOC(Chip8RAM, 1);
+    Chip8RAM ram = {
+        .memory = { 0 },
+    };
 
-    memset(ram->memory, 0x00, sizeof(ram->memory));
-    c8LoadFont(ram);
-
+    c8LoadFont(&ram);
     return ram;
-}
-
-void c8CloseRAM(Chip8RAM *ram)
-{
-    C8_FREE(ram);
 }
 
 void c8UploadROMToRAM(Chip8RAM *ram, Chip8ROM rom)
 {
-    memcpy(ram->memory + 0x0200, rom.data, rom.size);
+    memcpy(ram->memory + ADDR_ROM, rom.data, rom.size);
 }
 
 void c8RAMWrite(Chip8RAM *ram, u16 addr, u8 val)

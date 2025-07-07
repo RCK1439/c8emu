@@ -2,8 +2,8 @@
 
 #include "core/error.h"
 #include "core/log.h"
-#include "core/memory.h"
 
+#include <memory.h>
 #include <stdio.h>
 
 Chip8ROM c8LoadROM(const char *romFile)
@@ -20,15 +20,15 @@ Chip8ROM c8LoadROM(const char *romFile)
     rom.size = (size_t)ftell(file);
     fseek(file, 0, SEEK_SET);
 
-    rom.data = C8_MALLOC(uint8_t, rom.size);
     fread(rom.data, sizeof(uint8_t), rom.size, file);
     fclose(file);
 
-    C8_LOG_INFO("ROM, %s, successfully loaded", romFile);
+    C8_LOG_INFO("ROM successfully loaded "SIZE_T_FMT" bytes: %s", rom.size, romFile);
     return rom;
 }
 
 void c8UnloadROM(Chip8ROM rom)
 {
-    C8_FREE(rom.data);
+    C8_LOG_WARNING("ROM unloaded");
+    memset(rom.data, 0x00, MAX_ROM_SIZE);
 }

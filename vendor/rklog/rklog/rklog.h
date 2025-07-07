@@ -356,9 +356,9 @@ typedef struct rkTimeStamp
  */
 struct rkLogger
 {
-    char        title[MAX_LOGGER_TITLE_SIZE]; // the title for this logger
-    rkLogStyle  style;                        // color configurations for each severity level
-    FILE       *output;                       // output stream for the logging messages
+    char        title[MAX_LOGGER_TITLE_SIZE+1]; // the title for this logger
+    rkLogStyle  style;                          // color configurations for each severity level
+    FILE       *output;                         // output stream for the logging messages
 };
 
 // --- utility functions ------------------------------------------------------

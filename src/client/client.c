@@ -24,7 +24,9 @@ struct Chip8Client
 static void c8ClientOnUpdate(Chip8Client *client);
 static void c8ClientOnRender(const Chip8Client *client);
 
+#if defined(C8_DEBUG)
 static void c8RaylibLogger(int logLevel, const char *fmt, va_list args);
+#endif
 
 Chip8Client *c8InitClient(i32 argc, char **argv)
 {
@@ -93,6 +95,7 @@ static void c8ClientOnRender(const Chip8Client *client)
     EndDrawing();
 }
 
+#if defined(C8_DEBUG)
 static void c8RaylibLogger(int logLevel, const char *fmt, va_list args)
 {
     switch (logLevel)
@@ -111,4 +114,5 @@ static void c8RaylibLogger(int logLevel, const char *fmt, va_list args)
             break;
     }
 }
+#endif
 

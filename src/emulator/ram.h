@@ -3,15 +3,20 @@
 
 #include "rom.h"
 
+#define ADDR_ROM    0x0200
 #define ADDR_SCREEN 0x0F00
 #define ADDR_STACK  0x0FA0
 #define ADDR_PC     0x0200
 #define ADDR_FONT   0x0050
 
-typedef struct Chip8RAM Chip8RAM;
+#define MEMORY_SIZE (4 * 1024)
 
-Chip8RAM *c8InitRAM(void);
-void c8CloseRAM(Chip8RAM *ram);
+typedef struct Chip8RAM
+{
+    u8 memory[MEMORY_SIZE];
+} Chip8RAM;
+
+Chip8RAM c8InitRAM(void);
 
 void c8UploadROMToRAM(Chip8RAM *ram, Chip8ROM rom);
 

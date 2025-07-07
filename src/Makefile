@@ -2,7 +2,7 @@ CC = cc
 
 CFLAGS = -Wall -Werror -Wpedantic -Wextra -std=c99
 ifeq ($(MAKECMDGOALS), release)
-	CLFAGS += -O3 -DNDEBUG
+	CFLAGS += -O3 -DNDEBUG -march=native
 else
 	CFLAGS += -O0 -ggdb
 endif
