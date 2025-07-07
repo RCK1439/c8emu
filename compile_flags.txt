@@ -7,5 +7,4 @@
 
 -Isrc/
 -Ivendor/raylib/include/
--Lvendor/raylib/lib/
--lraylib -lm
+-Ivendor/rklog/

@@ -1,20 +1,20 @@
 #ifndef STACK_H
 #define STACK_H
 
-#include <stdint.h>
+#include "core/types.h"
 
 #define STACK_SIZE 32
 
-typedef struct CallStack
+typedef struct Chip8CallStack
 {
-    uint16_t data[STACK_SIZE];
-    uint8_t  ptr;
-} CallStack;
+    u16 data[STACK_SIZE];
+    u8  ptr;
+} Chip8CallStack;
 
-CallStack CreateStack(void);
+Chip8CallStack c8InitStack(void);
 
-void StackPush(CallStack *s, uint16_t val);
-uint16_t StackPop(CallStack *s);
+void c8StackPush(Chip8CallStack *s, u16 val);
+u16 c8StackPop(Chip8CallStack *s);
 
 #endif /* STACK_H */
 

@@ -1,60 +1,54 @@
 #include "ram.h"
-#include "debug.h"
-#include "util.h"
+
+#include "core/memory.h"
 
 #include <memory.h>
-#include <stdio.h>
 
 #define MEMORY_SIZE (4 * 1024)
 #define FONTSET_SIZE 80
 
-static void LoadChip8Font(void);
-
-static uint8_t memory[MEMORY_SIZE];
-
-MemoryResult InitRAM(const char *romFile)
+struct Chip8RAM
 {
-    memset(memory, 0x00, sizeof(memory));
-    
-    FILE *rom = NULL;
-    if ((rom = fopen(romFile, "rb")) == NULL)
-    {
-        return MEM_FILE_ERR;
-    }
+    u8 memory[MEMORY_SIZE];
+};
 
-    fseek(rom, 0, SEEK_END);
-    const size_t size = (size_t)ftell(rom);
-    fseek(rom, 0, SEEK_SET);
+static void c8LoadFont(Chip8RAM *ram);
 
-    uint8_t *const buffer = C8_MALLOC(uint8_t, size);
-    fread(buffer, sizeof(uint8_t), size, rom);
-    fclose(rom);
+Chip8RAM *c8InitRAM(void)
+{
+    Chip8RAM *const ram = C8_MALLOC(Chip8RAM, 1);
 
-    DISASSEMBLE(romFile, buffer, size);
+    memset(ram->memory, 0x00, sizeof(ram->memory));
+    c8LoadFont(ram);
 
-    memcpy(memory + 0x0200, buffer, size * sizeof(uint8_t));
-    C8_FREE(buffer);
-
-    LoadChip8Font();
-
-    return MEM_OK;
+    return ram;
 }
 
-void RAMWrite(uint16_t addr, uint8_t val)
+void c8CloseRAM(Chip8RAM *ram)
+{
+    C8_FREE(ram);
+}
+
+void c8UploadROMToRAM(Chip8RAM *ram, Chip8ROM rom)
+{
+    memcpy(ram->memory + 0x0200, rom.data, rom.size);
+}
+
+void c8RAMWrite(Chip8RAM *ram, u16 addr, u8 val)
 {
     addr &= 0x0FFF;
-    memory[addr] = val;
+    ram->memory[addr] = val;
 }
 
-uint8_t RAMRead(uint16_t addr)
+u8 c8RAMRead(const Chip8RAM *ram, u16 addr)
 {
     addr &= 0x0FFF;
-    return memory[addr];
+    return ram->memory[addr];
 }
 
-static void LoadChip8Font(void)
+static void c8LoadFont(Chip8RAM *ram)
 {
-    const uint8_t fontset[FONTSET_SIZE] = {
+    const u8 fontset[FONTSET_SIZE] = {
     	0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
     	0x20, 0x60, 0x20, 0x20, 0x70, // 1
     	0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
@@ -73,9 +67,9 @@ static void LoadChip8Font(void)
     	0xF0, 0x80, 0xF0, 0x80, 0x80  // F
     };
 
-    for (uint8_t i = 0; i < FONTSET_SIZE; i++)
+    for (u8 i = 0; i < FONTSET_SIZE; i++)
     {
-        memory[ADDR_FONT + i] = fontset[i];
+        ram->memory[ADDR_FONT + i] = fontset[i];
     }
 }
 

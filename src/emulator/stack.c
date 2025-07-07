@@ -1,9 +1,10 @@
 #include "stack.h"
-#include "util.h"
 
-CallStack CreateStack(void)
+#include "core/error.h"
+
+Chip8CallStack c8InitStack(void)
 {
-    const CallStack s = {
+    const Chip8CallStack s = {
         .data = { 0 },
         .ptr = 0
     };
@@ -11,13 +12,13 @@ CallStack CreateStack(void)
     return s;
 }
 
-void StackPush(CallStack *s, uint16_t val)
+void c8StackPush(Chip8CallStack *s, u16 val)
 {
     C8_ASSERT(s->ptr < STACK_SIZE, "Cannot push; call stack is full");
     s->data[(s->ptr)++] = val;
 }
 
-uint16_t StackPop(CallStack *s)
+u16 c8StackPop(Chip8CallStack *s)
 {
     C8_ASSERT(s->ptr > 0, "Cannot pop; call stack is empty");
     return s->data[--(s->ptr)];

@@ -1,6 +1,8 @@
-#include "chip8.h"
+#include "client/client.h"
 
 int main(int argc, char **argv)
 {
-    return InvokeChip8(argc, argv);
+    Chip8Client *const client = c8InitClient(argc, argv);
+    c8RunClient(client);
+    c8CloseClient(client);
 }

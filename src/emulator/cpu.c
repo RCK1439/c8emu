@@ -1,8 +1,11 @@
 #include "cpu.h"
 #include "debug.h"
-#include "instructions.h"
 #include "ram.h"
+#include "instructions.h"
 #include "stack.h"
+
+#include "core/memory.h"
+#include "core/types.h"
 
 #include <raylib.h>
 #include <memory.h>
@@ -14,380 +17,421 @@
 #define SCREEN_BUFFER_HEIGHT 32
 #define SCALE 16
 
-#define unused __attribute__((unused))
-
-typedef struct CPU
+struct Chip8CPU
 {
-    uint8_t   video[SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT];
-    CallStack stack;
-
-    uint8_t   keypad[NUM_KEYS];
-    uint8_t   v[NUM_REGISTERS];
+    u8             video[SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT];
+    Chip8CallStack stack;
     
-    uint16_t  idx;
-    uint16_t  pc;
+    u8             keypad[NUM_KEYS];
+    u8             v[NUM_REGISTERS];
+    
+    u16            idx;
+    u16            pc;
 
-    uint8_t   dt;
-    uint8_t   st;
-} CPU;
-
-typedef void (*Executor)(const OpCode *op);
-
-static void Raw(const OpCode *op);
-static void Cls(const OpCode *op);
-static void Ret(const OpCode *op);
-static void Sys(const OpCode *op);
-static void Jp(const OpCode *op);
-static void Call(const OpCode *op);
-static void Se(const OpCode *op);
-static void Sne(const OpCode *op);
-static void Ld(const OpCode *op);
-static void Add(const OpCode *op);
-static void Or(const OpCode *op);
-static void And(const OpCode *op);
-static void Xor(const OpCode *op);
-static void Sub(const OpCode *op);
-static void Shr(const OpCode *op);
-static void Subn(const OpCode *op);
-static void Shl(const OpCode *op);
-static void Rnd(const OpCode *op);
-static void Drw(const OpCode *op);
-static void Skp(const OpCode *op);
-static void Sknp(const OpCode *op);
-
-static CPU cpu;
-static Executor executors[] = {
-    [IN_RAW] = Raw,
-    [IN_CLS] = Cls,
-    [IN_RET] = Ret,
-    [IN_SYS] = Sys,
-    [IN_JP] = Jp,
-    [IN_CALL] = Call,
-    [IN_SE] = Se,
-    [IN_SNE] = Sne,
-    [IN_LD] = Ld,
-    [IN_ADD] = Add,
-    [IN_OR] = Or,
-    [IN_AND] = And,
-    [IN_XOR] = Xor,
-    [IN_SUB] = Sub,
-    [IN_SHR] = Shr,
-    [IN_SUBN] = Subn,
-    [IN_SHL] = Shl,
-    [IN_RND] = Rnd,
-    [IN_DRW] = Drw,
-    [IN_SKP] = Skp,
-    [IN_SKNP] = Sknp
+    u8             dt;
+    u8             st;
 };
 
-void InitCPU(void)
+typedef void (*Chip8Exec)(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op);
+
+static void c8Raw(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op);
+static void c8Cls(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op);
+static void c8Ret(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op);
+static void c8Sys(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op);
+static void c8Jp(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op);
+static void c8Call(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op);
+static void c8Se(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op);
+static void c8Sne(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op);
+static void c8Ld(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op);
+static void c8Add(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op);
+static void c8Or(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op);
+static void c8And(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op);
+static void c8Xor(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op);
+static void c8Sub(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op);
+static void c8Shr(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op);
+static void c8Subn(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op);
+static void c8Shl(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op);
+static void c8Rnd(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op);
+static void c8Drw(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op);
+static void c8Skp(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op);
+static void c8Sknp(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op);
+
+static Chip8Exec executors[] = {
+    [IN_RAW] = c8Raw,
+    [IN_CLS] = c8Cls,
+    [IN_RET] = c8Ret,
+    [IN_SYS] = c8Sys,
+    [IN_JP] = c8Jp,
+    [IN_CALL] = c8Call,
+    [IN_SE] = c8Se,
+    [IN_SNE] = c8Sne,
+    [IN_LD] = c8Ld,
+    [IN_ADD] = c8Add,
+    [IN_OR] = c8Or,
+    [IN_AND] = c8And,
+    [IN_XOR] = c8Xor,
+    [IN_SUB] = c8Sub,
+    [IN_SHR] = c8Shr,
+    [IN_SUBN] = c8Subn,
+    [IN_SHL] = c8Shl,
+    [IN_RND] = c8Rnd,
+    [IN_DRW] = c8Drw,
+    [IN_SKP] = c8Skp,
+    [IN_SKNP] = c8Sknp
+};
+
+Chip8CPU *c8InitCPU(void)
 {
-    memset(cpu.v, 0x00, sizeof(cpu.v));
-    cpu.idx = 0;
-    cpu.pc = ADDR_PC;
-    cpu.dt = 0;
-    cpu.st = 0;
-    cpu.stack = CreateStack();
-    memset(cpu.video, 0x00, sizeof(cpu.video));
-    memset(cpu.keypad, 0x00, sizeof(cpu.keypad));
+    Chip8CPU *const cpu = C8_MALLOC(Chip8CPU, 1);
+
+    memset(cpu->video, 0x00, sizeof(cpu->video));
+    cpu->stack = c8InitStack();
+    memset(cpu->keypad, 0x00, sizeof(cpu->keypad));
+    memset(cpu->v, 0x00, sizeof(cpu->v));
+    cpu->idx = 0;
+    cpu->pc = ADDR_PC;
+    cpu->dt = 0;
+    cpu->st = 0;
+
+    return cpu;
 }
 
-void StepCPU(void)
+void c8CloseCPU(Chip8CPU *cpu)
 {
-    const uint16_t raw = (RAMRead(cpu.pc) << 8) | RAMRead(cpu.pc + 1);
-    cpu.pc += 2;
+    C8_FREE(cpu);
+}
+
+void c8StepCPU(Chip8CPU *cpu, Chip8RAM *ram)
+{
+    const u16 raw = (c8RAMRead(ram, cpu->pc) << 8) | c8RAMRead(ram, cpu->pc + 1);
+    cpu->pc += 2;
 
     const OpCode opcode = DecodeOpCode(raw);
-    executors[opcode.instr](&opcode);
+    executors[opcode.instr](cpu, ram, &opcode);
 
-    if (cpu.dt > 0)
+    if (cpu->dt > 0)
     {
-        cpu.dt--;
+        cpu->dt--;
     }
 
-    if (cpu.st > 0)
+    if (cpu->st > 0)
     {
-        cpu.st--;
+        cpu->st--;
     }
 }
 
-void SetCPUKey(uint8_t key, uint8_t val)
+void c8SetCPUKey(Chip8CPU *cpu, u8 key, u8 val)
 {
-    cpu.keypad[key] = val;
+    cpu->keypad[key] = val;
 }
 
-void DrawCPUBuffer(void)
+void c8DrawCPUBuffer(const Chip8CPU *cpu)
 {
-    for (uint16_t y = 0; y < SCREEN_BUFFER_HEIGHT; y++)
+    for (u16 y = 0; y < SCREEN_BUFFER_HEIGHT; y++)
     {
-        for (uint16_t x = 0; x < SCREEN_BUFFER_WIDTH; x++)
+        for (u16 x = 0; x < SCREEN_BUFFER_WIDTH; x++)
         {
-            if (cpu.video[x + y * SCREEN_BUFFER_WIDTH])
+            if (cpu->video[x + y * SCREEN_BUFFER_WIDTH])
             {
                 DrawRectangle(x * SCALE, y * SCALE, SCALE, SCALE, GREEN);
             }
         }
     }
 
-    DRAW_DEBUG_INFO(cpu.v, cpu.dt, cpu.st, cpu.idx, cpu.pc, cpu.keypad);
+    DRAW_DEBUG_INFO(cpu->v, cpu->dt, cpu->st, cpu->idx, cpu->pc, cpu->keypad);
 }
 
-static void Raw(unused const OpCode *op)
+static void c8Raw(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op)
 {
-    /* Intentionally left empty */
+    (void)cpu;
+    (void)ram;
+    (void)op;
 }
 
-static void Cls(unused const OpCode *op)
+static void c8Cls(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op)
 {
-    memset(cpu.video, 0x00, sizeof(cpu.video));
+    memset(cpu->video, 0x00, sizeof(cpu->video));
+    
+    (void)ram;
+    (void)op;
 }
 
-static void Ret(unused const OpCode *op)
+static void c8Ret(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op)
 {
-    cpu.pc = StackPop(&cpu.stack);    
+    cpu->pc = c8StackPop(&cpu->stack);
+
+    (void)ram;
+    (void)op;
 }
 
-static void Sys(unused const OpCode *op)
+static void c8Sys(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op)
 {
-    /* Intentionally left empty */
+    (void)cpu;
+    (void)ram;
+    (void)op;
 }
 
-static void Jp(const OpCode *op)
+static void c8Jp(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op)
 {
     if (op->addressMode == AM_ADDR)
     {
-        cpu.pc = op->address;
+        cpu->pc = op->address;
     }
     else if (op->addressMode == AM_V0_ADDR)
     {
-        cpu.pc = cpu.v[0x0] + op->address;
+        cpu->pc = cpu->v[0x0] + op->address;
     }
+
+    (void)ram;
 }
 
-static void Call(const OpCode *op)
+static void c8Call(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op)
 {
-    StackPush(&cpu.stack, cpu.pc);
-    cpu.pc = op->address;
+    c8StackPush(&cpu->stack, cpu->pc);
+    cpu->pc = op->address;
+
+    (void)ram;
 }
 
-static void Se(const OpCode *op)
+static void c8Se(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op)
 {
     if (op->addressMode == AM_VX_BYTE)
     {
-        if (cpu.v[op->x] == op->byte)
+        if (cpu->v[op->x] == op->byte)
         {
-            cpu.pc += 2;
+            cpu->pc += 2;
         }
     }
     else if (op->addressMode == AM_VX_VY)
     {
-        if (cpu.v[op->x] == cpu.v[op->y])
+        if (cpu->v[op->x] == cpu->v[op->y])
         {
-            cpu.pc += 2;
+            cpu->pc += 2;
         }
     }
+
+    (void)ram;
 }
 
-static void Sne(const OpCode *op)
+static void c8Sne(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op)
 {
     if (op->addressMode == AM_VX_BYTE)
     {
-        if (cpu.v[op->x] != op->byte)
+        if (cpu->v[op->x] != op->byte)
         {
-            cpu.pc += 2;
+            cpu->pc += 2;
         }
     }
     else if (op->addressMode == AM_VX_VY)
     {
-        if (cpu.v[op->x] != cpu.v[op->y])
+        if (cpu->v[op->x] != cpu->v[op->y])
         {
-            cpu.pc += 2;
+            cpu->pc += 2;
         }
     }
+
+    (void)ram;
 }
 
-static void Ld(const OpCode *op)
+static void c8Ld(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op)
 {
     if (op->addressMode == AM_VX_BYTE)
     {
-        cpu.v[op->x] = op->byte;
+        cpu->v[op->x] = op->byte;
     }
     else if (op->addressMode == AM_VX_VY)
     {
-        cpu.v[op->x] = cpu.v[op->y];
+        cpu->v[op->x] = cpu->v[op->y];
     }
     else if (op->addressMode == AM_I_ADDR)
     {
-        cpu.idx = op->address;
+        cpu->idx = op->address;
     }
     else if (op->addressMode == AM_VX_DT)
     {
-        cpu.v[op->x] = cpu.dt;
+        cpu->v[op->x] = cpu->dt;
     }
     else if (op->addressMode == AM_VX_KEY)
     {
-        bool found = false;
-        for (uint8_t i = 0; i < NUM_KEYS; i++)
+        Chip8Bool found = C8_FALSE;
+        for (u8 i = 0; i < NUM_KEYS; i++)
         {
-            if (cpu.keypad[i])
+            if (cpu->keypad[i])
             {
-                found = true;
-                cpu.v[op->x] = i;
+                found = C8_TRUE;
+                cpu->v[op->x] = i;
                 break;
             }
         }
 
         if (!found)
         {
-            cpu.pc -= 2;
+            cpu->pc -= 2;
         }
     }
     else if (op->addressMode == AM_DT_VX)
     {
-        cpu.dt = cpu.v[op->x];
+        cpu->dt = cpu->v[op->x];
     }
     else if (op->addressMode == AM_ST_VX)
     {
-        cpu.st = cpu.v[op->x];
+        cpu->st = cpu->v[op->x];
     }
     else if (op->addressMode == AM_FONT_VX)
     {
-        const uint8_t digit = cpu.v[op->x];
-        cpu.idx = ADDR_FONT + (5 * digit);
+        const u8 digit = cpu->v[op->x];
+        cpu->idx = ADDR_FONT + (5 * digit);
     }
     else if (op->addressMode == AM_BCD_VX)
     {
-        uint8_t value = cpu.v[op->x];
-        RAMWrite(cpu.idx + 2, value % 10);
+        u8 value = cpu->v[op->x];
+        c8RAMWrite(ram, cpu->idx + 2, value % 10);
 	    value /= 10;
 
-        RAMWrite(cpu.idx + 1, value % 10);
+        c8RAMWrite(ram, cpu->idx + 1, value % 10);
 	    value /= 10;
 
-        RAMWrite(cpu.idx, value % 10);
+        c8RAMWrite(ram, cpu->idx, value % 10);
     }
     else if (op->addressMode == AM_ADDR_I_VX)
     {
-	    for (uint8_t i = 0; i <= op->x; i++)
+	    for (u8 i = 0; i <= op->x; i++)
         {
-            RAMWrite(cpu.idx + i, cpu.v[i]);
+            c8RAMWrite(ram, cpu->idx + i, cpu->v[i]);
         }
     }
     else if (op->addressMode == AM_VX_ADDR_I)
     {
-        for (uint8_t i = 0; i <= op->x; i++)
+        for (u8 i = 0; i <= op->x; i++)
         {
-            cpu.v[i] = RAMRead(cpu.idx + i);
+            cpu->v[i] = c8RAMRead(ram, cpu->idx + i);
         }
     }
 }
 
-static void Add(const OpCode *op)
+static void c8Add(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op)
 {
     if (op->addressMode == AM_VX_BYTE)
     {
-        cpu.v[op->x] += op->byte;
+        cpu->v[op->x] += op->byte;
     }
     else if (op->addressMode == AM_VX_VY)
     {
-        const uint16_t sum = cpu.v[op->x] + cpu.v[op->y];
+        const u16 sum = (u16)cpu->v[op->x] + (u16)cpu->v[op->y];
         if (sum > 0x00FF)
         {
-            cpu.v[0xF] = 1;
+            cpu->v[0xF] = 1;
         }
         else
         {
-            cpu.v[0xF] = 0;
+            cpu->v[0xF] = 0;
         }
 
-        cpu.v[op->x] = sum & 0x00FF;
+        cpu->v[op->x] = sum & 0x00FF;
     }
     else if (op->addressMode == AM_I_VX)
     {
-        cpu.idx += cpu.v[op->x];
-    }
-}
-
-static void Or(const OpCode *op)
-{
-    cpu.v[op->x] |= cpu.v[op->y];
-}
-
-static void And(const OpCode *op)
-{
-    cpu.v[op->x] &= cpu.v[op->y];
-}
-
-static void Xor(const OpCode *op)
-{
-    cpu.v[op->x] ^= cpu.v[op->y];
-}
-
-static void Sub(const OpCode *op)
-{
-    if (cpu.v[op->x] > cpu.v[op->y])
-    {
-        cpu.v[0xF] = 1;
-    }
-    else
-    {
-        cpu.v[0xF] = 0;
+        cpu->idx += cpu->v[op->x];
     }
 
-    cpu.v[op->x] -= cpu.v[op->y];
+    (void)ram;
 }
 
-static void Shr(const OpCode *op)
+static void c8Or(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op)
 {
-    cpu.v[0xF] = cpu.v[op->x] & 0x01;
-    cpu.v[op->x] >>= 1;
+    cpu->v[op->x] |= cpu->v[op->y];
+
+    (void)ram;
 }
 
-static void Subn(const OpCode *op)
+static void c8And(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op)
 {
-    if (cpu.v[op->y] > cpu.v[op->x])
+    cpu->v[op->x] &= cpu->v[op->y];
+
+    (void)ram;
+}
+
+static void c8Xor(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op)
+{
+    cpu->v[op->x] ^= cpu->v[op->y];
+    
+    (void)ram;
+}
+
+static void c8Sub(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op)
+{
+    if (cpu->v[op->x] > cpu->v[op->y])
     {
-        cpu.v[0xF] = 1;
+        cpu->v[0xF] = 1;
     }
     else
     {
-        cpu.v[0xF] = 0;
+        cpu->v[0xF] = 0;
     }
 
-    cpu.v[op->x] = cpu.v[op->y] - cpu.v[op->x];
+    cpu->v[op->x] -= cpu->v[op->y];
+
+    (void)ram;
 }
 
-static void Shl(const OpCode *op)
+static void c8Shr(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op)
 {
-    cpu.v[0xF] = (cpu.v[op->x] & 0x80) >> 7;
-    cpu.v[op->x] <<= 1;
+    cpu->v[0xF] = cpu->v[op->x] & 0x01;
+    cpu->v[op->x] >>= 1;
+
+    (void)ram;
 }
 
-static void Rnd(const OpCode *op)
+static void c8Subn(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op)
 {
-    cpu.v[op->x] = GetRandomValue(0, 255) & op->byte;
-}
-
-static void Drw(const OpCode *op)
-{
-    const uint8_t height = op->nibble;
-    const uint8_t xp = cpu.v[op->x] % SCREEN_BUFFER_WIDTH;
-    const uint8_t yp = cpu.v[op->y] % SCREEN_BUFFER_HEIGHT;
-
-    cpu.v[0xF] = 0;
-    for (uint8_t r = 0; r < height; r++)
+    if (cpu->v[op->y] > cpu->v[op->x])
     {
-        const uint8_t sprite = RAMRead(cpu.idx + r);
-        for (uint8_t c = 0; c < 8; c++)
+        cpu->v[0xF] = 1;
+    }
+    else
+    {
+        cpu->v[0xF] = 0;
+    }
+    cpu->v[op->x] = cpu->v[op->y] - cpu->v[op->x];
+    
+    (void)ram;
+}
+
+static void c8Shl(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op)
+{
+    cpu->v[0xF] = (cpu->v[op->x] & 0x80) >> 7;
+    cpu->v[op->x] <<= 1;
+
+    (void)ram;
+}
+
+static void c8Rnd(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op)
+{
+    cpu->v[op->x] = GetRandomValue(0, 255) & op->byte;
+
+    (void)ram;
+}
+
+static void c8Drw(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op)
+{
+    const u8 height = op->nibble;
+    const u8 xp = cpu->v[op->x] % SCREEN_BUFFER_WIDTH;
+    const u8 yp = cpu->v[op->y] % SCREEN_BUFFER_HEIGHT;
+
+    cpu->v[0xF] = 0;
+    for (u8 r = 0; r < height; r++)
+    {
+        const u8 sprite = c8RAMRead(ram, cpu->idx + r);
+        for (u8 c = 0; c < 8; c++)
         {
-            const uint8_t spritePx = sprite & (0x80 >> c);
-            uint8_t *const screenPx = &cpu.video[(yp + r) * SCREEN_BUFFER_WIDTH + (xp + c)];
+            const u8 spritePx = sprite & (0x80 >> c);
+            u8 *const screenPx = &cpu->video[(yp + r) * SCREEN_BUFFER_WIDTH + (xp + c)];
 
             if (spritePx)
             {
                 if (*screenPx == 0xFF)
                 {
-                    cpu.v[0xF] = 1;
+                    cpu->v[0xF] = 1;
                 }
 
                 *screenPx ^= 0xFF;
@@ -396,20 +440,24 @@ static void Drw(const OpCode *op)
     }
 }
 
-static void Skp(const OpCode *op)
+static void c8Skp(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op)
 {
-    const uint8_t key = cpu.v[op->x];
-    if (cpu.keypad[key])
+    const u8 key = cpu->v[op->x];
+    if (cpu->keypad[key])
     {
-        cpu.pc += 2;
+        cpu->pc += 2;
     }
+
+    (void)ram;
 }
 
-static void Sknp(const OpCode *op)
+static void c8Sknp(Chip8CPU *cpu, Chip8RAM *ram, const OpCode *op)
 {
-    const uint8_t key = cpu.v[op->x];
-    if (!cpu.keypad[key])
+    const u8 key = cpu->v[op->x];
+    if (!cpu->keypad[key])
     {
-        cpu.pc += 2;
+        cpu->pc += 2;
     }
+
+    (void)ram;
 }

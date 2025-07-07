@@ -1,6 +1,6 @@
-CC = gcc
+CC = cc
 
-CFLAGS = -Wall -Werror -Wpedantic -std=c99
+CFLAGS = -Wall -Werror -Wpedantic -Wextra -std=c99
 ifeq ($(MAKECMDGOALS), release)
 	CLFAGS += -O3 -DNDEBUG
 else
@@ -8,10 +8,13 @@ else
 endif
 
 SRC_DIR = .
-EMULATOR_DIR = $(SRC_DIR)/emulator
 BIN_DIR = ../bin
 
-SRC_FILES = $(wildcard $(SRC_DIR)/*.c $(EMULATOR_DIR)/*.c)
+CLIENT_DIR = $(SRC_DIR)/client
+CORE_DIR = $(SRC_DIR)/core
+EMULATOR_DIR = $(SRC_DIR)/emulator
+
+SRC_FILES = $(wildcard $(SRC_DIR)/*.c $(CLIENT_DIR)/*.c $(CORE_DIR)/*.c $(EMULATOR_DIR)/*.c)
 OBJ_FILES = $(patsubst %.c, $(BIN_DIR)/%.o, $(SRC_FILES))
 
 TARGET = $(BIN_DIR)/c8emu
@@ -19,7 +22,9 @@ TARGET = $(BIN_DIR)/c8emu
 RAYLIB_INCL = -I../vendor/raylib/include
 RAYLIB_LINK = -L../vendor/raylib/lib
 
-INCL = -I$(SRC_DIR) $(RAYLIB_INCL)
+RKLOG_INCL = -I../vendor/rklog
+
+INCL = -I$(SRC_DIR) $(RAYLIB_INCL) $(RKLOG_INCL)
 LINK = $(RAYLIB_LINK)
 LIBS = -lraylib -lm
 
