@@ -3,6 +3,12 @@
 
 #include "core/types.h"
 
+typedef enum Chip8ExitCode
+{
+    C8_SUCCESS,
+    C8_FAILURE,
+} Chip8ExitCode;
+
 typedef struct Chip8Client Chip8Client;
 
 Chip8Client *c8InitClient(i32 argc, char **argv);

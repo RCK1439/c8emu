@@ -1,10 +1,10 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
-#include "core/platform.h"
+#include "platform.h"
 
 #if defined(C8_DEBUG)
-#include "core/types.h"
+#include "types.h"
 
 #include "emulator/instructions.h"
 

@@ -1,9 +1,9 @@
 #include "cpu.h"
-#include "debug.h"
-#include "ram.h"
 #include "instructions.h"
+#include "ram.h"
 #include "stack.h"
 
+#include "core/debug.h"
 #include "core/types.h"
 
 #include <raylib.h>
