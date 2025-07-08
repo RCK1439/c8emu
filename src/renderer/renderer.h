@@ -11,6 +11,8 @@ void c8CloseRenderer(Chip8Renderer *renderer);
 void c8RendererBegin(Chip8Renderer *renderer);
 void c8RendererEnd(Chip8Renderer *renderer);
 
+void c8RendererOnResize(Chip8Renderer *renderer);
+
 void c8DrawBuffer(Chip8Renderer *renderer, const u8 *buffer, size_t width, size_t height);
 
 void c8ToggleDebugOverlay(Chip8Renderer *renderer);

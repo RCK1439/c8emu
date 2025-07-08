@@ -22,6 +22,7 @@ struct Chip8Client
 
 static void c8ClientOnUpdate(Chip8Client *client);
 static void c8ClientOnRender(const Chip8Client *client);
+static void c8ClientOnResize(Chip8Client *client);
 
 #if defined(C8_DEBUG)
 static void c8RaylibLogger(int logLevel, const char *fmt, va_list args);
@@ -44,6 +45,7 @@ Chip8Client *c8InitClient(i32 argc, char **argv)
     C8_LOG_INFO("Logging initialized");
 #endif
 
+    SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT | FLAG_WINDOW_RESIZABLE);
     InitWindow(C8_WINDOW_WIDTH, C8_WINDOW_HEIGHT, C8_WINDOW_TITLE);
     InitAudioDevice();
     SetTargetFPS(C8_TARGET_FPS);
@@ -89,6 +91,29 @@ static void c8ClientOnUpdate(Chip8Client *client)
         c8ToggleDebugOverlay(client->renderer);
     }
 
+    if (IsKeyPressed(KEY_F11))
+    {
+        if (!IsWindowFullscreen())
+        {
+            const i32 monitorHandle = GetCurrentMonitor();
+            const i32 monitorWidth = GetMonitorWidth(monitorHandle);
+            const i32 monitorHeight = GetMonitorHeight(monitorHandle);
+            C8_LOG_WARNING("monitor (%d) resolution: %dx%d", monitorHandle, monitorWidth, monitorHeight);
+
+            SetWindowSize(monitorWidth, monitorHeight);
+        }
+        
+        ToggleFullscreen();
+        c8ClientOnResize(client);
+
+        C8_LOG_WARNING("Window resized to %dx%d", GetScreenWidth(), GetScreenHeight());
+    }
+    else if (IsWindowResized())
+    {
+        c8ClientOnResize(client);
+        C8_LOG_WARNING("Window resized to %dx%d", GetScreenWidth(), GetScreenHeight());
+    }
+
     c8EmulatorOnUpdate(client->emulator);
 
     client->isRunning = !WindowShouldClose();
@@ -106,6 +131,11 @@ static void c8ClientOnRender(const Chip8Client *client)
     c8RendererBegin(client->renderer); 
         c8EmulatorOnRender(client->emulator, client->renderer);
     c8RendererEnd(client->renderer);
+}
+
+static void c8ClientOnResize(Chip8Client *client)
+{
+    c8RendererOnResize(client->renderer);
 }
 
 #if defined(C8_DEBUG)

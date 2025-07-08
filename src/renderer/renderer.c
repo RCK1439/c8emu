@@ -2,6 +2,7 @@
 #include "debug_overlay.h"
 
 #include "core/error.h"
+#include "core/log.h"
 #include "core/memory.h"
 
 #include <raylib.h>
@@ -74,6 +75,17 @@ void c8RendererEnd(Chip8Renderer *renderer)
     c8DrawDebugOverlay(renderer);
 
     EndDrawing();
+}
+
+void c8RendererOnResize(Chip8Renderer *renderer)
+{
+    UnloadRenderTexture(renderer->target);
+
+    const i32 screenWidth = GetScreenWidth();
+    const i32 screenHeight = GetScreenHeight();
+    renderer->target = LoadRenderTexture(screenWidth, screenHeight);
+
+    C8_LOG_WARNING("Framebuffer resized: %dx%d", screenWidth, screenHeight);
 }
 
 void c8DrawBuffer(Chip8Renderer *renderer, const u8 *buffer, size_t width, size_t height)
