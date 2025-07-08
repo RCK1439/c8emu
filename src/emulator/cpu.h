@@ -27,7 +27,5 @@ Chip8CPU c8InitCPU(void);
 void c8StepCPU(Chip8CPU *cpu, Chip8RAM *ram);
 void c8SetCPUKey(Chip8CPU *cpu, u8 key, u8 val);
 
-void c8DrawCPUBuffer(const Chip8CPU *cpu);
-
 #endif /* CPU_H */
 

@@ -3,7 +3,7 @@
 #include "ram.h"
 #include "stack.h"
 
-#include "core/debug.h"
+#include "core/platform.h"
 #include "core/types.h"
 
 #include <raylib.h>
@@ -97,20 +97,6 @@ void c8StepCPU(Chip8CPU *cpu, Chip8RAM *ram)
 void c8SetCPUKey(Chip8CPU *cpu, u8 key, u8 val)
 {
     cpu->keypad[key] = val;
-}
-
-void c8DrawCPUBuffer(const Chip8CPU *cpu)
-{
-    for (u16 y = 0; y < C8_SCREEN_BUFFER_HEIGHT; y++)
-    {
-        for (u16 x = 0; x < C8_SCREEN_BUFFER_WIDTH; x++)
-        {
-            if (cpu->video[x + y * C8_SCREEN_BUFFER_WIDTH])
-            {
-                DrawRectangle(x * SCALE, y * SCALE, SCALE, SCALE, GREEN);
-            }
-        }
-    }
 }
 
 static void c8Raw(UNUSED Chip8CPU *cpu, UNUSED Chip8RAM *ram, UNUSED const Chip8OpCode *op)

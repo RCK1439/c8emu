@@ -22,6 +22,8 @@ Chip8ROM c8LoadROM(const char *romFile)
 
     fread(rom.data, sizeof(uint8_t), rom.size, file);
     fclose(file);
+    
+    rom.romName = romFile;
 
     C8_LOG_INFO("ROM successfully loaded "SIZE_T_FMT" bytes: %s", rom.size, romFile);
     return rom;
