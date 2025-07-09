@@ -67,7 +67,7 @@ Chip8DebugText c8GetDebugTextAt(const Chip8DebugOverlay *debugOverlay, size_t i)
 
 static void c8DebugOverlayEnsureSpace(Chip8DebugOverlay *debugOverlay)
 {
-    if (debugOverlay->size + 1 < debugOverlay->capacity)
+    if (debugOverlay->size < debugOverlay->capacity)
     {
         return;
     }
