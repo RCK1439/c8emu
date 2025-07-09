@@ -25,7 +25,7 @@ void *c8Realloc(void *ptr, size_t numBytes)
         c8Panic(ERR_OUT_OF_MEMORY, "Out of memory");
     }
 
-    C8_LOG_WARNING("reallocated"SIZE_T_FMT" bytes to ptr=%p", numBytes, p);
+    C8_LOG_WARNING("reallocated "SIZE_T_FMT" bytes to ptr=%p", numBytes, p);
     return p;
 }
 
