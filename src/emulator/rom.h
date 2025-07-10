@@ -7,7 +7,7 @@
 
 typedef struct Chip8ROM
 {
-    u8          data[C8_MAX_ROM_SIZE];
+    u8         *data;
     size_t      size;
     const char *romName;
 } Chip8ROM;

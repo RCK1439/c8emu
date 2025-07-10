@@ -10,7 +10,6 @@
 #include "renderer/renderer.h"
 
 #include <raylib.h>
-#include <stdio.h>
 
 struct Chip8Client
 {
@@ -30,12 +29,6 @@ static void c8RaylibLogger(int logLevel, const char *fmt, va_list args);
 
 Chip8Client *c8InitClient(i32 argc, char **argv)
 {
-    if (argc < 2)
-    {
-        fprintf(stderr, "usage: %s <rom_file>\n", argv[0]);
-        return NULL;
-    }
-
 #if defined(C8_RELEASE)
     SetTraceLogLevel(LOG_NONE);
 #else
@@ -45,10 +38,17 @@ Chip8Client *c8InitClient(i32 argc, char **argv)
     C8_LOG_INFO("Logging initialized");
 #endif
 
+    if (argc < 2)
+    {
+        C8_LOG_FATAL("usage: %s <rom_file>", argv[0]);
+    }
+
     SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT | FLAG_WINDOW_RESIZABLE);
     InitWindow(C8_WINDOW_WIDTH, C8_WINDOW_HEIGHT, C8_WINDOW_TITLE);
     InitAudioDevice();
+
     SetTargetFPS(C8_TARGET_FPS);
+    SetWindowMinSize(C8_WINDOW_WIDTH, C8_WINDOW_HEIGHT);
 
     Chip8Client *const client = C8_MALLOC(Chip8Client, 1);
     client->emulator = c8InitEmulator();
@@ -56,7 +56,11 @@ Chip8Client *c8InitClient(i32 argc, char **argv)
     client->isRunning = C8_TRUE;
     client->debug = C8_FALSE;
 
-    c8LoadROMInEmulator(client->emulator, argv[1]);
+    if (argc > 1)
+    {
+        c8LoadROMInEmulator(client->emulator, argv[1]);
+    }
+
     return client;
 }
 

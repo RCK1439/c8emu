@@ -11,11 +11,12 @@
 
 typedef enum Chip8ErrorCode
 {
-    ERR_ASSERTION_FAILED = 1,
-    ERR_FAILED_TO_OPEN_FILE = 2,
-    ERR_FAILED_TO_READ_ROM = 3,
-    ERR_OUT_OF_MEMORY = 4,
-    ERR_FAILED_TO_LOAD_TARGET = 5,
+    ERR_NONE,
+    ERR_ASSERTION_FAILED,
+    ERR_FAILED_TO_OPEN_FILE,
+    ERR_FAILED_TO_READ_ROM,
+    ERR_OUT_OF_MEMORY,
+    ERR_FAILED_TO_LOAD_TARGET,
 } Chip8ErrorCode;
 
 void c8Panic(Chip8ErrorCode code, const char *fmt, ...);

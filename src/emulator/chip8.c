@@ -1,9 +1,12 @@
 #include "chip8.h"
 #include "cpu.h"
+#include "emulator/rom.h"
 #include "ram.h"
 
+#include "client/config.h"
+
 #include "core/memory.h"
-#include "core/platform.h"
+#include "core/types.h"
 
 #include "renderer/renderer.h"
 
@@ -11,9 +14,9 @@
 
 struct Chip8
 {
-    Chip8RAM ram;
-    Chip8ROM rom;
-    Chip8CPU cpu;
+    Chip8RAM  ram;
+    Chip8CPU  cpu;
+    Chip8Bool romLoaded;
 };
 
 static void c8ProcessInput(Chip8 *emulator);
@@ -23,26 +26,39 @@ Chip8 *c8InitEmulator(void)
     Chip8 *const emulator = C8_MALLOC(Chip8, 1);
     emulator->ram = c8InitRAM();
     emulator->cpu = c8InitCPU();
+    emulator->romLoaded = C8_FALSE;
 
     return emulator;
 }
 
 void c8CloseEmulator(Chip8 *emulator)
 {
-    c8UnloadROM(emulator->rom);
     C8_FREE(emulator);
 }
 
-Chip8Bool c8LoadROMInEmulator(Chip8 *emulator, const char *romFile)
+void c8LoadROMInEmulator(Chip8 *emulator, const char *romFile)
 {
-    emulator->rom = c8LoadROM(romFile);
-    c8UploadROMToRAM(&emulator->ram, emulator->rom);
+    const Chip8ROM rom = c8LoadROM(romFile);
+    if (!rom.data)
+    {
+        emulator->romLoaded = C8_FALSE;
+        return;
+    }
 
-    return C8_TRUE;
+    c8UploadROMToRAM(&emulator->ram, rom);
+    SetWindowTitle(TextFormat("%s - %s", C8_WINDOW_TITLE, rom.romName));
+    c8UnloadROM(rom);
+
+    emulator->romLoaded = C8_TRUE;
 }
 
 void c8EmulatorOnUpdate(Chip8 *emulator)
 {
+    if (!emulator->romLoaded)
+    {
+        return;
+    }
+
     c8ProcessInput(emulator);
     c8StepCPU(&emulator->cpu, &emulator->ram);
 }
@@ -67,8 +83,7 @@ void c8EmulatorOnRender(const Chip8* emulator, Chip8Renderer *renderer)
         c8AddDebugText(renderer, " - Sound timer: %x", (i32)emulator->cpu.st);
 
         c8AddDebugText(renderer, "ROM:");
-        c8AddDebugText(renderer, " - File: %s", emulator->rom.romName);
-        c8AddDebugText(renderer, " - Size: "SIZE_T_FMT"B", emulator->rom.size);
+        c8AddDebugText(renderer, " - Loaded: %s", emulator->romLoaded ? "true" : "false");
     }
 }
 

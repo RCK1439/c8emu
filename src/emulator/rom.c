@@ -2,6 +2,7 @@
 
 #include "core/error.h"
 #include "core/log.h"
+#include "core/memory.h"
 
 #include <memory.h>
 #include <stdio.h>
@@ -18,9 +19,15 @@ Chip8ROM c8LoadROM(const char *romFile)
 
     fseek(file, 0, SEEK_END);
     rom.size = (size_t)ftell(file);
+    if (rom.size > C8_MAX_ROM_SIZE)
+    {
+        C8_LOG_ERROR("ROM file too large!");
+        return rom;
+    }
     fseek(file, 0, SEEK_SET);
 
-    fread(rom.data, sizeof(uint8_t), rom.size, file);
+    rom.data = C8_MALLOC(u8, rom.size);
+    fread(rom.data, sizeof(u8), rom.size, file);
     fclose(file);
     
     rom.romName = romFile;
@@ -31,6 +38,6 @@ Chip8ROM c8LoadROM(const char *romFile)
 
 void c8UnloadROM(Chip8ROM rom)
 {
+    C8_FREE(rom.data);
     C8_LOG_WARNING("ROM unloaded");
-    memset(rom.data, 0x00, C8_MAX_ROM_SIZE);
 }
