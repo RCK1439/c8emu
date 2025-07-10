@@ -143,6 +143,21 @@ static void c8DrawDebugOverlay(Chip8Renderer *renderer)
     for (size_t i = 0; i < size; i++)
     {
         const Chip8DebugText debugText = c8GetDebugTextAt(renderer->debugOverlay, i);
+        const Vector2 size = MeasureTextEx(renderer->font, debugText.text, 20.0f, 2.0f);
+        const Rectangle box = {
+            .x = debugText.position.x,
+            .y = debugText.position.y,
+            .width = size.x + 2.5f,
+            .height = size.y + 2.5f,
+        };
+        const Color boxColor = {
+            .r = 0,
+            .g = 0,
+            .b = 0,
+            .a = 128
+        };
+
+        DrawRectangleRec(box, boxColor);
         DrawTextEx(renderer->font, debugText.text, debugText.position, 20.0f, 2.0f, WHITE);
     }
 

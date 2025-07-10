@@ -54,13 +54,11 @@ void c8LoadROMInEmulator(Chip8 *emulator, const char *romFile)
 
 void c8EmulatorOnUpdate(Chip8 *emulator)
 {
-    if (!emulator->romLoaded)
-    {
-        return;
-    }
-
     c8ProcessInput(emulator);
-    c8StepCPU(&emulator->cpu, &emulator->ram);
+    if (emulator->romLoaded)
+    {
+        c8StepCPU(&emulator->cpu, &emulator->ram);
+    }
 }
 
 void c8EmulatorOnRender(const Chip8* emulator, Chip8Renderer *renderer)
@@ -71,10 +69,30 @@ void c8EmulatorOnRender(const Chip8* emulator, Chip8Renderer *renderer)
     {
         c8AddDebugText(renderer, "CPU:");
         c8AddDebugText(renderer, " - Registers:", (i32)emulator->cpu.v[0], (i32)emulator->cpu.v[1], (i32)emulator->cpu.v[2], (i32)emulator->cpu.v[3]);
-        c8AddDebugText(renderer, "   (V0=%x V1=%x V2=%x V3=%x)", (i32)emulator->cpu.v[0], (i32)emulator->cpu.v[1], (i32)emulator->cpu.v[2], (i32)emulator->cpu.v[3]);
-        c8AddDebugText(renderer, "   (V4=%x V5=%x V6=%x V7=%x)", (i32)emulator->cpu.v[4], (i32)emulator->cpu.v[5], (i32)emulator->cpu.v[6], (i32)emulator->cpu.v[7]);
-        c8AddDebugText(renderer, "   (V8=%x V9=%x VA=%x VB=%x)", (i32)emulator->cpu.v[8], (i32)emulator->cpu.v[9], (i32)emulator->cpu.v[10], (i32)emulator->cpu.v[11]);
-        c8AddDebugText(renderer, "   (VC=%x VD=%x VE=%x VF=%x)", (i32)emulator->cpu.v[12], (i32)emulator->cpu.v[13], (i32)emulator->cpu.v[14], (i32)emulator->cpu.v[15]);
+        c8AddDebugText(renderer, "   (V0=%x V1=%x V2=%x V3=%x)",
+            (i32)emulator->cpu.v[0],
+            (i32)emulator->cpu.v[1],
+            (i32)emulator->cpu.v[2],
+            (i32)emulator->cpu.v[3]
+        );
+        c8AddDebugText(renderer, "   (V4=%x V5=%x V6=%x V7=%x)",
+            (i32)emulator->cpu.v[4],
+            (i32)emulator->cpu.v[5],
+            (i32)emulator->cpu.v[6],
+            (i32)emulator->cpu.v[7]
+        );
+        c8AddDebugText(renderer, "   (V8=%x V9=%x VA=%x VB=%x)",
+            (i32)emulator->cpu.v[8],
+            (i32)emulator->cpu.v[9],
+            (i32)emulator->cpu.v[10],
+            (i32)emulator->cpu.v[11]
+        );
+        c8AddDebugText(renderer, "   (VC=%x VD=%x VE=%x VF=%x)",
+            (i32)emulator->cpu.v[12],
+            (i32)emulator->cpu.v[13],
+            (i32)emulator->cpu.v[14],
+            (i32)emulator->cpu.v[15]
+        );
 
         c8AddDebugText(renderer, " - Index register: %x", emulator->cpu.idx);
         c8AddDebugText(renderer, " - Program counter: %x", emulator->cpu.pc);
@@ -82,8 +100,31 @@ void c8EmulatorOnRender(const Chip8* emulator, Chip8Renderer *renderer)
         c8AddDebugText(renderer, " - Delay timer: %x", (i32)emulator->cpu.dt);
         c8AddDebugText(renderer, " - Sound timer: %x", (i32)emulator->cpu.st);
 
-        c8AddDebugText(renderer, "ROM:");
-        c8AddDebugText(renderer, " - Loaded: %s", emulator->romLoaded ? "true" : "false");
+        c8AddDebugText(renderer, " - Keypad:");
+        c8AddDebugText(renderer, "   [K0=%d, K1=%d, K2=%d, K3=%d]",
+            (i32)emulator->cpu.keypad[0],
+            (i32)emulator->cpu.keypad[1],
+            (i32)emulator->cpu.keypad[2],
+            (i32)emulator->cpu.keypad[3]
+        );
+        c8AddDebugText(renderer, "   [K4=%d, K5=%d, K6=%d, K7=%d]",
+            (i32)emulator->cpu.keypad[4],
+            (i32)emulator->cpu.keypad[5],
+            (i32)emulator->cpu.keypad[6],
+            (i32)emulator->cpu.keypad[7]
+        );
+        c8AddDebugText(renderer, "   [K8=%d, K9=%d, KA=%d, KB=%d]",
+            (i32)emulator->cpu.keypad[8],
+            (i32)emulator->cpu.keypad[9],
+            (i32)emulator->cpu.keypad[10],
+            (i32)emulator->cpu.keypad[11]
+        );
+        c8AddDebugText(renderer, "   [KC=%d, KD=%d, KE=%d, KF=%d]",
+            (i32)emulator->cpu.keypad[12],
+            (i32)emulator->cpu.keypad[13],
+            (i32)emulator->cpu.keypad[14],
+            (i32)emulator->cpu.keypad[15]
+        );
     }
 }
 
