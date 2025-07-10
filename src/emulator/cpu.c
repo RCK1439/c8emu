@@ -3,13 +3,12 @@
 #include "ram.h"
 #include "stack.h"
 
+#include "core/debug.h"
 #include "core/platform.h"
 #include "core/types.h"
 
 #include <raylib.h>
 #include <memory.h>
-
-#define SCALE 16
 
 typedef void (*Chip8Exec)(Chip8CPU *cpu, Chip8RAM *ram, const Chip8OpCode *op);
 
@@ -62,15 +61,8 @@ static Chip8Exec s_executors[] = {
 Chip8CPU c8InitCPU(void)
 {
     Chip8CPU cpu = { 0 };
-
-    memset(cpu.video, 0x00, sizeof(cpu.video));
     cpu.stack = c8InitStack();
-    memset(cpu.keypad, 0x00, sizeof(cpu.keypad));
-    memset(cpu.v, 0x00, sizeof(cpu.v));
-    cpu.idx = 0;
     cpu.pc = C8_ADDR_PC;
-    cpu.dt = 0;
-    cpu.st = 0;
 
     return cpu;
 }
@@ -121,13 +113,17 @@ static void c8Sys(UNUSED Chip8CPU *cpu, UNUSED Chip8RAM *ram, const UNUSED Chip8
 
 static void c8Jp(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 {
-    if (op->addressMode == AM_ADDR)
+    switch (op->addressMode)
     {
-        cpu->pc = op->address;
-    }
-    else if (op->addressMode == AM_V0_ADDR)
-    {
-        cpu->pc = cpu->v[0x0] + op->address;
+        case AM_ADDR:
+            cpu->pc = op->address;
+            break;
+        case AM_V0_ADDR:
+            cpu->pc = cpu->v[0x0] + op->address;
+            break;
+        default:
+            C8_ASSERT(C8_FALSE, "Invalid opcode in %s: %d", __func__, op->addressMode);
+            break;
     }
 }
 
@@ -139,139 +135,141 @@ static void c8Call(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 
 static void c8Se(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 {
-    if (op->addressMode == AM_VX_BYTE)
+    switch (op->addressMode)
     {
-        if (cpu->v[op->x] == op->byte)
-        {
-            cpu->pc += 2;
-        }
-    }
-    else if (op->addressMode == AM_VX_VY)
-    {
-        if (cpu->v[op->x] == cpu->v[op->y])
-        {
-            cpu->pc += 2;
-        }
+        case AM_VX_BYTE:
+            if (cpu->v[op->x] == op->byte)
+            {
+                cpu->pc += 2;
+            }
+            break;
+        case AM_VX_VY:
+            if (cpu->v[op->x] == cpu->v[op->y])
+            {
+                cpu->pc += 2;
+            }
+            break;
+        default:
+            C8_ASSERT(C8_FALSE, "Invalid opcode in %s: %d", __func__, op->addressMode);
+            break;
     }
 }
 
 static void c8Sne(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 {
-    if (op->addressMode == AM_VX_BYTE)
+    switch (op->addressMode)
     {
-        if (cpu->v[op->x] != op->byte)
-        {
-            cpu->pc += 2;
-        }
-    }
-    else if (op->addressMode == AM_VX_VY)
-    {
-        if (cpu->v[op->x] != cpu->v[op->y])
-        {
-            cpu->pc += 2;
-        }
+        case AM_VX_BYTE:
+            if (cpu->v[op->x] != op->byte)
+            {
+                cpu->pc += 2;
+            }
+            break;
+        case AM_VX_VY:
+            if (cpu->v[op->x] != cpu->v[op->y])
+            {
+                cpu->pc += 2;
+            }
+            break;
+        default:
+            C8_ASSERT(C8_FALSE, "Invalid opcode in %s: %d", __func__, op->addressMode);
+            break;
     }
 }
 
 static void c8Ld(Chip8CPU *cpu, Chip8RAM *ram, const Chip8OpCode *op)
 {
-    if (op->addressMode == AM_VX_BYTE)
+    switch (op->addressMode)
     {
-        cpu->v[op->x] = op->byte;
-    }
-    else if (op->addressMode == AM_VX_VY)
-    {
-        cpu->v[op->x] = cpu->v[op->y];
-    }
-    else if (op->addressMode == AM_I_ADDR)
-    {
-        cpu->idx = op->address;
-    }
-    else if (op->addressMode == AM_VX_DT)
-    {
-        cpu->v[op->x] = cpu->dt;
-    }
-    else if (op->addressMode == AM_VX_KEY)
-    {
-        Chip8Bool found = C8_FALSE;
-        for (u8 i = 0; i < C8_NUM_KEYS; i++)
+        case AM_VX_BYTE:
+            cpu->v[op->x] = op->byte;
+            break;
+        case AM_VX_VY:
+            cpu->v[op->x] = cpu->v[op->y];
+            break;
+        case AM_I_ADDR:
+            cpu->idx = op->address;
+            break;
+        case AM_VX_DT:
+            cpu->v[op->x] = cpu->dt;
+            break;
+        case AM_VX_KEY:
         {
-            if (cpu->keypad[i])
+            Chip8Bool found = C8_FALSE;
+            for (u8 i = 0; i < C8_NUM_KEYS; i++)
             {
-                found = C8_TRUE;
-                cpu->v[op->x] = i;
-                break;
+                if (cpu->keypad[i])
+                {
+                    found = C8_TRUE;
+                    cpu->v[op->x] = i;
+                    break;
+                }
             }
-        }
 
-        if (!found)
+            if (!found)
+            {
+                cpu->pc -= 2;
+            }
+        } break;
+        case AM_DT_VX:
+            cpu->dt = cpu->v[op->x];
+            break;
+        case AM_ST_VX:
+            cpu->st = cpu->v[op->x];
+            break;
+        case AM_FONT_VX:
         {
-            cpu->pc -= 2;
-        }
-    }
-    else if (op->addressMode == AM_DT_VX)
-    {
-        cpu->dt = cpu->v[op->x];
-    }
-    else if (op->addressMode == AM_ST_VX)
-    {
-        cpu->st = cpu->v[op->x];
-    }
-    else if (op->addressMode == AM_FONT_VX)
-    {
-        const u8 digit = cpu->v[op->x];
-        cpu->idx = C8_ADDR_FONT + (5 * digit);
-    }
-    else if (op->addressMode == AM_BCD_VX)
-    {
-        u8 value = cpu->v[op->x];
-        c8RAMWrite(ram, cpu->idx + 2, value % 10);
-	    value /= 10;
+            const u8 digit = cpu->v[op->x];
+            cpu->idx = C8_ADDR_FONT + (5 * digit);
+        } break;
+        case AM_BCD_VX:
+        {
+            u8 value = cpu->v[op->x];
+            c8RAMWrite(ram, cpu->idx + 2, value % 10);
+	        value /= 10;
 
-        c8RAMWrite(ram, cpu->idx + 1, value % 10);
-	    value /= 10;
+            c8RAMWrite(ram, cpu->idx + 1, value % 10);
+	        value /= 10;
 
-        c8RAMWrite(ram, cpu->idx, value % 10);
-    }
-    else if (op->addressMode == AM_ADDR_I_VX)
-    {
-	    for (u8 i = 0; i <= op->x; i++)
-        {
-            c8RAMWrite(ram, cpu->idx + i, cpu->v[i]);
-        }
-    }
-    else if (op->addressMode == AM_VX_ADDR_I)
-    {
-        for (u8 i = 0; i <= op->x; i++)
-        {
-            cpu->v[i] = c8RAMRead(ram, cpu->idx + i);
-        }
+            c8RAMWrite(ram, cpu->idx, value % 10);
+        } break;
+        case AM_ADDR_I_VX:
+            for (u8 i = 0; i <= op->x; i++)
+            {
+                c8RAMWrite(ram, cpu->idx + i, cpu->v[i]);
+            }
+            break;
+        case AM_VX_ADDR_I:
+            for (u8 i = 0; i <= op->x; i++)
+            {
+                cpu->v[i] = c8RAMRead(ram, cpu->idx + i);
+            }
+            break;
+        default:
+            C8_ASSERT(C8_FALSE, "Invalid opcode in %s: %d", __func__, op->addressMode);
+            break;
     }
 }
 
 static void c8Add(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 {
-    if (op->addressMode == AM_VX_BYTE)
+    switch (op->addressMode)
     {
-        cpu->v[op->x] += op->byte;
-    }
-    else if (op->addressMode == AM_VX_VY)
-    {
-        const u16 sum = (u16)cpu->v[op->x] + (u16)cpu->v[op->y];
-        if (sum > 0x00FF)
+        case AM_VX_BYTE:
+            cpu->v[op->x] += op->byte;
+            break;
+        case AM_VX_VY:
         {
-            cpu->v[0xF] = 1;
-        }
-        else
-        {
-            cpu->v[0xF] = 0;
-        }
-
-        cpu->v[op->x] = sum & 0x00FF;
-    }
-    else if (op->addressMode == AM_I_VX)
-    {
-        cpu->idx += cpu->v[op->x];
+            const u16 sum = (u16)cpu->v[op->x] + (u16)cpu->v[op->y];
+            cpu->v[0xF] = sum > 0x00FF;
+            cpu->v[op->x] = (u8)(sum & 0x00FF);
+        } break;
+        case AM_I_VX:
+            cpu->idx += cpu->v[op->x];
+            break;
+        default:
+            C8_ASSERT(C8_FALSE, "Invalid opcode %s: %d", __func__, op->addressMode);
+            break;    
     }
 }
 
@@ -292,15 +290,7 @@ static void c8Xor(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 
 static void c8Sub(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 {
-    if (cpu->v[op->x] > cpu->v[op->y])
-    {
-        cpu->v[0xF] = 1;
-    }
-    else
-    {
-        cpu->v[0xF] = 0;
-    }
-
+    cpu->v[0xF] = cpu->v[op->x] > cpu->v[op->y];
     cpu->v[op->x] -= cpu->v[op->y];
 }
 
@@ -312,14 +302,7 @@ static void c8Shr(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 
 static void c8Subn(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 {
-    if (cpu->v[op->y] > cpu->v[op->x])
-    {
-        cpu->v[0xF] = 1;
-    }
-    else
-    {
-        cpu->v[0xF] = 0;
-    }
+    cpu->v[0xF] = cpu->v[op->y] > cpu->v[op->x];
     cpu->v[op->x] = cpu->v[op->y] - cpu->v[op->x];
 }
 
