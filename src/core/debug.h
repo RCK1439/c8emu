@@ -3,24 +3,50 @@
 
 #include "platform.h"
 
+#include <stdarg.h>
+
 #if defined(C8_DEBUG)
-#include "types.h"
-
-#include "emulator/instructions.h"
-
-#define DISASSEMBLE(rom_name, prog, size)       c8Disassemble(rom_name, prog, size)
-#define DEBUG_OPCODE(op)                        c8DebugOpCode(op)
-#define DRAW_DEBUG_INFO(v, dt, st, idx, pc, kp) c8DrawDebugInfo(v, dt, st, idx, pc, kp);
-
-void c8Disassemble(const char *romName, const u8 *prog, size_t size);
-void c8DebugOpCode(const Chip8OpCode *op);
-void c8DrawDebugInfo(const u8 *v, u8 dt, u8 st, u16 idx, u16 pc, const u8 *kp);
-
+#   define C8_ASSERT(expr, ...) if (!(expr)) c8Panic(ERR_ASSERTION_FAILED, __VA_ARGS__)
 #else
-#define DISASSEMBLE(rom_name, prog, size)       (void)0
-#define DEBUG_OPCODE(op)                        (void)0
-#define DRAW_DEBUG_INFO(v, dt, st, idx, pc, kp) (void)0
+#   define C8_ASSERT(expr, ...) (void)0
 #endif
+
+#if defined(C8_DEBUG)
+#   define C8_LOG_INFO(...)    c8LogInfo(__VA_ARGS__)
+#   define C8_LOG_WARNING(...) c8LogWarning(__VA_ARGS__)
+#   define C8_LOG_ERROR(...)   c8LogError(__VA_ARGS__)
+#   define C8_LOG_FATAL(...)   c8LogFatal(__VA_ARGS__)
+#else
+#   define C8_LOG_INFO(...)    (void)0
+#   define C8_LOG_WARNING(...) (void)0
+#   define C8_LOG_ERROR(...)   (void)0
+#   define C8_LOG_FATAL(...)   (void)0
+#endif
+
+typedef enum Chip8ErrorCode
+{
+    ERR_NONE,
+    ERR_ASSERTION_FAILED,
+    ERR_FAILED_TO_OPEN_FILE,
+    ERR_FAILED_TO_READ_ROM,
+    ERR_OUT_OF_MEMORY,
+    ERR_FAILED_TO_LOAD_TARGET,
+} Chip8ErrorCode;
+
+void c8InitLogging(void);
+void c8CloseLogging(void);
+
+void c8LogInfo(const char *fmt, ...);
+void c8LogWarning(const char *fmt, ...);
+void c8LogError(const char *fmt, ...);
+void c8LogFatal(const char *fmt, ...);
+
+void c8LogInfoArgs(const char *fmt, va_list args);
+void c8LogWarningArgs(const char *fmt, va_list args);
+void c8LogErrorArgs(const char *fmt, va_list args);
+void c8LogFatalArgs(const char *fmt, va_list args);
+
+void c8Panic(Chip8ErrorCode code, const char *fmt, ...);
 
 #endif /* DEBUG_H */
 

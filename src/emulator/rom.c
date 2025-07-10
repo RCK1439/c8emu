@@ -1,7 +1,7 @@
 #include "rom.h"
+#include "specifications.h"
 
-#include "core/error.h"
-#include "core/log.h"
+#include "core/debug.h"
 #include "core/memory.h"
 
 #include <memory.h>

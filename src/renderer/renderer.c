@@ -1,8 +1,7 @@
 #include "renderer.h"
 #include "debug_overlay.h"
 
-#include "core/error.h"
-#include "core/log.h"
+#include "core/debug.h"
 #include "core/memory.h"
 
 #include <raylib.h>

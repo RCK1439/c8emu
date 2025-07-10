@@ -1,6 +1,6 @@
 #include "debug_overlay.h"
 
-#include "core/error.h"
+#include "core/debug.h"
 #include "core/memory.h"
 
 #include <stdio.h>

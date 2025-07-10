@@ -1,6 +1,6 @@
 #include "stack.h"
 
-#include "core/error.h"
+#include "core/debug.h"
 
 Chip8CallStack c8InitStack(void)
 {

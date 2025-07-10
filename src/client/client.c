@@ -1,7 +1,7 @@
 #include "client.h"
 #include "config.h"
 
-#include "core/log.h"
+#include "core/debug.h"
 #include "core/memory.h"
 #include "core/platform.h"
 

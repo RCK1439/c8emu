@@ -1,6 +1,5 @@
 #include "memory.h"
-#include "error.h"
-#include "log.h"
+#include "debug.h"
 #include "platform.h"
 
 #include <stdlib.h>
