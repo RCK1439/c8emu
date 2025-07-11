@@ -1,7 +1,8 @@
 #include "chip8.h"
 #include "cpu.h"
-#include "emulator/rom.h"
+#include "keyboard.h"
 #include "ram.h"
+#include "rom.h"
 
 #include "client/config.h"
 
@@ -101,52 +102,52 @@ void c8EmulatorOnRender(const Chip8* emulator, Chip8Renderer *renderer)
         c8AddDebugText(renderer, " - Sound timer: %x", (i32)emulator->cpu.st);
 
         c8AddDebugText(renderer, " - Keypad:");
-        c8AddDebugText(renderer, "   [K0=%d, K1=%d, K2=%d, K3=%d]",
-            (i32)emulator->cpu.keypad[0],
-            (i32)emulator->cpu.keypad[1],
-            (i32)emulator->cpu.keypad[2],
-            (i32)emulator->cpu.keypad[3]
+        c8AddDebugText(renderer, "   [K1=%d, K2=%d, K3=%d, KC=%d]",
+            (i32)emulator->cpu.keypad[0x1],
+            (i32)emulator->cpu.keypad[0x2],
+            (i32)emulator->cpu.keypad[0x3],
+            (i32)emulator->cpu.keypad[0xC]
         );
-        c8AddDebugText(renderer, "   [K4=%d, K5=%d, K6=%d, K7=%d]",
-            (i32)emulator->cpu.keypad[4],
-            (i32)emulator->cpu.keypad[5],
-            (i32)emulator->cpu.keypad[6],
-            (i32)emulator->cpu.keypad[7]
+        c8AddDebugText(renderer, "   [K4=%d, K5=%d, K6=%d, KD=%d]",
+            (i32)emulator->cpu.keypad[0x4],
+            (i32)emulator->cpu.keypad[0x5],
+            (i32)emulator->cpu.keypad[0x6],
+            (i32)emulator->cpu.keypad[0xD]
         );
-        c8AddDebugText(renderer, "   [K8=%d, K9=%d, KA=%d, KB=%d]",
-            (i32)emulator->cpu.keypad[8],
-            (i32)emulator->cpu.keypad[9],
-            (i32)emulator->cpu.keypad[10],
-            (i32)emulator->cpu.keypad[11]
+        c8AddDebugText(renderer, "   [K7=%d, K8=%d, K9=%d, KE=%d]",
+            (i32)emulator->cpu.keypad[0x7],
+            (i32)emulator->cpu.keypad[0x8],
+            (i32)emulator->cpu.keypad[0x9],
+            (i32)emulator->cpu.keypad[0xE]
         );
-        c8AddDebugText(renderer, "   [KC=%d, KD=%d, KE=%d, KF=%d]",
-            (i32)emulator->cpu.keypad[12],
-            (i32)emulator->cpu.keypad[13],
-            (i32)emulator->cpu.keypad[14],
-            (i32)emulator->cpu.keypad[15]
+        c8AddDebugText(renderer, "   [KA=%d, K0=%d, KB=%d, KF=%d]",
+            (i32)emulator->cpu.keypad[0xA],
+            (i32)emulator->cpu.keypad[0x0],
+            (i32)emulator->cpu.keypad[0xB],
+            (i32)emulator->cpu.keypad[0xF]
         );
     }
 }
 
 static void c8ProcessInput(Chip8 *emulator)
 {
-    const KeyboardKey keys[C8_NUM_KEYS] = {
-        KEY_ZERO,
-        KEY_ONE,
-        KEY_TWO,
-        KEY_THREE,
-        KEY_FOUR,
-        KEY_FIVE,
-        KEY_SIX,
-        KEY_SEVEN,
-        KEY_EIGHT,
-        KEY_NINE,
-        KEY_A,
-        KEY_B,
-        KEY_C,
-        KEY_D,
-        KEY_E,
-        KEY_F
+    const Chip8Key keys[C8_NUM_KEYS] = {
+        C8_KEY_0,
+        C8_KEY_1,
+        C8_KEY_2,
+        C8_KEY_3,
+        C8_KEY_4,
+        C8_KEY_5,
+        C8_KEY_6,
+        C8_KEY_7,
+        C8_KEY_8,
+        C8_KEY_9,
+        C8_KEY_A,
+        C8_KEY_B,
+        C8_KEY_C,
+        C8_KEY_D,
+        C8_KEY_E,
+        C8_KEY_F,
     };
 
     for (u8 k = 0; k < C8_NUM_KEYS; k++)

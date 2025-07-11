@@ -1,4 +1,5 @@
 #include "cpu.h"
+#include "emulator/keyboard.h"
 #include "instructions.h"
 #include "ram.h"
 #include "stack.h"
@@ -96,7 +97,7 @@ void c8StepCPU(Chip8CPU *cpu, Chip8RAM *ram)
     }
 }
 
-void c8SetCPUKey(Chip8CPU *cpu, u8 key, u8 val)
+void c8SetCPUKey(Chip8CPU *cpu, Chip8Key key, u8 val)
 {
     cpu->keypad[key] = val;
 }

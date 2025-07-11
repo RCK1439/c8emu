@@ -1,6 +1,7 @@
 #ifndef CPU_H
 #define CPU_H
 
+#include "keyboard.h"
 #include "ram.h"
 #include "specifications.h"
 #include "stack.h"
@@ -25,7 +26,7 @@ typedef struct Chip8CPU
 Chip8CPU c8InitCPU(void);
 
 void c8StepCPU(Chip8CPU *cpu, Chip8RAM *ram);
-void c8SetCPUKey(Chip8CPU *cpu, u8 key, u8 val);
+void c8SetCPUKey(Chip8CPU *cpu, Chip8Key key, u8 val);
 
 #endif /* CPU_H */
 
