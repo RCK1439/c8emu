@@ -79,10 +79,17 @@ void c8Panic(Chip8ErrorCode code, const char *fmt, ...)
     va_list args = { 0 };
 
     va_start(args, fmt);
-    vfprintf(stderr, fmt, args);
+    if (s_globalLogger)
+    {
+        rkLogFatalArgs(s_globalLogger, fmt, args);
+    }
+    else
+    {
+        vfprintf(stderr, fmt, args);
+        fputc('\n', stderr);
+    }
     va_end(args);
-    
-    fputc('\n', stderr);
+
     exit(code);
 }
 

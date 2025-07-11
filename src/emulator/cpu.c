@@ -10,6 +10,13 @@
 #include <raylib.h>
 #include <memory.h>
 
+#define C8_ENSURE_ADDR_MODE(addr_mode, expected)                 \
+    if ((addr_mode) != (expected))                               \
+        c8Panic(ERR_INVALID_ADDRESS_MODE,                        \
+            "Unexpected address mode in %s executor routine: %d",\
+            __func__,                                            \
+            (addr_mode))                                         \
+
 typedef void (*Chip8Exec)(Chip8CPU *cpu, Chip8RAM *ram, const Chip8OpCode *op);
 
 static void c8Raw(Chip8CPU *cpu, Chip8RAM *ram, const Chip8OpCode *op);
@@ -93,16 +100,19 @@ void c8SetCPUKey(Chip8CPU *cpu, u8 key, u8 val)
 
 static void c8Raw(UNUSED Chip8CPU *cpu, UNUSED Chip8RAM *ram, UNUSED const Chip8OpCode *op)
 {
+    C8_ENSURE_ADDR_MODE(op->addressMode, AM_OPCODE);
     /* Intentionally left empty */
 }
 
 static void c8Cls(Chip8CPU *cpu, UNUSED Chip8RAM *ram, UNUSED const Chip8OpCode *op)
 {
+    C8_ENSURE_ADDR_MODE(op->addressMode, AM_NONE);
     memset(cpu->video, 0x00, sizeof(cpu->video));
 }
 
 static void c8Ret(Chip8CPU *cpu, UNUSED Chip8RAM *ram, UNUSED const Chip8OpCode *op)
 {
+    C8_ENSURE_ADDR_MODE(op->addressMode, AM_NONE);
     cpu->pc = c8StackPop(&cpu->stack);
 }
 
@@ -129,6 +139,7 @@ static void c8Jp(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 
 static void c8Call(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 {
+    C8_ENSURE_ADDR_MODE(op->addressMode, AM_ADDR);
     c8StackPush(&cpu->stack, cpu->pc);
     cpu->pc = op->address;
 }
@@ -275,50 +286,59 @@ static void c8Add(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 
 static void c8Or(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 {
+    C8_ENSURE_ADDR_MODE(op->addressMode, AM_VX_VY);
     cpu->v[op->x] |= cpu->v[op->y];
 }
 
 static void c8And(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 {
+    C8_ENSURE_ADDR_MODE(op->addressMode, AM_VX_VY);
     cpu->v[op->x] &= cpu->v[op->y];
 }
 
 static void c8Xor(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 {
+    C8_ENSURE_ADDR_MODE(op->addressMode, AM_VX_VY);
     cpu->v[op->x] ^= cpu->v[op->y];
 }
 
 static void c8Sub(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 {
+    C8_ENSURE_ADDR_MODE(op->addressMode, AM_VX_VY);
     cpu->v[0xF] = cpu->v[op->x] > cpu->v[op->y];
     cpu->v[op->x] -= cpu->v[op->y];
 }
 
 static void c8Shr(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 {
+    C8_ENSURE_ADDR_MODE(op->addressMode, AM_VX_VY);
     cpu->v[0xF] = cpu->v[op->x] & 0x01;
     cpu->v[op->x] >>= 1;
 }
 
 static void c8Subn(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 {
+    C8_ENSURE_ADDR_MODE(op->addressMode, AM_VX_VY);
     cpu->v[0xF] = cpu->v[op->y] > cpu->v[op->x];
     cpu->v[op->x] = cpu->v[op->y] - cpu->v[op->x];
 }
 
 static void c8Shl(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 {
+    C8_ENSURE_ADDR_MODE(op->addressMode, AM_VX_VY);
     cpu->v[0xF] = (cpu->v[op->x] & 0x80) >> 7;
     cpu->v[op->x] <<= 1;
 }
 
 static void c8Rnd(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 {
+    C8_ENSURE_ADDR_MODE(op->addressMode, AM_VX_BYTE);
     cpu->v[op->x] = GetRandomValue(0, 255) & op->byte;
 }
 
 static void c8Drw(Chip8CPU *cpu, Chip8RAM *ram, const Chip8OpCode *op)
 {
+    C8_ENSURE_ADDR_MODE(op->addressMode, AM_VX_VY_N);
     const u8 height = op->nibble;
     const u8 xp = cpu->v[op->x] % C8_SCREEN_BUFFER_WIDTH;
     const u8 yp = cpu->v[op->y] % C8_SCREEN_BUFFER_HEIGHT;
@@ -347,6 +367,7 @@ static void c8Drw(Chip8CPU *cpu, Chip8RAM *ram, const Chip8OpCode *op)
 
 static void c8Skp(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 {
+    C8_ENSURE_ADDR_MODE(op->addressMode, AM_VX);
     const u8 key = cpu->v[op->x];
     if (cpu->keypad[key])
     {
@@ -356,6 +377,7 @@ static void c8Skp(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 
 static void c8Sknp(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 {
+    C8_ENSURE_ADDR_MODE(op->addressMode, AM_VX);
     const u8 key = cpu->v[op->x];
     if (!cpu->keypad[key])
     {

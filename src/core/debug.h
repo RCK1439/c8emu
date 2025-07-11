@@ -31,6 +31,7 @@ typedef enum Chip8ErrorCode
     ERR_FAILED_TO_READ_ROM,
     ERR_OUT_OF_MEMORY,
     ERR_FAILED_TO_LOAD_TARGET,
+    ERR_INVALID_ADDRESS_MODE,
 } Chip8ErrorCode;
 
 void c8InitLogging(void);
