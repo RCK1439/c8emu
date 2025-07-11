@@ -76,7 +76,7 @@ Chip8CPU c8InitCPU(void)
 
 void c8StepCPU(Chip8CPU *cpu, Chip8RAM *ram)
 {
-    for (u8 i = 0; i < C8_OPERATIONS_PER_CYCLE; i++)
+    for (u8 i = 0; i < C8_OPS_PER_CYCLE; i++)
     {
         const u16 raw = ((u16)c8RAMRead(ram, cpu->pc) << 8) | (u16)c8RAMRead(ram, cpu->pc + 1);
         cpu->pc += 2;
@@ -353,26 +353,37 @@ static void c8Drw(Chip8CPU *cpu, Chip8RAM *ram, const Chip8OpCode *op)
 {
     C8_ENSURE_ADDR_MODE(op->addressMode, AM_VX_VY_N);
     const u8 height = op->nibble;
-    const u8 xp = cpu->v[op->x] % C8_SCREEN_BUFFER_WIDTH;
-    const u8 yp = cpu->v[op->y] % C8_SCREEN_BUFFER_HEIGHT;
+    const u8 x0 = cpu->v[op->x] % C8_SCREEN_BUFFER_WIDTH;
+    const u8 y0 = cpu->v[op->y] % C8_SCREEN_BUFFER_HEIGHT;
 
     cpu->v[0xF] = 0;
-    for (u8 r = 0; r < height; r++)
+    for (u8 y = 0; y < height; y++)
     {
-        const u8 sprite = c8RAMRead(ram, cpu->idx + r);
-        for (u8 c = 0; c < 8; c++)
+        const u16 y1 = (u16)(y0 + y);
+        if (y1 >= C8_SCREEN_BUFFER_HEIGHT)
         {
-            const u8 spritePx = sprite & (0x80 >> c);
-            u8 *const screenPx = &cpu->video[(yp + r) * C8_SCREEN_BUFFER_WIDTH + (xp + c)];
+            continue;
+        }
 
-            if (spritePx)
+        const u8 sprite = c8RAMRead(ram, cpu->idx + y);
+        for (u8 x = 0; x < 8; x++)
+        {
+            const u16 x1 = (u16)(x0 + x);
+            if (x1 >= C8_SCREEN_BUFFER_WIDTH)
             {
-                if (*screenPx == 0xFF)
+                continue;
+            }
+
+            const u8 spritePx = sprite & (0x80 >> x);
+            if (spritePx > 0)
+            {
+                const u16 idx = (u16)((x0 + x) % C8_SCREEN_BUFFER_WIDTH) + (u16)(y0 + y) * C8_SCREEN_BUFFER_WIDTH;
+                if (cpu->video[idx] == 0xFF)
                 {
                     cpu->v[0xF] = 1;
                 }
 
-                *screenPx ^= 0xFF;
+                cpu->video[idx] ^= 0xFF;
             }
         }
     }

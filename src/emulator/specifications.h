@@ -31,6 +31,6 @@
 
 // --- cycles -----------------------------------------------------------------
 
-#define C8_OPERATIONS_PER_CYCLE (8)
+#define C8_OPS_PER_CYCLE (8)
 
 #endif /* SPECIFICATIONS_H */
