@@ -352,6 +352,7 @@ static void c8Rnd(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 static void c8Drw(Chip8CPU *cpu, Chip8RAM *ram, const Chip8OpCode *op)
 {
     C8_ENSURE_ADDR_MODE(op->addressMode, AM_VX_VY_N);
+    
     const u8 height = op->nibble;
     const u8 x0 = cpu->v[op->x] % C8_SCREEN_BUFFER_WIDTH;
     const u8 y0 = cpu->v[op->y] % C8_SCREEN_BUFFER_HEIGHT;
@@ -377,7 +378,7 @@ static void c8Drw(Chip8CPU *cpu, Chip8RAM *ram, const Chip8OpCode *op)
             const u8 spritePx = sprite & (0x80 >> x);
             if (spritePx > 0)
             {
-                const u16 idx = (u16)((x0 + x) % C8_SCREEN_BUFFER_WIDTH) + (u16)(y0 + y) * C8_SCREEN_BUFFER_WIDTH;
+                const u16 idx = x1 + y1 * C8_SCREEN_BUFFER_WIDTH;
                 if (cpu->video[idx] == 0xFF)
                 {
                     cpu->v[0xF] = 1;
