@@ -29,4 +29,8 @@
 
 #define C8_CALLSTACK_SIZE (32)
 
+// --- cycles -----------------------------------------------------------------
+
+#define C8_OPERATIONS_PER_CYCLE (8)
+
 #endif /* SPECIFICATIONS_H */

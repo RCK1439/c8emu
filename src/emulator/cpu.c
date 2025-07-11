@@ -41,7 +41,7 @@ static void c8Drw(Chip8CPU *cpu, Chip8RAM *ram, const Chip8OpCode *op);
 static void c8Skp(Chip8CPU *cpu, Chip8RAM *ram, const Chip8OpCode *op);
 static void c8Sknp(Chip8CPU *cpu, Chip8RAM *ram, const Chip8OpCode *op);
 
-static Chip8Exec s_executors[] = {
+static const Chip8Exec s_executors[] = {
     [IN_RAW] = c8Raw,
     [IN_CLS] = c8Cls,
     [IN_RET] = c8Ret,
@@ -76,11 +76,14 @@ Chip8CPU c8InitCPU(void)
 
 void c8StepCPU(Chip8CPU *cpu, Chip8RAM *ram)
 {
-    const u16 raw = ((u16)c8RAMRead(ram, cpu->pc) << 8) | (u16)c8RAMRead(ram, cpu->pc + 1);
-    cpu->pc += 2;
+    for (u8 i = 0; i < C8_OPERATIONS_PER_CYCLE; i++)
+    {
+        const u16 raw = ((u16)c8RAMRead(ram, cpu->pc) << 8) | (u16)c8RAMRead(ram, cpu->pc + 1);
+        cpu->pc += 2;
 
-    const Chip8OpCode opcode = c8DecodeOpCode(raw);
-    s_executors[opcode.instr](cpu, ram, &opcode);
+        const Chip8OpCode opcode = c8DecodeOpCode(raw);
+        s_executors[opcode.instr](cpu, ram, &opcode);
+    }
 
     if (cpu->dt > 0)
     {
