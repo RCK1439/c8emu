@@ -69,7 +69,7 @@ void c8EmulatorOnRender(const Chip8* emulator, Chip8Renderer *renderer)
     if (c8DebugOverlayEnabled(renderer))
     {
         c8AddDebugText(renderer, "CPU:");
-        c8AddDebugText(renderer, " - Registers:", (i32)emulator->cpu.v[0], (i32)emulator->cpu.v[1], (i32)emulator->cpu.v[2], (i32)emulator->cpu.v[3]);
+        c8AddDebugText(renderer, " - Registers:");
         c8AddDebugText(renderer, "   (V0=%x V1=%x V2=%x V3=%x)",
             (i32)emulator->cpu.v[0],
             (i32)emulator->cpu.v[1],
