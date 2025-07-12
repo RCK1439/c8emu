@@ -133,7 +133,7 @@ static void c8Jp(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
             cpu->pc = op->address;
             break;
         case AM_V0_ADDR:
-            cpu->pc = cpu->v[0x0] + op->address;
+            cpu->pc = cpu->registers[V0] + op->address;
             break;
         default:
             C8_ASSERT(C8_FALSE, "Invalid opcode in %s: %d", __func__, op->addressMode);
@@ -153,13 +153,13 @@ static void c8Se(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
     switch (op->addressMode)
     {
         case AM_VX_BYTE:
-            if (cpu->v[op->x] == op->byte)
+            if (cpu->registers[op->x] == op->byte)
             {
                 cpu->pc += 2;
             }
             break;
         case AM_VX_VY:
-            if (cpu->v[op->x] == cpu->v[op->y])
+            if (cpu->registers[op->x] == cpu->registers[op->y])
             {
                 cpu->pc += 2;
             }
@@ -175,13 +175,13 @@ static void c8Sne(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
     switch (op->addressMode)
     {
         case AM_VX_BYTE:
-            if (cpu->v[op->x] != op->byte)
+            if (cpu->registers[op->x] != op->byte)
             {
                 cpu->pc += 2;
             }
             break;
         case AM_VX_VY:
-            if (cpu->v[op->x] != cpu->v[op->y])
+            if (cpu->registers[op->x] != cpu->registers[op->y])
             {
                 cpu->pc += 2;
             }
@@ -197,16 +197,16 @@ static void c8Ld(Chip8CPU *cpu, Chip8RAM *ram, const Chip8OpCode *op)
     switch (op->addressMode)
     {
         case AM_VX_BYTE:
-            cpu->v[op->x] = op->byte;
+            cpu->registers[op->x] = op->byte;
             break;
         case AM_VX_VY:
-            cpu->v[op->x] = cpu->v[op->y];
+            cpu->registers[op->x] = cpu->registers[op->y];
             break;
         case AM_I_ADDR:
             cpu->idx = op->address;
             break;
         case AM_VX_DT:
-            cpu->v[op->x] = cpu->dt;
+            cpu->registers[op->x] = cpu->dt;
             break;
         case AM_VX_KEY:
         {
@@ -216,7 +216,7 @@ static void c8Ld(Chip8CPU *cpu, Chip8RAM *ram, const Chip8OpCode *op)
                 if (cpu->keypad[i])
                 {
                     found = C8_TRUE;
-                    cpu->v[op->x] = i;
+                    cpu->registers[op->x] = i;
                     break;
                 }
             }
@@ -227,19 +227,19 @@ static void c8Ld(Chip8CPU *cpu, Chip8RAM *ram, const Chip8OpCode *op)
             }
         } break;
         case AM_DT_VX:
-            cpu->dt = cpu->v[op->x];
+            cpu->dt = cpu->registers[op->x];
             break;
         case AM_ST_VX:
-            cpu->st = cpu->v[op->x];
+            cpu->st = cpu->registers[op->x];
             break;
         case AM_FONT_VX:
         {
-            const u8 digit = cpu->v[op->x];
+            const u8 digit = cpu->registers[op->x];
             cpu->idx = C8_ADDR_FONT + (5 * digit);
         } break;
         case AM_BCD_VX:
         {
-            u8 value = cpu->v[op->x];
+            u8 value = cpu->registers[op->x];
             c8RAMWrite(ram, cpu->idx + 2, value % 10);
 	        value /= 10;
 
@@ -251,13 +251,13 @@ static void c8Ld(Chip8CPU *cpu, Chip8RAM *ram, const Chip8OpCode *op)
         case AM_ADDR_I_VX:
             for (u8 i = 0; i <= op->x; i++)
             {
-                c8RAMWrite(ram, cpu->idx++, cpu->v[i]);
+                c8RAMWrite(ram, cpu->idx++, cpu->registers[i]);
             }
             break;
         case AM_VX_ADDR_I:
             for (u8 i = 0; i <= op->x; i++)
             {
-                cpu->v[i] = c8RAMRead(ram, cpu->idx++);
+                cpu->registers[i] = c8RAMRead(ram, cpu->idx++);
             }
             break;
         default:
@@ -272,18 +272,18 @@ static void c8Add(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
     {
         case AM_VX_BYTE:
         {
-            const u16 sum = (u16)cpu->v[op->x] + (u16)op->byte;
-            cpu->v[op->x] = (u8)(sum & 0x00FF);
-            cpu->v[0xF] = sum > 0x00FF;
+            const u16 sum = (u16)cpu->registers[op->x] + (u16)op->byte;
+            cpu->registers[op->x] = (u8)(sum & 0x00FF);
+            cpu->registers[VF] = sum > 0x00FF;
         } break;
         case AM_VX_VY:
         {
-            const u16 sum = (u16)cpu->v[op->x] + (u16)cpu->v[op->y];
-            cpu->v[op->x] = (u8)(sum & 0x00FF);
-            cpu->v[0xF] = sum > 0x00FF;
+            const u16 sum = (u16)cpu->registers[op->x] + (u16)cpu->registers[op->y];
+            cpu->registers[op->x] = (u8)(sum & 0x00FF);
+            cpu->registers[VF] = sum > 0x00FF;
         } break;
         case AM_I_VX:
-            cpu->idx += cpu->v[op->x];
+            cpu->idx += cpu->registers[op->x];
             break;
         default:
             C8_ASSERT(C8_FALSE, "Invalid opcode %s: %d", __func__, op->addressMode);
@@ -294,60 +294,60 @@ static void c8Add(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 static void c8Or(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 {
     C8_ENSURE_ADDR_MODE(op->addressMode, AM_VX_VY);
-    cpu->v[op->x] |= cpu->v[op->y];
-    cpu->v[0xF] = 0;
+    cpu->registers[op->x] |= cpu->registers[op->y];
+    cpu->registers[VF] = 0;
 }
 
 static void c8And(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 {
     C8_ENSURE_ADDR_MODE(op->addressMode, AM_VX_VY);
-    cpu->v[op->x] &= cpu->v[op->y];
-    cpu->v[0xF] = 0;
+    cpu->registers[op->x] &= cpu->registers[op->y];
+    cpu->registers[VF] = 0;
 }
 
 static void c8Xor(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 {
     C8_ENSURE_ADDR_MODE(op->addressMode, AM_VX_VY);
-    cpu->v[op->x] ^= cpu->v[op->y];
-    cpu->v[0xF] = 0;
+    cpu->registers[op->x] ^= cpu->registers[op->y];
+    cpu->registers[VF] = 0;
 }
 
 static void c8Sub(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 {
     C8_ENSURE_ADDR_MODE(op->addressMode, AM_VX_VY);
-    const u16 diff = (u16)cpu->v[op->x] - (u16)cpu->v[op->y];
-    cpu->v[op->x] = (u8)(diff & 0x00FF);
-    cpu->v[0xF] = diff <= 0x00FF;
+    const u16 diff = (u16)cpu->registers[op->x] - (u16)cpu->registers[op->y];
+    cpu->registers[op->x] = (u8)(diff & 0x00FF);
+    cpu->registers[VF] = diff <= 0x00FF;
 }
 
 static void c8Shr(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 {
     C8_ENSURE_ADDR_MODE(op->addressMode, AM_VX_VY);
-    const u8 bit = cpu->v[op->y] & 0x01;
-    cpu->v[op->x] = cpu->v[op->y] >> 1;
-    cpu->v[0xF] = bit > 0;
+    const u8 bit = cpu->registers[op->y] & 0x01;
+    cpu->registers[op->x] = cpu->registers[op->y] >> 1;
+    cpu->registers[VF] = bit > 0;
 }
 
 static void c8Subn(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 {
     C8_ENSURE_ADDR_MODE(op->addressMode, AM_VX_VY);
-    const u16 diff = (u16)cpu->v[op->y] - (u16)cpu->v[op->x];
-    cpu->v[op->x] = (u8)(diff & 0x00FF);
-    cpu->v[0xF] = diff <= 0x00FF;
+    const u16 diff = (u16)cpu->registers[op->y] - (u16)cpu->registers[op->x];
+    cpu->registers[op->x] = (u8)(diff & 0x00FF);
+    cpu->registers[VF] = diff <= 0x00FF;
 }
 
 static void c8Shl(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 {
     C8_ENSURE_ADDR_MODE(op->addressMode, AM_VX_VY);
-    const u8 bit = cpu->v[op->y] & 0x80;
-    cpu->v[op->x] = cpu->v[op->y] << 1;
-    cpu->v[0xF] = bit > 0;
+    const u8 bit = cpu->registers[op->y] & 0x80;
+    cpu->registers[op->x] = cpu->registers[op->y] << 1;
+    cpu->registers[VF] = bit > 0;
 }
 
 static void c8Rnd(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 {
     C8_ENSURE_ADDR_MODE(op->addressMode, AM_VX_BYTE);
-    cpu->v[op->x] = GetRandomValue(0, 255) & op->byte;
+    cpu->registers[op->x] = GetRandomValue(0, 255) & op->byte;
 }
 
 static void c8Drw(Chip8CPU *cpu, Chip8RAM *ram, const Chip8OpCode *op)
@@ -355,10 +355,10 @@ static void c8Drw(Chip8CPU *cpu, Chip8RAM *ram, const Chip8OpCode *op)
     C8_ENSURE_ADDR_MODE(op->addressMode, AM_VX_VY_N);
     
     const u8 height = op->nibble;
-    const u8 x0 = cpu->v[op->x] % C8_SCREEN_BUFFER_WIDTH;
-    const u8 y0 = cpu->v[op->y] % C8_SCREEN_BUFFER_HEIGHT;
+    const u8 x0 = cpu->registers[op->x] % C8_SCREEN_BUFFER_WIDTH;
+    const u8 y0 = cpu->registers[op->y] % C8_SCREEN_BUFFER_HEIGHT;
 
-    cpu->v[0xF] = 0;
+    cpu->registers[VF] = 0;
     for (u8 y = 0; y < height; y++)
     {
         const u16 y1 = (u16)(y0 + y);
@@ -382,7 +382,7 @@ static void c8Drw(Chip8CPU *cpu, Chip8RAM *ram, const Chip8OpCode *op)
                 const u16 idx = x1 + y1 * C8_SCREEN_BUFFER_WIDTH;
                 if (cpu->video[idx] == 0xFF)
                 {
-                    cpu->v[0xF] = 1;
+                    cpu->registers[VF] = 1;
                 }
 
                 cpu->video[idx] ^= 0xFF;
@@ -394,7 +394,7 @@ static void c8Drw(Chip8CPU *cpu, Chip8RAM *ram, const Chip8OpCode *op)
 static void c8Skp(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 {
     C8_ENSURE_ADDR_MODE(op->addressMode, AM_VX);
-    const u8 key = cpu->v[op->x];
+    const u8 key = cpu->registers[op->x];
     if (cpu->keypad[key])
     {
         cpu->pc += 2;
@@ -404,7 +404,7 @@ static void c8Skp(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 static void c8Sknp(Chip8CPU *cpu, UNUSED Chip8RAM *ram, const Chip8OpCode *op)
 {
     C8_ENSURE_ADDR_MODE(op->addressMode, AM_VX);
-    const u8 key = cpu->v[op->x];
+    const u8 key = cpu->registers[op->x];
     if (!cpu->keypad[key])
     {
         cpu->pc += 2;

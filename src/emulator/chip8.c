@@ -71,28 +71,28 @@ void c8EmulatorOnRender(const Chip8* emulator, Chip8Renderer *renderer)
         c8AddDebugText(renderer, "CPU:");
         c8AddDebugText(renderer, " - Registers:");
         c8AddDebugText(renderer, "   (V0=%x V1=%x V2=%x V3=%x)",
-            (i32)emulator->cpu.v[0],
-            (i32)emulator->cpu.v[1],
-            (i32)emulator->cpu.v[2],
-            (i32)emulator->cpu.v[3]
+            (i32)emulator->cpu.registers[V0],
+            (i32)emulator->cpu.registers[V1],
+            (i32)emulator->cpu.registers[V2],
+            (i32)emulator->cpu.registers[V3]
         );
         c8AddDebugText(renderer, "   (V4=%x V5=%x V6=%x V7=%x)",
-            (i32)emulator->cpu.v[4],
-            (i32)emulator->cpu.v[5],
-            (i32)emulator->cpu.v[6],
-            (i32)emulator->cpu.v[7]
+            (i32)emulator->cpu.registers[V4],
+            (i32)emulator->cpu.registers[V5],
+            (i32)emulator->cpu.registers[V6],
+            (i32)emulator->cpu.registers[V7]
         );
         c8AddDebugText(renderer, "   (V8=%x V9=%x VA=%x VB=%x)",
-            (i32)emulator->cpu.v[8],
-            (i32)emulator->cpu.v[9],
-            (i32)emulator->cpu.v[10],
-            (i32)emulator->cpu.v[11]
+            (i32)emulator->cpu.registers[V8],
+            (i32)emulator->cpu.registers[V9],
+            (i32)emulator->cpu.registers[VA],
+            (i32)emulator->cpu.registers[VB]
         );
         c8AddDebugText(renderer, "   (VC=%x VD=%x VE=%x VF=%x)",
-            (i32)emulator->cpu.v[12],
-            (i32)emulator->cpu.v[13],
-            (i32)emulator->cpu.v[14],
-            (i32)emulator->cpu.v[15]
+            (i32)emulator->cpu.registers[VC],
+            (i32)emulator->cpu.registers[VD],
+            (i32)emulator->cpu.registers[VE],
+            (i32)emulator->cpu.registers[VF]
         );
 
         c8AddDebugText(renderer, " - Index register: %x", emulator->cpu.idx);
