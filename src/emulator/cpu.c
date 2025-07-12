@@ -11,14 +11,24 @@
 #include <raylib.h>
 #include <memory.h>
 
+// --- debug macros -----------------------------------------------------------
+
+#if defined(C8_DEBUG)
 #define C8_ENSURE_ADDR_MODE(addr_mode, expected)                 \
     if ((addr_mode) != (expected))                               \
         c8Panic(ERR_INVALID_ADDRESS_MODE,                        \
             "Unexpected address mode in %s executor routine: %d",\
             __func__,                                            \
-            (addr_mode))                                         \
+            (addr_mode))
+#else
+#define C8_ENSURE_ADDR_MODE(addr_mode, expected)
+#endif
+
+// --- type definitions -------------------------------------------------------
 
 typedef void (*Chip8Exec)(Chip8CPU *cpu, Chip8RAM *ram, const Chip8OpCode *op);
+
+// --- instruction executors --------------------------------------------------
 
 static void c8Raw(Chip8CPU *cpu, Chip8RAM *ram, const Chip8OpCode *op);
 static void c8Cls(Chip8CPU *cpu, Chip8RAM *ram, const Chip8OpCode *op);
@@ -66,6 +76,8 @@ static const Chip8Exec s_executors[] = {
     [IN_SKNP] = c8Sknp
 };
 
+// --- cpu interface ----------------------------------------------------------
+
 Chip8CPU c8InitCPU(void)
 {
     Chip8CPU cpu = { 0 };
@@ -101,6 +113,8 @@ void c8SetCPUKey(Chip8CPU *cpu, Chip8Key key, u8 val)
 {
     cpu->keypad[key] = val;
 }
+
+// --- executor implementations -----------------------------------------------
 
 static void c8Raw(UNUSED Chip8CPU *cpu, UNUSED Chip8RAM *ram, UNUSED const Chip8OpCode *op)
 {

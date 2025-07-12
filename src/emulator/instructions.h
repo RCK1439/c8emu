@@ -3,6 +3,8 @@
 
 #include "core/types.h"
 
+// --- type definitions -------------------------------------------------------
+
 typedef enum Chip8Instr
 {
     IN_RAW,
@@ -54,14 +56,13 @@ typedef struct Chip8OpCode
 {
     Chip8Instr instr;
     Chip8AddrMode addressMode;
-    
-    u16 address;
-    u16 raw;
-
-    u8 x;
-    u8 y;
-    u8 byte;
-    u8 nibble;
+    union
+    {
+        struct { u16 address; };
+        struct { u16 raw; };
+        struct { u8 x, y; };
+        struct { u8 px, py, n; };
+    };
 } Chip8OpCode;
 
 Chip8OpCode c8DecodeOpCode(u16 op);
