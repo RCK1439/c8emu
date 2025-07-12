@@ -17,10 +17,12 @@ struct Chip8Client
     Chip8Renderer *renderer;
     Chip8Bool      isRunning;
     Chip8Bool      debug;
+    float          updateTime;
+    float          renderTime;
 };
 
 static void c8ClientOnUpdate(Chip8Client *client);
-static void c8ClientOnRender(const Chip8Client *client);
+static void c8ClientOnRender(Chip8Client *client);
 static void c8ClientOnResize(Chip8Client *client);
 
 #if defined(C8_DEBUG)
@@ -55,6 +57,8 @@ Chip8Client *c8InitClient(i32 argc, char **argv)
     client->renderer = c8InitRenderer();
     client->isRunning = C8_TRUE;
     client->debug = C8_FALSE;
+    client->updateTime = 0.0f;
+    client->renderTime = 0.0f;
 
     if (argc > 1)
     {
@@ -90,6 +94,7 @@ void c8CloseClient(Chip8Client *client)
 
 static void c8ClientOnUpdate(Chip8Client *client)
 {
+    const float t0 = (float)GetTime();
     if (IsKeyPressed(KEY_F3))
     {
         c8ToggleDebugOverlay(client->renderer);
@@ -121,20 +126,27 @@ static void c8ClientOnUpdate(Chip8Client *client)
     c8EmulatorOnUpdate(client->emulator);
 
     client->isRunning = !WindowShouldClose();
+    client->updateTime = (float)GetTime() - t0;
 }
 
-static void c8ClientOnRender(const Chip8Client *client)
+static void c8ClientOnRender(Chip8Client *client)
 {
+    const float t0 = (float)GetTime();
+
     if (c8DebugOverlayEnabled(client->renderer))
     {
         c8AddDebugText(client->renderer, "Client:");
         c8AddDebugText(client->renderer, "- Resolution: %dx%d", GetScreenWidth(), GetScreenHeight());
         c8AddDebugText(client->renderer, "- %d FPS (%.2fms)", GetFPS(), GetFrameTime() * 1000.0f);
+        c8AddDebugText(client->renderer, "- Update time: %.5fms", client->updateTime * 1000.0f);
+        c8AddDebugText(client->renderer, "- Render time: %.5fms", client->renderTime * 1000.0f);
     }
 
     c8RendererBegin(client->renderer); 
         c8EmulatorOnRender(client->emulator, client->renderer);
     c8RendererEnd(client->renderer);
+
+    client->renderTime = (float)GetTime() - t0;
 }
 
 static void c8ClientOnResize(Chip8Client *client)

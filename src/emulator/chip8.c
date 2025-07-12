@@ -69,58 +69,58 @@ void c8EmulatorOnRender(const Chip8* emulator, Chip8Renderer *renderer)
     if (c8DebugOverlayEnabled(renderer))
     {
         c8AddDebugText(renderer, "CPU:");
-        c8AddDebugText(renderer, " - Registers:");
-        c8AddDebugText(renderer, "   (V0=%x V1=%x V2=%x V3=%x)",
+        c8AddDebugText(renderer, "- Registers:");
+        c8AddDebugText(renderer, "  (V0=%x V1=%x V2=%x V3=%x)",
             (i32)emulator->cpu.registers[V0],
             (i32)emulator->cpu.registers[V1],
             (i32)emulator->cpu.registers[V2],
             (i32)emulator->cpu.registers[V3]
         );
-        c8AddDebugText(renderer, "   (V4=%x V5=%x V6=%x V7=%x)",
+        c8AddDebugText(renderer, "  (V4=%x V5=%x V6=%x V7=%x)",
             (i32)emulator->cpu.registers[V4],
             (i32)emulator->cpu.registers[V5],
             (i32)emulator->cpu.registers[V6],
             (i32)emulator->cpu.registers[V7]
         );
-        c8AddDebugText(renderer, "   (V8=%x V9=%x VA=%x VB=%x)",
+        c8AddDebugText(renderer, "  (V8=%x V9=%x VA=%x VB=%x)",
             (i32)emulator->cpu.registers[V8],
             (i32)emulator->cpu.registers[V9],
             (i32)emulator->cpu.registers[VA],
             (i32)emulator->cpu.registers[VB]
         );
-        c8AddDebugText(renderer, "   (VC=%x VD=%x VE=%x VF=%x)",
+        c8AddDebugText(renderer, "  (VC=%x VD=%x VE=%x VF=%x)",
             (i32)emulator->cpu.registers[VC],
             (i32)emulator->cpu.registers[VD],
             (i32)emulator->cpu.registers[VE],
             (i32)emulator->cpu.registers[VF]
         );
 
-        c8AddDebugText(renderer, " - Index register: %x", emulator->cpu.idx);
-        c8AddDebugText(renderer, " - Program counter: %x", emulator->cpu.pc);
+        c8AddDebugText(renderer, "- Index register: %x", emulator->cpu.idx);
+        c8AddDebugText(renderer, "- Program counter: %x", emulator->cpu.pc);
 
-        c8AddDebugText(renderer, " - Delay timer: %x", (i32)emulator->cpu.dt);
-        c8AddDebugText(renderer, " - Sound timer: %x", (i32)emulator->cpu.st);
+        c8AddDebugText(renderer, "- Delay timer: %x", (i32)emulator->cpu.dt);
+        c8AddDebugText(renderer, "- Sound timer: %x", (i32)emulator->cpu.st);
 
-        c8AddDebugText(renderer, " - Keypad:");
-        c8AddDebugText(renderer, "   [K1=%d, K2=%d, K3=%d, KC=%d]",
+        c8AddDebugText(renderer, "- Keypad:");
+        c8AddDebugText(renderer, "  [K1=%d, K2=%d, K3=%d, KC=%d]",
             (i32)emulator->cpu.keypad[0x1],
             (i32)emulator->cpu.keypad[0x2],
             (i32)emulator->cpu.keypad[0x3],
             (i32)emulator->cpu.keypad[0xC]
         );
-        c8AddDebugText(renderer, "   [K4=%d, K5=%d, K6=%d, KD=%d]",
+        c8AddDebugText(renderer, "  [K4=%d, K5=%d, K6=%d, KD=%d]",
             (i32)emulator->cpu.keypad[0x4],
             (i32)emulator->cpu.keypad[0x5],
             (i32)emulator->cpu.keypad[0x6],
             (i32)emulator->cpu.keypad[0xD]
         );
-        c8AddDebugText(renderer, "   [K7=%d, K8=%d, K9=%d, KE=%d]",
+        c8AddDebugText(renderer, "  [K7=%d, K8=%d, K9=%d, KE=%d]",
             (i32)emulator->cpu.keypad[0x7],
             (i32)emulator->cpu.keypad[0x8],
             (i32)emulator->cpu.keypad[0x9],
             (i32)emulator->cpu.keypad[0xE]
         );
-        c8AddDebugText(renderer, "   [KA=%d, K0=%d, KB=%d, KF=%d]",
+        c8AddDebugText(renderer, "  [KA=%d, K0=%d, KB=%d, KF=%d]",
             (i32)emulator->cpu.keypad[0xA],
             (i32)emulator->cpu.keypad[0x0],
             (i32)emulator->cpu.keypad[0xB],
