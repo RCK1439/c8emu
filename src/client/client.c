@@ -11,23 +11,56 @@
 
 #include <raylib.h>
 
+// --- type definitions -------------------------------------------------------
+
+/**
+ * This struct "contains" the process as a whole. The whole emulator is tied to
+ * the lifetime of this struct
+ */
 struct Chip8Client
 {
-    Chip8         *emulator;
-    Chip8Renderer *renderer;
-    Chip8Bool      isRunning;
-    Chip8Bool      debug;
-    float          updateTime;
-    float          renderTime;
+    Chip8         *emulator;   // A handle to the emulator
+    Chip8Renderer *renderer;   // A handle to the renderer
+    Chip8Bool      isRunning;  // Flag indicating whether the application is running or not
+    float          updateTime; // The time taken, in seconds, to update the logic of the application
+    float          renderTime; // The time taken, in seconds, to render the application to the window
 };
 
+// --- static functions -------------------------------------------------------
+
+/**
+ * Called once per frame to update the logic of the client
+ *
+ * @param[in] client
+ *      The handle to the client
+ */
 static void c8ClientOnUpdate(Chip8Client *client);
+
+/**
+ * Called once per frame to render the client to the window
+ *
+ * @param[in] client
+ *      The handle to the client
+ */
 static void c8ClientOnRender(Chip8Client *client);
+
+/**
+ * Called once the window has been resized, to adjust the window content
+ *
+ * @param[in] client
+ *      The handle to the client
+ */
 static void c8ClientOnResize(Chip8Client *client);
 
 #if defined(C8_DEBUG)
+/**
+ * This is simply a callback logging function so that raylib can use the
+ * internal logging system that we have got here
+ */
 static void c8RaylibLogger(int logLevel, const char *fmt, va_list args);
 #endif
+
+// --- client interface -------------------------------------------------------
 
 Chip8Client *c8InitClient(i32 argc, char **argv)
 {
@@ -56,7 +89,6 @@ Chip8Client *c8InitClient(i32 argc, char **argv)
     client->emulator = c8InitEmulator();
     client->renderer = c8InitRenderer();
     client->isRunning = C8_TRUE;
-    client->debug = C8_FALSE;
     client->updateTime = 0.0f;
     client->renderTime = 0.0f;
 
@@ -91,6 +123,8 @@ void c8CloseClient(Chip8Client *client)
     c8CloseLogging();
 #endif
 }
+
+// --- static function implementations ----------------------------------------
 
 static void c8ClientOnUpdate(Chip8Client *client)
 {
