@@ -1,6 +1,8 @@
 #ifndef PLATFORM_H
 #define PLATFORM_H
 
+// --- operating system detection ---------------------------------------------
+
 #if defined(_WIN32) || defined(_WIN64)
 #   define C8_PLATFORM_WINDOWS
 #elif defined(__linux__)
@@ -11,6 +13,8 @@
 #   error "Unsupported platform"
 #endif
 
+// --- build mode configuration -----------------------------------------------
+
 #if defined(DEBUG)
 #   define C8_DEBUG
 #elif defined(NDEBUG)
@@ -18,6 +22,8 @@
 #else
 #   define C8_DEBUG
 #endif
+
+// --- compiler detection -----------------------------------------------------
 
 #if defined(__GNUC__)
 #   define C8_COMPILER_GCC
@@ -29,11 +35,15 @@
 #   error "Unsupported compiler"
 #endif
 
+// --- platform-specific format specifiers ------------------------------------
+
 #if defined(C8_PLATFORM_WINDOWS)
 #   define SIZE_T_FMT "%llu"
 #elif defined(C8_PLATFORM_LINUX) || defined(C8_PLATFORM_APPLE)
 #   define SIZE_T_FMT "%lu"
 #endif
+
+// --- compiler-specific attributes -------------------------------------------
 
 #if defined(C8_COMPILER_GCC)
 #   define UNUSED __attribute__((unused))

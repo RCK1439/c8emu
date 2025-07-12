@@ -13,14 +13,28 @@
 
 #include <raylib.h>
 
+// --- struct definitions -----------------------------------------------------
+
+// Definition of `Chip8` handle
 struct Chip8
 {
-    Chip8RAM  ram;
-    Chip8CPU  cpu;
-    Chip8Bool romLoaded;
+    Chip8RAM  ram;       // The Chip-8 memory
+    Chip8CPU  cpu;       // The Chip-8 processor
+    Chip8Bool romLoaded; // Flag indicating whether a ROM is loaded or not
 };
 
+// --- static functions -------------------------------------------------------
+
+/**
+ * Processes any input by the user on their host-machine and sends the relevant
+ * input data to the emulator
+ *
+ * @param[in] emulator
+ *      The handle to the emulator
+ */
 static void c8ProcessInput(Chip8 *emulator);
+
+// --- chip-8 interface -------------------------------------------------------
 
 Chip8 *c8InitEmulator(void)
 {
@@ -128,6 +142,8 @@ void c8EmulatorOnRender(const Chip8* emulator, Chip8Renderer *renderer)
         );
     }
 }
+
+// --- static function implementations ----------------------------------------
 
 static void c8ProcessInput(Chip8 *emulator)
 {

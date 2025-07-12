@@ -3,13 +3,19 @@
 
 #include "core/platform.h"
 
+// --- utility macros ---------------------------------------------------------
+
 #define STR(x)       STRINGIFY(x)
 #define STRINGIFY(x) #x
+
+// --- version ----------------------------------------------------------------
 
 #define C8_VERSION_MAJOR 1
 #define C8_VERSION_MINOR 5
 
 #define C8_VERSION_STRING "v"STR(C8_VERSION_MAJOR)"."STR(C8_VERSION_MINOR)
+
+// --- window details ---------------------------------------------------------
 
 #define C8_PROG_NAME "c8emu"
 

@@ -4,6 +4,8 @@
 
 #include <stdlib.h>
 
+// --- memory interface -------------------------------------------------------
+
 void *c8Malloc(size_t numBytes)
 {
     void *const ptr = malloc(numBytes);

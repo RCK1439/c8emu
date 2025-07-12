@@ -6,7 +6,11 @@
 #define RK_LOG_IMPLEMENTATION
 #include <rklog/rklog.h>
 
-static rkLogger *s_globalLogger = NULL;
+// --- globals (oh no) --------------------------------------------------------
+
+static rkLogger *s_globalLogger = NULL; // The handle to our global logger
+
+// --- debug interface --------------------------------------------------------
 
 void c8InitLogging(void)
 {
