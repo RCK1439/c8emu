@@ -56,13 +56,12 @@ typedef struct Chip8OpCode
 {
     Chip8Instr instr;
     Chip8AddrMode addressMode;
-    union
-    {
-        struct { u16 address; };
-        struct { u16 raw; };
-        struct { u8 x, y; };
-        struct { u8 px, py, n; };
-    };
+    u16 address;
+    u16 raw;
+    u8 x;
+    u8 y;
+    u8 byte;
+    u8 nibble; 
 } Chip8OpCode;
 
 Chip8OpCode c8DecodeOpCode(u16 op);
