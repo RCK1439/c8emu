@@ -9,13 +9,13 @@
 
 #define C8_NUM_REGISTERS (16)
 
-#define C8_SCREEN_BUFFER_WIDTH (64)
+#define C8_SCREEN_BUFFER_WIDTH  (64)
 #define C8_SCREEN_BUFFER_HEIGHT (32)
 
 // --- memory -----------------------------------------------------------------
 
 #define C8_FONTSET_SIZE (80)
-#define C8_MEMORY_SIZE (4 * 1024)
+#define C8_MEMORY_SIZE  (4 * 1024)
 #define C8_MAX_ROM_SIZE (C8_MEMORY_SIZE - 512)
 
 #define C8_ADDR_ROM    (0x0200) // Starting address for ROM data
