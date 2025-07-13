@@ -5,6 +5,9 @@
 
 // --- type definitions -------------------------------------------------------
 
+/**
+ * All the possible instructions the Chip-8 processor has
+ */
 typedef enum C8Instr
 {
     IN_RAW,
@@ -30,6 +33,9 @@ typedef enum C8Instr
     IN_SKNP
 } C8Instr;
 
+/**
+ * Enum containing different address modes for different instructions
+ */
 typedef enum C8AddrMode
 {
     AM_NONE,
@@ -52,18 +58,32 @@ typedef enum C8AddrMode
     AM_VX_ADDR_I
 } C8AddrMode;
 
+/**
+ * Struct representing the decoded opcode read from the ROM file
+ */
 typedef struct C8OpCode
 {
-    C8Instr instr;
-    C8AddrMode addressMode;
-    u16 address;
-    u16 raw;
-    u8 x;
-    u8 y;
-    u8 byte;
-    u8 nibble; 
+    C8Instr    instr;       // The instruction
+    C8AddrMode addressMode; // The mode which the instruction must be addressed with
+    u16        address;     // Memory address argument
+    u16        raw;         // Raw opcode argument
+    u8         x;           // X-register argument
+    u8         y;           // Y-register argument
+    u8         byte;        // Byte argument
+    u8         nibble;      // Nibble argument
 } C8OpCode;
 
+// --- instructions interface -------------------------------------------------
+
+/**
+ * Decodes a raw opcode from a Chip-8 ROM file
+ *
+ * @param[in] op
+ *      The raw opcode to decode
+ *
+ * @return
+ *      The decoded opcode
+ */
 C8OpCode c8DecodeOpCode(u16 op);
 
 #endif /* INSTRUCTIONS_H */

@@ -131,7 +131,7 @@ static void c8Cls(C8CPU *cpu, UNUSED C8RAM *ram, UNUSED const C8OpCode *op)
 static void c8Ret(C8CPU *cpu, UNUSED C8RAM *ram, UNUSED const C8OpCode *op)
 {
     C8_ENSURE_ADDR_MODE(op->addressMode, AM_NONE);
-    cpu->pc = c8StackPop(&cpu->stack);
+    cpu->pc = c8PopAddr(&cpu->stack);
 }
 
 static void c8Sys(UNUSED C8CPU *cpu, UNUSED C8RAM *ram, const UNUSED C8OpCode *op)
@@ -158,7 +158,7 @@ static void c8Jp(C8CPU *cpu, UNUSED C8RAM *ram, const C8OpCode *op)
 static void c8Call(C8CPU *cpu, UNUSED C8RAM *ram, const C8OpCode *op)
 {
     C8_ENSURE_ADDR_MODE(op->addressMode, AM_ADDR);
-    c8StackPush(&cpu->stack, cpu->pc);
+    c8PushAddr(&cpu->stack, cpu->pc);
     cpu->pc = op->address;
 }
 

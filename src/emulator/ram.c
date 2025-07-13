@@ -2,7 +2,17 @@
 
 #include <memory.h>
 
+// --- utility functions ------------------------------------------------------
+
+/**
+ * Loads the Chip-8 font into memory
+ *
+ * @param[in] ram
+ *		A pointer to the Chip-8 RAM
+ */
 static void c8LoadFont(C8RAM *ram);
+
+// --- ram implementation -----------------------------------------------------
 
 C8RAM c8InitRAM(void)
 {
@@ -28,6 +38,8 @@ u8 c8RAMRead(const C8RAM *ram, u16 addr)
     addr &= 0x0FFF;
     return ram->memory[addr];
 }
+
+// --- function implementations -----------------------------------------------
 
 static void c8LoadFont(C8RAM *ram)
 {

@@ -7,6 +7,8 @@
 #include <memory.h>
 #include <stdio.h>
 
+// --- rom implementation -----------------------------------------------------
+
 C8ROM c8LoadROM(const char *romFile)
 {
     C8ROM rom = { 0 };

@@ -3,6 +3,12 @@
 
 #include <raylib.h>
 
+// --- type definitions -------------------------------------------------------
+
+/**
+ * Enum mapping the keyboard keys to Chip-8 keys
+ * Our emulator makes use of the QWER-format for Chip-8
+ */
 typedef enum C8Key
 {
     C8_KEY_1 = KEY_ONE, C8_KEY_2 = KEY_TWO, C8_KEY_3 = KEY_THREE, C8_KEY_C = KEY_FOUR,

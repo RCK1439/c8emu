@@ -1,11 +1,15 @@
 #include "instructions.h"
 
+// --- useful macros ----------------------------------------------------------
+
 #define INSTR(op) (((op) & 0xF000) >> 12)
 #define X(op)     (((op) & 0x0F00) >> 8)
 #define Y(op)     (((op) & 0x00F0) >> 4)
 #define N(op)     ((op) & 0x000F)
 #define KK(op)    ((op) & 0x00FF)
 #define NNN(op)   ((op) & 0x0FFF)
+
+// --- instructions implementation --------------------------------------------
 
 C8OpCode c8DecodeOpCode(u16 op)
 {
