@@ -7,9 +7,9 @@
 #define KK(op)    ((op) & 0x00FF)
 #define NNN(op)   ((op) & 0x0FFF)
 
-Chip8OpCode c8DecodeOpCode(u16 op)
+C8OpCode c8DecodeOpCode(u16 op)
 {
-    Chip8OpCode code = { 0 };
+    C8OpCode code = { 0 };
 
     switch (op & 0xF000)
     {

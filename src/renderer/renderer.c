@@ -7,24 +7,24 @@
 #include <raylib.h>
 #include <raymath.h>
 
-struct Chip8Renderer
+struct C8Renderer
 {
-    Font               font;
-    RenderTexture2D    target;
-    Chip8DebugOverlay *debugOverlay;
-    Chip8Bool          drawDebugOverlay;
+    Font             font;
+    RenderTexture2D  target;
+    C8DebugOverlay  *debugOverlay;
+    C8Bool           drawDebugOverlay;
 };
 
-static void c8DrawDebugOverlay(Chip8Renderer *renderer);
+static void c8DrawDebugOverlay(C8Renderer *renderer);
 
-Chip8Renderer *c8InitRenderer(void)
+C8Renderer *c8InitRenderer(void)
 {
     C8_ASSERT(IsWindowReady(), "Window not yet ready");
 
     const i32 screenWidth = GetScreenWidth();
     const i32 screenHeight = GetScreenHeight();
 
-    Chip8Renderer *const renderer = C8_MALLOC(Chip8Renderer, 1);
+    C8Renderer *const renderer = C8_MALLOC(C8Renderer, 1);
     renderer->font = GetFontDefault();
     renderer->target = LoadRenderTexture(screenWidth, screenHeight);
     renderer->debugOverlay = c8CreateDebugOverlay();
@@ -37,20 +37,20 @@ Chip8Renderer *c8InitRenderer(void)
     return renderer;
 }
 
-void c8CloseRenderer(Chip8Renderer *renderer)
+void c8CloseRenderer(C8Renderer *renderer)
 {
     c8FreeDebugOverlay(renderer->debugOverlay);
     UnloadRenderTexture(renderer->target);
     C8_FREE(renderer);
 }
 
-void c8RendererBegin(Chip8Renderer *renderer)
+void c8RendererBegin(C8Renderer *renderer)
 {
     BeginTextureMode(renderer->target);
     ClearBackground(BLACK);
 }
 
-void c8RendererEnd(Chip8Renderer *renderer)
+void c8RendererEnd(C8Renderer *renderer)
 {
     EndTextureMode();
 
@@ -76,7 +76,7 @@ void c8RendererEnd(Chip8Renderer *renderer)
     EndDrawing();
 }
 
-void c8RendererOnResize(Chip8Renderer *renderer)
+void c8RendererOnResize(C8Renderer *renderer)
 {
     UnloadRenderTexture(renderer->target);
 
@@ -87,7 +87,7 @@ void c8RendererOnResize(Chip8Renderer *renderer)
     C8_LOG_WARNING("Framebuffer resized: %dx%d", screenWidth, screenHeight);
 }
 
-void c8DrawBuffer(Chip8Renderer *renderer, const u8 *buffer, size_t width, size_t height)
+void c8DrawBuffer(C8Renderer *renderer, const u8 *buffer, size_t width, size_t height)
 {
     const float scale = (float)renderer->target.texture.width / (float)width;
 
@@ -112,17 +112,17 @@ void c8DrawBuffer(Chip8Renderer *renderer, const u8 *buffer, size_t width, size_
     }
 }
 
-void c8ToggleDebugOverlay(Chip8Renderer *renderer)
+void c8ToggleDebugOverlay(C8Renderer *renderer)
 {
     renderer->drawDebugOverlay = !renderer->drawDebugOverlay;
 }
 
-Chip8Bool c8DebugOverlayEnabled(const Chip8Renderer *renderer)
+C8Bool c8DebugOverlayEnabled(const C8Renderer *renderer)
 {
     return renderer->drawDebugOverlay;
 }
 
-void c8AddDebugText(Chip8Renderer *renderer, const char *fmt, ...)
+void c8AddDebugText(C8Renderer *renderer, const char *fmt, ...)
 {
     if (!renderer->drawDebugOverlay)
     {
@@ -136,13 +136,13 @@ void c8AddDebugText(Chip8Renderer *renderer, const char *fmt, ...)
     va_end(args);
 }
 
-static void c8DrawDebugOverlay(Chip8Renderer *renderer)
+static void c8DrawDebugOverlay(C8Renderer *renderer)
 {
     const size_t size = c8GetDebugOverlaySize(renderer->debugOverlay);
     
     for (size_t i = 0; i < size; i++)
     {
-        const Chip8DebugText debugText = c8GetDebugTextAt(renderer->debugOverlay, i);
+        const C8DebugText debugText = c8GetDebugTextAt(renderer->debugOverlay, i);
         const Vector2 size = MeasureTextEx(renderer->font, debugText.text, 20.0f, 2.0f);
         const Rectangle box = {
             .x = debugText.position.x,

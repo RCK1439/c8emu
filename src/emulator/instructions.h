@@ -5,7 +5,7 @@
 
 // --- type definitions -------------------------------------------------------
 
-typedef enum Chip8Instr
+typedef enum C8Instr
 {
     IN_RAW,
     IN_CLS,
@@ -28,9 +28,9 @@ typedef enum Chip8Instr
     IN_DRW,
     IN_SKP,
     IN_SKNP
-} Chip8Instr;
+} C8Instr;
 
-typedef enum Chip8AddrMode
+typedef enum C8AddrMode
 {
     AM_NONE,
     AM_OPCODE,
@@ -50,21 +50,21 @@ typedef enum Chip8AddrMode
     AM_BCD_VX,
     AM_ADDR_I_VX,
     AM_VX_ADDR_I
-} Chip8AddrMode;
+} C8AddrMode;
 
-typedef struct Chip8OpCode
+typedef struct C8OpCode
 {
-    Chip8Instr instr;
-    Chip8AddrMode addressMode;
+    C8Instr instr;
+    C8AddrMode addressMode;
     u16 address;
     u16 raw;
     u8 x;
     u8 y;
     u8 byte;
     u8 nibble; 
-} Chip8OpCode;
+} C8OpCode;
 
-Chip8OpCode c8DecodeOpCode(u16 op);
+C8OpCode c8DecodeOpCode(u16 op);
 
 #endif /* INSTRUCTIONS_H */
 

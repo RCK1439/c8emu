@@ -3,14 +3,14 @@
 
 #include "core/types.h"
 
-typedef struct Chip8ROM
+typedef struct C8ROM
 {
     u8         *data;
     size_t      size;
     const char *romName;
-} Chip8ROM;
+} C8ROM;
 
-Chip8ROM c8LoadROM(const char *romFile);
-void c8UnloadROM(Chip8ROM rom);
+C8ROM c8LoadROM(const char *romFile);
+void c8UnloadROM(C8ROM rom);
 
 #endif /* ROM_H */

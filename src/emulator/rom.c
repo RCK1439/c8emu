@@ -7,9 +7,9 @@
 #include <memory.h>
 #include <stdio.h>
 
-Chip8ROM c8LoadROM(const char *romFile)
+C8ROM c8LoadROM(const char *romFile)
 {
-    Chip8ROM rom = { 0 };
+    C8ROM rom = { 0 };
 
     FILE *const file = fopen(romFile, "rb");
     if (!file)
@@ -36,7 +36,7 @@ Chip8ROM c8LoadROM(const char *romFile)
     return rom;
 }
 
-void c8UnloadROM(Chip8ROM rom)
+void c8UnloadROM(C8ROM rom)
 {
     C8_FREE(rom.data);
     C8_LOG_WARNING("ROM unloaded");

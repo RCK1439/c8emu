@@ -3,22 +3,22 @@
 
 #include "core/types.h"
 
-typedef struct Chip8Renderer Chip8Renderer;
+typedef struct C8Renderer C8Renderer;
 
-Chip8Renderer *c8InitRenderer(void);
-void c8CloseRenderer(Chip8Renderer *renderer);
+C8Renderer *c8InitRenderer(void);
+void c8CloseRenderer(C8Renderer *renderer);
 
-void c8RendererBegin(Chip8Renderer *renderer);
-void c8RendererEnd(Chip8Renderer *renderer);
+void c8RendererBegin(C8Renderer *renderer);
+void c8RendererEnd(C8Renderer *renderer);
 
-void c8RendererOnResize(Chip8Renderer *renderer);
+void c8RendererOnResize(C8Renderer *renderer);
 
-void c8DrawBuffer(Chip8Renderer *renderer, const u8 *buffer, size_t width, size_t height);
+void c8DrawBuffer(C8Renderer *renderer, const u8 *buffer, size_t width, size_t height);
 
-void c8ToggleDebugOverlay(Chip8Renderer *renderer);
-Chip8Bool c8DebugOverlayEnabled(const Chip8Renderer *renderer);
+void c8ToggleDebugOverlay(C8Renderer *renderer);
+C8Bool c8DebugOverlayEnabled(const C8Renderer *renderer);
 
-void c8AddDebugText(Chip8Renderer *renderer, const char *fmt, ...);
+void c8AddDebugText(C8Renderer *renderer, const char *fmt, ...);
 
 #endif /* RENDERER_H */
 

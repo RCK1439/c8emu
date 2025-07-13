@@ -17,13 +17,13 @@
  * This struct "contains" the process as a whole. The whole emulator is tied to
  * the lifetime of this struct
  */
-struct Chip8Client
+struct C8Client
 {
-    Chip8         *emulator;   // A handle to the emulator
-    Chip8Renderer *renderer;   // A handle to the renderer
-    Chip8Bool      isRunning;  // Flag indicating whether the application is running or not
-    float          updateTime; // The time taken, in seconds, to update the logic of the application
-    float          renderTime; // The time taken, in seconds, to render the application to the window
+    C8Emulator *emulator;   // A handle to the emulator
+    C8Renderer *renderer;   // A handle to the renderer
+    C8Bool      isRunning;  // Flag indicating whether the application is running or not
+    float       updateTime; // The time taken, in seconds, to update the logic of the application
+    float       renderTime; // The time taken, in seconds, to render the application to the window
 };
 
 // --- static functions -------------------------------------------------------
@@ -34,7 +34,7 @@ struct Chip8Client
  * @param[in] client
  *      The handle to the client
  */
-static void c8ClientOnUpdate(Chip8Client *client);
+static void c8ClientOnUpdate(C8Client *client);
 
 /**
  * Called once per frame to render the client to the window
@@ -42,7 +42,7 @@ static void c8ClientOnUpdate(Chip8Client *client);
  * @param[in] client
  *      The handle to the client
  */
-static void c8ClientOnRender(Chip8Client *client);
+static void c8ClientOnRender(C8Client *client);
 
 /**
  * Called once the window has been resized, to adjust the window content
@@ -50,7 +50,7 @@ static void c8ClientOnRender(Chip8Client *client);
  * @param[in] client
  *      The handle to the client
  */
-static void c8ClientOnResize(Chip8Client *client);
+static void c8ClientOnResize(C8Client *client);
 
 #if defined(C8_DEBUG)
 /**
@@ -62,7 +62,7 @@ static void c8RaylibLogger(int logLevel, const char *fmt, va_list args);
 
 // --- client interface -------------------------------------------------------
 
-Chip8Client *c8InitClient(i32 argc, char **argv)
+C8Client *c8InitClient(i32 argc, char **argv)
 {
 #if defined(C8_RELEASE)
     SetTraceLogLevel(LOG_NONE);
@@ -85,7 +85,7 @@ Chip8Client *c8InitClient(i32 argc, char **argv)
     SetTargetFPS(C8_TARGET_FPS);
     SetWindowMinSize(C8_WINDOW_WIDTH, C8_WINDOW_HEIGHT);
 
-    Chip8Client *const client = C8_MALLOC(Chip8Client, 1);
+    C8Client *const client = C8_MALLOC(C8Client, 1);
     client->emulator = c8InitEmulator();
     client->renderer = c8InitRenderer();
     client->isRunning = C8_TRUE;
@@ -100,7 +100,7 @@ Chip8Client *c8InitClient(i32 argc, char **argv)
     return client;
 }
 
-void c8RunClient(Chip8Client *client)
+void c8RunClient(C8Client *client)
 {
     while (client->isRunning)
     {
@@ -109,7 +109,7 @@ void c8RunClient(Chip8Client *client)
     }
 }
 
-void c8CloseClient(Chip8Client *client)
+void c8CloseClient(C8Client *client)
 {
     c8CloseRenderer(client->renderer);
     c8CloseEmulator(client->emulator);
@@ -126,7 +126,7 @@ void c8CloseClient(Chip8Client *client)
 
 // --- static function implementations ----------------------------------------
 
-static void c8ClientOnUpdate(Chip8Client *client)
+static void c8ClientOnUpdate(C8Client *client)
 {
     const float t0 = (float)GetTime();
     if (IsKeyPressed(KEY_F3))
@@ -163,7 +163,7 @@ static void c8ClientOnUpdate(Chip8Client *client)
     client->updateTime = (float)GetTime() - t0;
 }
 
-static void c8ClientOnRender(Chip8Client *client)
+static void c8ClientOnRender(C8Client *client)
 {
     const float t0 = (float)GetTime();
 
@@ -183,7 +183,7 @@ static void c8ClientOnRender(Chip8Client *client)
     client->renderTime = (float)GetTime() - t0;
 }
 
-static void c8ClientOnResize(Chip8Client *client)
+static void c8ClientOnResize(C8Client *client)
 {
     c8RendererOnResize(client->renderer);
 }

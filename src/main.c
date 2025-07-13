@@ -2,7 +2,7 @@
 
 int main(int argc, char **argv)
 {
-    Chip8Client *const client = c8InitClient(argc, argv);
+    C8Client *const client = c8InitClient(argc, argv);
     if (!client)
     {
         return C8_FAILURE;

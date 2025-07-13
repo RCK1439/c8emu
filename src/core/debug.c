@@ -78,7 +78,7 @@ void c8LogFatalArgs(const char *fmt, va_list args)
     rkLogFatalArgs(s_globalLogger, fmt, args);
 }
 
-void c8Panic(Chip8ErrorCode code, const char *fmt, ...)
+void c8Panic(C8ErrorCode code, const char *fmt, ...)
 {
     va_list args = { 0 };
 

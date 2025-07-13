@@ -15,12 +15,12 @@
 
 // --- struct definitions -----------------------------------------------------
 
-// Definition of `Chip8` handle
-struct Chip8
+// Definition of `C8Emulator` handle
+struct C8Emulator
 {
-    Chip8RAM  ram;       // The Chip-8 memory
-    Chip8CPU  cpu;       // The Chip-8 processor
-    Chip8Bool romLoaded; // Flag indicating whether a ROM is loaded or not
+    C8RAM  ram;       // The Chip-8 memory
+    C8CPU  cpu;       // The Chip-8 processor
+    C8Bool romLoaded; // Flag indicating whether a ROM is loaded or not
 };
 
 // --- static functions -------------------------------------------------------
@@ -32,13 +32,13 @@ struct Chip8
  * @param[in] emulator
  *      The handle to the emulator
  */
-static void c8ProcessInput(Chip8 *emulator);
+static void c8ProcessInput(C8Emulator *emulator);
 
 // --- chip-8 interface -------------------------------------------------------
 
-Chip8 *c8InitEmulator(void)
+C8Emulator *c8InitEmulator(void)
 {
-    Chip8 *const emulator = C8_MALLOC(Chip8, 1);
+    C8Emulator *const emulator = C8_MALLOC(C8Emulator, 1);
     emulator->ram = c8InitRAM();
     emulator->cpu = c8InitCPU();
     emulator->romLoaded = C8_FALSE;
@@ -46,14 +46,14 @@ Chip8 *c8InitEmulator(void)
     return emulator;
 }
 
-void c8CloseEmulator(Chip8 *emulator)
+void c8CloseEmulator(C8Emulator *emulator)
 {
     C8_FREE(emulator);
 }
 
-void c8LoadROMInEmulator(Chip8 *emulator, const char *romFile)
+void c8LoadROMInEmulator(C8Emulator *emulator, const char *romFile)
 {
-    const Chip8ROM rom = c8LoadROM(romFile);
+    const C8ROM rom = c8LoadROM(romFile);
     if (!rom.data)
     {
         emulator->romLoaded = C8_FALSE;
@@ -67,7 +67,7 @@ void c8LoadROMInEmulator(Chip8 *emulator, const char *romFile)
     emulator->romLoaded = C8_TRUE;
 }
 
-void c8EmulatorOnUpdate(Chip8 *emulator)
+void c8EmulatorOnUpdate(C8Emulator *emulator)
 {
     c8ProcessInput(emulator);
     if (emulator->romLoaded)
@@ -76,7 +76,7 @@ void c8EmulatorOnUpdate(Chip8 *emulator)
     }
 }
 
-void c8EmulatorOnRender(const Chip8* emulator, Chip8Renderer *renderer)
+void c8EmulatorOnRender(const C8Emulator* emulator, C8Renderer *renderer)
 {
     c8DrawBuffer(renderer, emulator->cpu.video, C8_SCREEN_BUFFER_WIDTH, C8_SCREEN_BUFFER_HEIGHT);
 
@@ -145,9 +145,9 @@ void c8EmulatorOnRender(const Chip8* emulator, Chip8Renderer *renderer)
 
 // --- static function implementations ----------------------------------------
 
-static void c8ProcessInput(Chip8 *emulator)
+static void c8ProcessInput(C8Emulator *emulator)
 {
-    const Chip8Key keys[C8_NUM_KEYS] = {
+    const C8Key keys[C8_NUM_KEYS] = {
         C8_KEY_0,
         C8_KEY_1,
         C8_KEY_2,

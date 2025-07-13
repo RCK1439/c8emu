@@ -33,7 +33,7 @@
  * Enum describing different error codes that the program can return if a panic
  * occurs
  */
-typedef enum Chip8ErrorCode
+typedef enum C8ErrorCode
 {
     ERR_NONE,
     ERR_ASSERTION_FAILED,
@@ -42,7 +42,7 @@ typedef enum Chip8ErrorCode
     ERR_OUT_OF_MEMORY,
     ERR_FAILED_TO_LOAD_TARGET,
     ERR_INVALID_ADDRESS_MODE,
-} Chip8ErrorCode;
+} C8ErrorCode;
 
 // --- debug interface --------------------------------------------------------
 
@@ -136,7 +136,7 @@ void c8LogFatalArgs(const char *fmt, va_list args);
  * @param[in] fmt
  *      The format specifier of the termination message
  */
-void c8Panic(Chip8ErrorCode code, const char *fmt, ...);
+void c8Panic(C8ErrorCode code, const char *fmt, ...);
 
 #endif /* DEBUG_H */
 

@@ -2,36 +2,34 @@
 
 #include <memory.h>
 
-static void c8LoadFont(Chip8RAM *ram);
+static void c8LoadFont(C8RAM *ram);
 
-Chip8RAM c8InitRAM(void)
+C8RAM c8InitRAM(void)
 {
-    Chip8RAM ram = {
-        .memory = { 0 },
-    };
+    C8RAM ram = { 0 };
 
     c8LoadFont(&ram);
     return ram;
 }
 
-void c8UploadROMToRAM(Chip8RAM *ram, Chip8ROM rom)
+void c8UploadROMToRAM(C8RAM *ram, C8ROM rom)
 {
     memcpy(ram->memory + C8_ADDR_ROM, rom.data, rom.size);
 }
 
-void c8RAMWrite(Chip8RAM *ram, u16 addr, u8 val)
+void c8RAMWrite(C8RAM *ram, u16 addr, u8 val)
 {
     addr &= 0x0FFF;
     ram->memory[addr] = val;
 }
 
-u8 c8RAMRead(const Chip8RAM *ram, u16 addr)
+u8 c8RAMRead(const C8RAM *ram, u16 addr)
 {
     addr &= 0x0FFF;
     return ram->memory[addr];
 }
 
-static void c8LoadFont(Chip8RAM *ram)
+static void c8LoadFont(C8RAM *ram)
 {
     const u8 fontset[C8_FONTSET_SIZE] = {
     	0xF0, 0x90, 0x90, 0x90, 0xF0, // 0

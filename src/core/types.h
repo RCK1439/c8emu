@@ -16,10 +16,10 @@ typedef int16_t i16;
 typedef int32_t i32;
 typedef int64_t i64;
 
-typedef enum Chip8Bool
+typedef enum C8Bool
 {
     C8_FALSE = 0,
     C8_TRUE  = 1,
-} Chip8Bool;
+} C8Bool;
 
 #endif /* TYPES_H */

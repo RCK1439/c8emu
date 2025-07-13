@@ -8,16 +8,16 @@
 /**
  * Exit codes for ``main` to return depending on the state of the application
  */
-typedef enum Chip8ExitCode
+typedef enum C8ExitCode
 {
     C8_SUCCESS,
     C8_FAILURE, 
-} Chip8ExitCode;
+} C8ExitCode;
 
 /**
  * This struct is a handle to the client
  */
-typedef struct Chip8Client Chip8Client;
+typedef struct C8Client C8Client;
 
 // --- client interface -------------------------------------------------------
 
@@ -33,7 +33,7 @@ typedef struct Chip8Client Chip8Client;
  * @return
  *      A handle to the initialized client or `NULL` if something went wrong
  */
-Chip8Client *c8InitClient(i32 argc, char **argv);
+C8Client *c8InitClient(i32 argc, char **argv);
 
 /**
  * Runs the client and returns once the client has been prompted to close by
@@ -42,7 +42,7 @@ Chip8Client *c8InitClient(i32 argc, char **argv);
  * @param[in] client
  *      The handle to the client
  */
-void c8RunClient(Chip8Client *client);
+void c8RunClient(C8Client *client);
 
 /**
  * Cleans up all resources used by the client and closes the application
@@ -50,6 +50,6 @@ void c8RunClient(Chip8Client *client);
  * @param[in] client
  *      The handle to the client
  */
-void c8CloseClient(Chip8Client *client);
+void c8CloseClient(C8Client *client);
 
 #endif /* CLIENT_H */
