@@ -47,7 +47,7 @@ void c8CloseRenderer(C8Renderer *renderer)
 void c8RendererBegin(C8Renderer *renderer)
 {
     BeginTextureMode(renderer->target);
-    ClearBackground(DARKGRAY);
+    ClearBackground(BLACK);
 }
 
 void c8RendererEnd(C8Renderer *renderer)
