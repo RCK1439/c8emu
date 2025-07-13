@@ -47,7 +47,7 @@ void c8CloseRenderer(C8Renderer *renderer)
 void c8RendererBegin(C8Renderer *renderer)
 {
     BeginTextureMode(renderer->target);
-    ClearBackground(BLACK);
+    ClearBackground(DARKGRAY);
 }
 
 void c8RendererEnd(C8Renderer *renderer)
@@ -65,7 +65,7 @@ void c8RendererEnd(C8Renderer *renderer)
     };
     const Rectangle dest = {
         .x = 0.0f,
-        .y = 0.0f,
+        .y = (float)(GetScreenHeight() - renderer->target.texture.height) * 0.5f,
         .width = (float)renderer->target.texture.width,
         .height = (float)renderer->target.texture.height
     };
@@ -81,7 +81,7 @@ void c8RendererOnResize(C8Renderer *renderer)
     UnloadRenderTexture(renderer->target);
 
     const i32 screenWidth = GetScreenWidth();
-    const i32 screenHeight = GetScreenHeight();
+    const i32 screenHeight = screenWidth / 2;
     renderer->target = LoadRenderTexture(screenWidth, screenHeight);
 
     C8_LOG_WARNING("Framebuffer resized: %dx%d", screenWidth, screenHeight);
