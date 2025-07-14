@@ -7,22 +7,37 @@
 #include <raylib.h>
 #include <raymath.h>
 
+// --- types ------------------------------------------------------------------
+
+/**
+ * Implementation of renderering type handle
+ */
 struct C8Renderer
 {
-    Font             font;
-    RenderTexture2D  target;
-    C8DebugOverlay  *debugOverlay;
-    C8Bool           drawDebugOverlay;
+    Font             font;             // Text font
+    RenderTexture2D  target;           // Render target
+    C8DebugOverlay  *debugOverlay;     // Debug overlay handle
+    C8Bool           drawDebugOverlay; // Flag for whether overlay is enabled
 };
 
+// --- utility functions ------------------------------------------------------
+
+/**
+ * Draws the debug overlay to the window
+ * 
+ * @param[in] renderer
+ *      A handle to the renderer
+ */
 static void c8DrawDebugOverlay(C8Renderer *renderer);
+
+// --- renderer implementation ------------------------------------------------
 
 C8Renderer *c8InitRenderer(void)
 {
     C8_ASSERT(IsWindowReady(), "Window not yet ready");
 
     const i32 screenWidth = GetScreenWidth();
-    const i32 screenHeight = GetScreenHeight();
+    const i32 screenHeight = screenWidth / 2;
 
     C8Renderer *const renderer = C8_MALLOC(C8Renderer, 1);
     renderer->font = GetFontDefault();
@@ -135,6 +150,8 @@ void c8AddDebugText(C8Renderer *renderer, const char *fmt, ...)
     c8AppendDebugText(renderer->debugOverlay, fmt, args);
     va_end(args);
 }
+
+// --- utility function implementation ----------------------------------------
 
 static void c8DrawDebugOverlay(C8Renderer *renderer)
 {
