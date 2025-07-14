@@ -98,6 +98,10 @@ void c8RendererOnResize(C8Renderer *renderer)
     const i32 screenWidth = GetScreenWidth();
     const i32 screenHeight = screenWidth / 2;
     renderer->target = LoadRenderTexture(screenWidth, screenHeight);
+    if (renderer->target.id <= 0)
+    {
+        C8_LOG_ERROR("Failed to resize render target");
+    }
 
     C8_LOG_WARNING("Framebuffer resized: %dx%d", screenWidth, screenHeight);
 }
