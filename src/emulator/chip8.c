@@ -21,6 +21,7 @@ struct C8Emulator
     C8RAM  ram;       // The Chip-8 memory
     C8CPU  cpu;       // The Chip-8 processor
     C8Bool romLoaded; // Flag indicating whether a ROM is loaded or not
+    float  tick;      // Tick delay before stepping the CPU  (60Hz tick rate)
 };
 
 // --- static functions -------------------------------------------------------
@@ -42,6 +43,7 @@ C8Emulator *c8InitEmulator(void)
     emulator->ram = c8InitRAM();
     emulator->cpu = c8InitCPU();
     emulator->romLoaded = C8_FALSE;
+    emulator->tick = 0.0f;
 
     return emulator;
 }
@@ -70,10 +72,17 @@ void c8LoadROMInEmulator(C8Emulator *emulator, const char *romFile)
 void c8EmulatorOnUpdate(C8Emulator *emulator)
 {
     c8ProcessInput(emulator);
-    if (emulator->romLoaded)
+    if (emulator->tick >= C8_TICK_RATE)
     {
-        c8StepCPU(&emulator->cpu, &emulator->ram);
+        if (emulator->romLoaded)
+        {
+            c8StepCPU(&emulator->cpu, &emulator->ram);
+        }
+
+        emulator->tick -= C8_TICK_RATE;
     }
+
+    emulator->tick += GetFrameTime();
 }
 
 void c8EmulatorOnRender(const C8Emulator* emulator, C8Renderer *renderer)
@@ -148,22 +157,10 @@ void c8EmulatorOnRender(const C8Emulator* emulator, C8Renderer *renderer)
 static void c8ProcessInput(C8Emulator *emulator)
 {
     const C8Key keys[C8_NUM_KEYS] = {
-        C8_KEY_0,
-        C8_KEY_1,
-        C8_KEY_2,
-        C8_KEY_3,
-        C8_KEY_4,
-        C8_KEY_5,
-        C8_KEY_6,
-        C8_KEY_7,
-        C8_KEY_8,
-        C8_KEY_9,
-        C8_KEY_A,
-        C8_KEY_B,
-        C8_KEY_C,
-        C8_KEY_D,
-        C8_KEY_E,
-        C8_KEY_F,
+        C8_KEY_0, C8_KEY_1, C8_KEY_2, C8_KEY_3,
+        C8_KEY_4, C8_KEY_5, C8_KEY_6, C8_KEY_7,
+        C8_KEY_8, C8_KEY_9, C8_KEY_A, C8_KEY_B,
+        C8_KEY_C, C8_KEY_D, C8_KEY_E, C8_KEY_F,
     };
 
     for (u8 k = 0; k < C8_NUM_KEYS; k++)

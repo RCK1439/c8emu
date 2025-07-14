@@ -16,7 +16,7 @@
 
 #define C8_FONTSET_SIZE (80)
 #define C8_MEMORY_SIZE  (4 * 1024)
-#define C8_MAX_ROM_SIZE (C8_MEMORY_SIZE - 512)
+#define C8_MAX_ROM_SIZE (C8_MEMORY_SIZE - C8_ADDR_ROM)
 
 #define C8_ADDR_ROM    (0x0200) // Starting address for ROM data
 #define C8_ADDR_SCREEN (0x0F00) // Starting address for Screen
@@ -32,5 +32,6 @@
 // --- cycles -----------------------------------------------------------------
 
 #define C8_OPS_PER_CYCLE (8)
+#define C8_TICK_RATE     (1.0f / 60.0f)
 
 #endif /* SPECIFICATIONS_H */

@@ -82,7 +82,6 @@ C8Client *c8InitClient(i32 argc, char **argv)
     InitWindow(C8_WINDOW_WIDTH, C8_WINDOW_HEIGHT, C8_WINDOW_TITLE);
     InitAudioDevice();
 
-    SetTargetFPS(C8_TARGET_FPS);
     SetWindowMinSize(C8_WINDOW_WIDTH, C8_WINDOW_HEIGHT);
 
     C8Client *const client = C8_MALLOC(C8Client, 1);

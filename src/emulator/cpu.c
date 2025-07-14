@@ -255,10 +255,10 @@ static void c8Ld(C8CPU *cpu, C8RAM *ram, const C8OpCode *op)
         {
             u8 value = cpu->registers[op->x];
             c8RAMWrite(ram, cpu->idx + 2, value % 10);
-	        value /= 10;
+            value /= 10;
 
             c8RAMWrite(ram, cpu->idx + 1, value % 10);
-	        value /= 10;
+            value /= 10;
 
             c8RAMWrite(ram, cpu->idx, value % 10);
         } break;

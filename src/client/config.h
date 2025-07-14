@@ -27,6 +27,4 @@
 #define C8_WINDOW_WIDTH 1024
 #define C8_WINDOW_HEIGHT 512
 
-#define C8_TARGET_FPS 60
-
 #endif /* CONFIG_H */
