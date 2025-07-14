@@ -125,25 +125,25 @@ void c8EmulatorOnRender(const C8Emulator* emulator, C8Renderer *renderer)
         c8AddDebugText(renderer, "- Sound timer: %x", (i32)emulator->cpu.st);
 
         c8AddDebugText(renderer, "- Keypad:");
-        c8AddDebugText(renderer, "  [K1=%d, K2=%d, K3=%d, KC=%d]",
+        c8AddDebugText(renderer, "  (K1=%d, K2=%d, K3=%d, KC=%d)",
             (i32)emulator->cpu.keypad[0x1],
             (i32)emulator->cpu.keypad[0x2],
             (i32)emulator->cpu.keypad[0x3],
             (i32)emulator->cpu.keypad[0xC]
         );
-        c8AddDebugText(renderer, "  [K4=%d, K5=%d, K6=%d, KD=%d]",
+        c8AddDebugText(renderer, "  (K4=%d, K5=%d, K6=%d, KD=%d)",
             (i32)emulator->cpu.keypad[0x4],
             (i32)emulator->cpu.keypad[0x5],
             (i32)emulator->cpu.keypad[0x6],
             (i32)emulator->cpu.keypad[0xD]
         );
-        c8AddDebugText(renderer, "  [K7=%d, K8=%d, K9=%d, KE=%d]",
+        c8AddDebugText(renderer, "  (K7=%d, K8=%d, K9=%d, KE=%d)",
             (i32)emulator->cpu.keypad[0x7],
             (i32)emulator->cpu.keypad[0x8],
             (i32)emulator->cpu.keypad[0x9],
             (i32)emulator->cpu.keypad[0xE]
         );
-        c8AddDebugText(renderer, "  [KA=%d, K0=%d, KB=%d, KF=%d]",
+        c8AddDebugText(renderer, "  (KA=%d, K0=%d, KB=%d, KF=%d)",
             (i32)emulator->cpu.keypad[0xA],
             (i32)emulator->cpu.keypad[0x0],
             (i32)emulator->cpu.keypad[0xB],

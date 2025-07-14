@@ -7,6 +7,21 @@
 #include <raylib.h>
 #include <raymath.h>
 
+// --- some color stuff -------------------------------------------------------
+
+#define RL_COLOR(R, G, B)\
+    CLITERAL(Color) {    \
+        .r = (u8)(R),    \
+        .g = (u8)(G),    \
+        .b = (u8)(B),    \
+        .a = (u8)255     \
+    }                    \
+
+// Background color
+#define C8_BG_COLOR RL_COLOR(0, 0, 255)
+// Foreground color
+#define C8_FG_COLOR RL_COLOR(255, 255, 255)
+
 // --- types ------------------------------------------------------------------
 
 /**
@@ -62,7 +77,7 @@ void c8CloseRenderer(C8Renderer *renderer)
 void c8RendererBegin(C8Renderer *renderer)
 {
     BeginTextureMode(renderer->target);
-    ClearBackground(BLACK);
+    ClearBackground(C8_BG_COLOR);
 }
 
 void c8RendererEnd(C8Renderer *renderer)
@@ -70,7 +85,7 @@ void c8RendererEnd(C8Renderer *renderer)
     EndTextureMode();
 
     BeginDrawing();
-    ClearBackground(BLACK);
+    ClearBackground(C8_BG_COLOR);
 
     const Rectangle src = {
         .x = 0.0f,
@@ -126,7 +141,7 @@ void c8DrawBuffer(C8Renderer *renderer, const u8 *buffer, size_t width, size_t h
                 .width = scale,
                 .height = scale
             };
-            DrawRectangleRec(pixel, GREEN);
+            DrawRectangleRec(pixel, C8_FG_COLOR);
         }
     }
 }
