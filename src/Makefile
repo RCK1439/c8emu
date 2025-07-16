@@ -24,6 +24,9 @@ CC = cc
 CFLAGS = -Wall -Werror -Wpedantic -Wextra -std=c99
 ifeq ($(BUILD_MODE), BUILD_RELEASE)
 	CFLAGS += -O3 -DNDEBUG -march=native
+	ifeq ($(PLATFORM), WINDOWS)
+		CFLAGS += -DCRT_SECURE_NO_WARNINGS -mwindows
+	endif
 else
 	CFLAGS += -O0 -ggdb
 endif
