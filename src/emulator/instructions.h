@@ -78,13 +78,13 @@ typedef struct C8OpCode
 /**
  * Decodes a raw opcode from a Chip-8 ROM file
  *
- * @param[in] op
+ * @param[in] raw
  *      The raw opcode to decode
  *
  * @return
  *      The decoded opcode
  */
-C8OpCode c8DecodeOpCode(u16 op);
+C8OpCode c8DecodeOpCode(u16 raw);
 
 #endif /* INSTRUCTIONS_H */
 

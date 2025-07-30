@@ -26,7 +26,7 @@
 
 // --- type definitions -------------------------------------------------------
 
-typedef void (*C8Exec)(C8CPU *cpu, C8RAM *ram, const C8OpCode *op);
+typedef void (*C8ExecProc)(C8CPU *cpu, C8RAM *ram, const C8OpCode *op);
 
 // --- instruction executors --------------------------------------------------
 
@@ -52,7 +52,7 @@ static void c8Drw(C8CPU *cpu, C8RAM *ram, const C8OpCode *op);
 static void c8Skp(C8CPU *cpu, C8RAM *ram, const C8OpCode *op);
 static void c8Sknp(C8CPU *cpu, C8RAM *ram, const C8OpCode *op);
 
-static const C8Exec s_executors[] = {
+static const C8ExecProc s_executors[] = {
     [IN_RAW] = c8Raw,
     [IN_CLS] = c8Cls,
     [IN_RET] = c8Ret,
