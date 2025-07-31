@@ -11,7 +11,7 @@
 
 // --- type definitions -------------------------------------------------------
 
-typedef C8OpCode (*DecodeProc)(u16);
+typedef C8OpCode (*C8DecodeProc)(u16);
 
 // --- decoder functions ------------------------------------------------------
 
@@ -32,7 +32,7 @@ static C8OpCode c8DecodeD(u16 raw);
 static C8OpCode c8DecodeE(u16 raw);
 static C8OpCode c8DecodeF(u16 raw);
 
-static const DecodeProc s_Decoders[] = {
+static const C8DecodeProc s_Decoders[] = {
     c8Decode0, c8Decode1, c8Decode2, c8Decode3,
     c8Decode4, c8Decode5, c8Decode6, c8Decode7,
     c8Decode8, c8Decode9, c8DecodeA, c8DecodeB,

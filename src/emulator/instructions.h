@@ -13,7 +13,6 @@ typedef enum C8Instr
     IN_RAW,
     IN_CLS,
     IN_RET,
-    IN_SYS,
     IN_JP,
     IN_CALL,
     IN_SE,

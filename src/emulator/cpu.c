@@ -33,7 +33,6 @@ typedef void (*C8ExecProc)(C8CPU *cpu, C8RAM *ram, const C8OpCode *op);
 static void c8Raw(C8CPU *cpu, C8RAM *ram, const C8OpCode *op);
 static void c8Cls(C8CPU *cpu, C8RAM *ram, const C8OpCode *op);
 static void c8Ret(C8CPU *cpu, C8RAM *ram, const C8OpCode *op);
-static void c8Sys(C8CPU *cpu, C8RAM *ram, const C8OpCode *op);
 static void c8Jp(C8CPU *cpu, C8RAM *ram, const C8OpCode *op);
 static void c8Call(C8CPU *cpu, C8RAM *ram, const C8OpCode *op);
 static void c8Se(C8CPU *cpu, C8RAM *ram, const C8OpCode *op);
@@ -52,11 +51,10 @@ static void c8Drw(C8CPU *cpu, C8RAM *ram, const C8OpCode *op);
 static void c8Skp(C8CPU *cpu, C8RAM *ram, const C8OpCode *op);
 static void c8Sknp(C8CPU *cpu, C8RAM *ram, const C8OpCode *op);
 
-static const C8ExecProc s_executors[] = {
+static const C8ExecProc s_Executors[] = {
     [IN_RAW] = c8Raw,
     [IN_CLS] = c8Cls,
     [IN_RET] = c8Ret,
-    [IN_SYS] = c8Sys,
     [IN_JP] = c8Jp,
     [IN_CALL] = c8Call,
     [IN_SE] = c8Se,
@@ -95,7 +93,7 @@ void c8StepCPU(C8CPU *cpu, C8RAM *ram)
         cpu->pc += 2;
 
         const C8OpCode opcode = c8DecodeOpCode(raw);
-        s_executors[opcode.instr](cpu, ram, &opcode);
+        s_Executors[opcode.instr](cpu, ram, &opcode);
     }
 
     if (cpu->dt > 0)
@@ -132,11 +130,6 @@ static void c8Ret(C8CPU *cpu, UNUSED C8RAM *ram, UNUSED const C8OpCode *op)
 {
     C8_ENSURE_ADDR_MODE(op->addressMode, AM_NONE);
     cpu->pc = c8PopAddr(&cpu->stack);
-}
-
-static void c8Sys(UNUSED C8CPU *cpu, UNUSED C8RAM *ram, const UNUSED C8OpCode *op)
-{
-    /* Intentionally left empty */
 }
 
 static void c8Jp(C8CPU *cpu, UNUSED C8RAM *ram, const C8OpCode *op)
