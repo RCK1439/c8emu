@@ -181,10 +181,10 @@ static void c8DrawDebugOverlay(C8Renderer *renderer)
         const C8DebugText debugText = c8GetDebugTextAt(renderer->debugOverlay, i);
         const Vector2 size = MeasureTextEx(renderer->font, debugText.text, 20.0f, 2.0f);
         const Rectangle box = {
-            .x = debugText.position.x,
-            .y = debugText.position.y,
-            .width = size.x + 2.5f,
-            .height = size.y + 2.5f,
+            .x = debugText.position.x - 5.0f,
+            .y = debugText.position.y - 5.0f,
+            .width = size.x + 10.0f,
+            .height = size.y + 5.0f,
         };
         const Color boxColor = {
             .r = 0,
