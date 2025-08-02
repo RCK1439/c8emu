@@ -12,6 +12,24 @@ To further extend my knowledge on this, I'd like to learn [CMake](https://cmake.
 
 - **GPU**: OpenGL 3.3 capable graphics device is required
 
+## Controls
+
+The original Chip-8 had an interesting 16-key keypad layout that looks like the following:
+
+|1|2|3|C|
+|-|-|-|-|
+|4|5|6|D|
+|7|8|9|E|
+|A|0|B|F|
+
+My implementation uses the QWER-layout, which means the keys of the Chip-8 respectively map to the following:
+
+|1|2|3|4|
+|-|-|-|-|
+|Q|W|E|R|
+|A|S|D|F|
+|Z|X|C|V|
+
 ## Building
 
 ### On Linux
