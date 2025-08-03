@@ -15,10 +15,15 @@ typedef struct C8Renderer C8Renderer;
 /**
  * Initializes the renderer
  *
+ * @param[in] width
+ *      The width of the framebuffer
+ * @param[in] height
+ *      The height of the framebuffer
+ *
  * @return
  *      A handle to the renderer
  */
-C8Renderer *c8InitRenderer(void);
+C8Renderer *c8InitRenderer(size_t width, size_t height);
 
 /**
  * Releases any resources used by the renderer and closes the renderer
@@ -34,7 +39,7 @@ void c8CloseRenderer(C8Renderer *renderer);
  * @param[in] renderer
  *      A handle to the renderer
  */
-void c8RendererBegin(C8Renderer *renderer);
+void c8RendererBegin(const C8Renderer *renderer);
 
 /**
  * Instructs the renderer to end drawing
@@ -42,7 +47,7 @@ void c8RendererBegin(C8Renderer *renderer);
  * @param[in] renderer
  *      A handle to the renderer
  */
-void c8RendererEnd(C8Renderer *renderer);
+void c8RendererEnd(const C8Renderer *renderer);
 
 /**
  * To be called once the window has been resized to adjust the renderer to the
@@ -65,7 +70,7 @@ void c8RendererOnResize(C8Renderer *renderer);
  * @param[in] height
  *      The height of the pixel buffer
  */
-void c8DrawBuffer(C8Renderer *renderer, const u8 *buffer, size_t width, size_t height);
+void c8DrawBuffer(const C8Renderer *renderer, const u8 *buffer, size_t width, size_t height);
 
 /**
  * Enables/disables the debug overlay to be drawn and used

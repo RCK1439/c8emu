@@ -6,6 +6,7 @@
 #include "core/platform.h"
 
 #include "emulator/chip8.h"
+#include "emulator/specifications.h"
 
 #include "renderer/renderer.h"
 
@@ -86,7 +87,7 @@ C8Client *c8InitClient(i32 argc, char **argv)
 
     C8Client *const client = C8_MALLOC(C8Client, 1);
     client->emulator = c8InitEmulator();
-    client->renderer = c8InitRenderer();
+    client->renderer = c8InitRenderer(C8_SCREEN_BUFFER_WIDTH, C8_SCREEN_BUFFER_HEIGHT);
     client->isRunning = C8_TRUE;
     client->updateTime = 0.0f;
     client->renderTime = 0.0f;

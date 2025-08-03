@@ -4,13 +4,8 @@
 #if defined(C8_PLATFORM_WINDOWS) && defined(C8_RELEASE)
 #include <windows.h>
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
+int WINAPI WinMain(UNUSED HINSTANCE hInstance, UNUSED HINSTANCE hPrevInstance, UNUSED LPSTR lpCmdLine, UNUSED int nShowCmd)
 {
-    (void)hInstance;     // --+
-    (void)hPrevInstance; //   |
-    (void)lpCmdLine;     //   +-- unused parameters
-    (void)nShowCmd;      // --+
-
     C8Client *const client = c8InitClient(__argc, __argv);
     if (!client)
     {
@@ -24,6 +19,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 }
 
 #else
+
 int main(int argc, char **argv)
 {
     C8Client *const client = c8InitClient(argc, argv);
@@ -37,4 +33,5 @@ int main(int argc, char **argv)
 
     return C8_SUCCESS;
 }
+
 #endif

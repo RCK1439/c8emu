@@ -11,6 +11,9 @@
 
 // --- type definitions -------------------------------------------------------
 
+/**
+ * Function pointer type for decoding Chip-8 opcodes
+ */
 typedef C8OpCode (*C8DecodeProc)(u16);
 
 // --- decoder functions ------------------------------------------------------

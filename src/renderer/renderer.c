@@ -3,6 +3,7 @@
 
 #include "core/debug.h"
 #include "core/memory.h"
+#include "core/platform.h"
 
 #include <raylib.h>
 #include <raymath.h>
@@ -33,6 +34,7 @@ struct C8Renderer
     RenderTexture2D  target;           // Render target
     C8DebugOverlay  *debugOverlay;     // Debug overlay handle
     C8Bool           drawDebugOverlay; // Flag for whether overlay is enabled
+    float            scale;            // Scale factor for rendering
 };
 
 // --- utility functions ------------------------------------------------------
@@ -43,26 +45,25 @@ struct C8Renderer
  * @param[in] renderer
  *      A handle to the renderer
  */
-static void c8DrawDebugOverlay(C8Renderer *renderer);
+static void c8DrawDebugOverlay(const C8Renderer *renderer);
 
 // --- renderer implementation ------------------------------------------------
 
-C8Renderer *c8InitRenderer(void)
+C8Renderer *c8InitRenderer(size_t width, size_t height)
 {
     C8_ASSERT(IsWindowReady(), "Window not yet ready");
 
-    const i32 screenWidth = GetScreenWidth();
-    const i32 screenHeight = screenWidth / 2;
-
     C8Renderer *const renderer = C8_MALLOC(C8Renderer, 1);
     renderer->font = GetFontDefault();
-    renderer->target = LoadRenderTexture(screenWidth, screenHeight);
-    renderer->debugOverlay = c8CreateDebugOverlay();
-    renderer->drawDebugOverlay = C8_FALSE;
-    if (renderer->target.id <= 0)
+    renderer->target = LoadRenderTexture((i32)width, (i32)height);
+    if (renderer->target.id == 0)
     {
         c8Panic(ERR_FAILED_TO_LOAD_TARGET, "Failed to load render target");
     }
+    
+    renderer->debugOverlay = c8CreateDebugOverlay();
+    renderer->drawDebugOverlay = C8_FALSE;
+    renderer->scale = (float)GetScreenWidth() / (float)width;
 
     return renderer;
 }
@@ -74,13 +75,13 @@ void c8CloseRenderer(C8Renderer *renderer)
     C8_FREE(renderer);
 }
 
-void c8RendererBegin(C8Renderer *renderer)
+void c8RendererBegin(const C8Renderer *renderer)
 {
     BeginTextureMode(renderer->target);
     ClearBackground(C8_BG_COLOR);
 }
 
-void c8RendererEnd(C8Renderer *renderer)
+void c8RendererEnd(const C8Renderer *renderer)
 {
     EndTextureMode();
 
@@ -95,9 +96,9 @@ void c8RendererEnd(C8Renderer *renderer)
     };
     const Rectangle dest = {
         .x = 0.0f,
-        .y = (float)(GetScreenHeight() - renderer->target.texture.height) * 0.5f,
-        .width = (float)renderer->target.texture.width,
-        .height = (float)renderer->target.texture.height
+        .y = ((float)GetScreenHeight() - (float)renderer->target.texture.height * renderer->scale) * 0.5f,
+        .width = (float)renderer->target.texture.width * renderer->scale,
+        .height = (float)renderer->target.texture.height * renderer->scale
     };
     const Vector2 origin = Vector2Zero();
     DrawTexturePro(renderer->target.texture, src, dest, origin, 0.0f, WHITE);
@@ -108,23 +109,12 @@ void c8RendererEnd(C8Renderer *renderer)
 
 void c8RendererOnResize(C8Renderer *renderer)
 {
-    UnloadRenderTexture(renderer->target);
-
-    const i32 screenWidth = GetScreenWidth();
-    const i32 screenHeight = screenWidth / 2;
-    renderer->target = LoadRenderTexture(screenWidth, screenHeight);
-    if (renderer->target.id <= 0)
-    {
-        C8_LOG_ERROR("Failed to resize render target");
-    }
-
-    C8_LOG_WARNING("Framebuffer resized: %dx%d", screenWidth, screenHeight);
+    renderer->scale = (float)GetScreenWidth() / (float)renderer->target.texture.width;
+    C8_LOG_WARNING("Framebuffer scale adjusted: %.2f", renderer->scale);
 }
 
-void c8DrawBuffer(C8Renderer *renderer, const u8 *buffer, size_t width, size_t height)
+void c8DrawBuffer(UNUSED const C8Renderer *renderer, const u8 *buffer, size_t width, size_t height)
 {
-    const float scale = (float)renderer->target.texture.width / (float)width;
-
     for (size_t y = 0; y < height; y++)
     {
         for (size_t x = 0; x < width; x++)
@@ -135,13 +125,7 @@ void c8DrawBuffer(C8Renderer *renderer, const u8 *buffer, size_t width, size_t h
                 continue;
             }
 
-            const Rectangle pixel = {
-                .x = (float)x * scale,
-                .y = (float)y * scale,
-                .width = scale,
-                .height = scale
-            };
-            DrawRectangleRec(pixel, C8_FG_COLOR);
+            DrawPixel((i32)x, (i32)y, C8_FG_COLOR);
         }
     }
 }
@@ -172,7 +156,7 @@ void c8AddDebugText(C8Renderer *renderer, const char *fmt, ...)
 
 // --- utility function implementation ----------------------------------------
 
-static void c8DrawDebugOverlay(C8Renderer *renderer)
+static void c8DrawDebugOverlay(const C8Renderer *renderer)
 {
     const size_t size = c8GetDebugOverlaySize(renderer->debugOverlay);
     

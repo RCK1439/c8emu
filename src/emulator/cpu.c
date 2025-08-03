@@ -26,7 +26,10 @@
 
 // --- type definitions -------------------------------------------------------
 
-typedef void (*C8ExecProc)(C8CPU *cpu, C8RAM *ram, const C8OpCode *op);
+/**
+ * Function pointer type for executing Chip-8 instructions
+ */
+typedef void (*C8ExecProc)(C8CPU*, C8RAM*, const C8OpCode*);
 
 // --- instruction executors --------------------------------------------------
 

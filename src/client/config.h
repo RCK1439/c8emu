@@ -11,7 +11,7 @@
 // --- version ----------------------------------------------------------------
 
 #define C8_VERSION_MAJOR 1
-#define C8_VERSION_MINOR 5
+#define C8_VERSION_MINOR 6
 
 #define C8_VERSION_STRING "v"STR(C8_VERSION_MAJOR)"."STR(C8_VERSION_MINOR)
 
