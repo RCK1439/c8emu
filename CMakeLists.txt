@@ -7,11 +7,11 @@ set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS Debug Release)
 
 # Platform detection
 if(WIN32)
-    set(PLATFORM "WINDOWS")
+    set(PLATFORM_WINDOWS TRUE)
 elseif(UNIX AND NOT APPLE)
-    set(PLATFORM "LINUX")
+    set(PLATFORM_LINUX TRUE)
 elseif(APPLE)
-    set(PLATFORM "MACOS")
+    set(PLATFORM_MACOS TRUE)
     message(FATAL_ERROR "MacOS not yet supported")
 else()
     message(FATAL_ERROR "Unsupported platform")
@@ -33,7 +33,7 @@ add_compile_options(
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
     add_compile_definitions(NDEBUG)
     add_compile_options(-O3 -march=native)
-    if(PLATFORM STREQUAL "WINDOWS")
+    if(PLATFORM_WINDOWS)
         add_compile_definitions(CRT_SECURE_NO_WARNINGS)
         add_compile_options(-mwindows)
     endif()
@@ -68,10 +68,10 @@ include_directories(
 )
 
 # Platform-specific linking
-if(PLATFORM STREQUAL "WINDOWS")
+if(PLATFORM_WINDOWS)
     set(RAYLIB_LINK ${VENDOR_DIR}/raylib/lib/windows)
     set(LIBS raylib winmm user32 shell32 gdi32)
-elseif(PLATFORM STREQUAL "LINUX")
+elseif(PLATFORM_LINUX)
     set(RAYLIB_LINK ${VENDOR_DIR}/raylib/lib/linux)
     set(LIBS raylib m)
 endif()
@@ -81,7 +81,7 @@ link_directories(${RAYLIB_LINK})
 # Executable target
 add_executable(c8emu ${SRC_FILES})
 
-if(PLATFORM STREQUAL "WINDOWS")
+if(PLATFORM_WINDOWS)
     set_target_properties(c8emu PROPERTIES SUFFIX ".exe")
 endif()
 
