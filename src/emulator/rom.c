@@ -34,7 +34,7 @@ C8ROM c8LoadROM(const char *romFile)
     
     rom.romName = romFile;
 
-    C8_LOG_INFO("ROM successfully loaded "SIZE_T_FMT" bytes: %s", rom.size, romFile);
+    C8_LOG_INFO("ROM successfully loaded %zu bytes: %s", rom.size, romFile);
     return rom;
 }
 

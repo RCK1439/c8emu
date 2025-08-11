@@ -35,14 +35,6 @@
 #   error "Unsupported compiler"
 #endif
 
-// --- platform-specific format specifiers ------------------------------------
-
-#if defined(C8_PLATFORM_WINDOWS)
-#   define SIZE_T_FMT "%llu"
-#elif defined(C8_PLATFORM_LINUX) || defined(C8_PLATFORM_APPLE)
-#   define SIZE_T_FMT "%lu"
-#endif
-
 // --- compiler-specific attributes -------------------------------------------
 
 #if defined(C8_COMPILER_GCC)

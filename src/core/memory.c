@@ -1,6 +1,5 @@
 #include "memory.h"
 #include "debug.h"
-#include "platform.h"
 
 #include <stdlib.h>
 
@@ -14,7 +13,7 @@ void *c8Malloc(size_t numBytes)
         c8Panic(ERR_OUT_OF_MEMORY, "Out of memory");
     }
 
-    C8_LOG_WARNING("allocated "SIZE_T_FMT" bytes at ptr=%p", numBytes, ptr);
+    C8_LOG_WARNING("allocated %zu bytes at ptr=%p", numBytes, ptr);
     return ptr;
 }
 
@@ -26,7 +25,7 @@ void *c8Realloc(void *ptr, size_t numBytes)
         c8Panic(ERR_OUT_OF_MEMORY, "Out of memory");
     }
 
-    C8_LOG_WARNING("reallocated "SIZE_T_FMT" bytes to ptr=%p", numBytes, p);
+    C8_LOG_WARNING("reallocated %zu bytes to ptr=%p", numBytes, p);
     return p;
 }
 

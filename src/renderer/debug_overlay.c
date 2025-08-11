@@ -72,7 +72,7 @@ size_t c8GetDebugOverlaySize(const C8DebugOverlay *debugOverlay)
 
 C8DebugText c8GetDebugTextAt(const C8DebugOverlay *debugOverlay, size_t i)
 {
-    C8_ASSERT(i < debugOverlay->size, "Index, "SIZE_T_FMT", out of range for size: "SIZE_T_FMT, i, debugOverlay->size);
+    C8_ASSERT(i < debugOverlay->size, "Index, %zu, out of range for size: %zu", i, debugOverlay->size);
     return debugOverlay->buffer[i];
 }
 
