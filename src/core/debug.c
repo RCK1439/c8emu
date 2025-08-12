@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 #define RK_LOG_IMPLEMENTATION
-#include <rklog/rklog.h>
+#include <rklog.h>
 
 // --- globals (oh no) --------------------------------------------------------
 
