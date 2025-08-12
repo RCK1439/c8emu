@@ -32,8 +32,6 @@ My implementation uses the QWER-layout, which means the keys of the Chip-8 respe
 
 ## Building
 
-### On Linux
-
 1. Clone the repository
 ```sh
 git clone https://github.com/RCK1439/c8emu.git
@@ -44,15 +42,22 @@ git clone https://github.com/RCK1439/c8emu.git
 cd c8emu/
 ```
 
-3. Finally, build the project
+3. Create the build configuration using CMake
 ```sh
-cd src/ && make release
+cmake -B build
 ```
-This will compile the project in "release" mode with full optimizations
 
-### On Windows
+4. Go to the build directory that CMake created
+```sh
+cd build/
+```
 
-Eveything is mostly the as with the Linux compilation steps, but you will need to have [w64devkit](https://github.com/skeeto/w64devkit) installed on your system.
+5. Finally, build the project
+```sh
+cmake --build .
+```
+
+This will compile the project in debug mode with debug symbols
 
 ## Running
 
