@@ -1,7 +1,11 @@
 /**
  * rklog is a header-only logging library used for clear message logging/debugging
  * 
- * version: 1.2
+ * version: 1.4
+ *  - Added ability to ignore background color getting rid of the black background
+ *    color.
+ *  - Added better configuration macros for creating rkLogConfig structs.
+ *
  * author: Ruan C. Keet
  */
 
@@ -9,8 +13,8 @@
 #define RK_LOG_H
 
 #include <stdarg.h>
+#include <stdbool.h>
 #include <stdint.h>
-#include <stdio.h>
 
 #if defined(__cplusplus)
 extern "C" {
@@ -20,20 +24,99 @@ extern "C" {
 
 #define C_LITERAL(type) (type)
 
+/**
+ * Creates a color literal for the rkColor struct
+ * 
+ * @param R
+ *      The red channel value (0-255)
+ * @param G
+ *      The green channel value (0-255)
+ * @param B
+ *      The blue channel value (0-255)
+ */
 #define RK_COLOR(R, G, B)\
     C_LITERAL(rkColor) { \
         .r = (uint8_t)R, \
         .g = (uint8_t)G, \
-        .b = (uint8_t)B  \
+        .b = (uint8_t)B, \
     }                    \
 
-#define RK_CONFIG(TAG, BG_COLOR, FG_COLOR)\
-    C_LITERAL(rkLogConfig) {              \
-        .tag = TAG,                       \
-        .background = BG_COLOR,           \
-        .foreground = FG_COLOR,           \
-    }                                     \
+/**
+ * Creates a configuration literal for the rkLogConfig struct
+ * 
+ * @param TAG
+ *      The tag title for the severity level
+ * @param BG_COLOR
+ *      The background color of the log message
+ * @param FG_COLOR
+ *      The foreground color of the log message
+ * @param USE_BG
+ *      Flag for whether the background color should be used or not
+ * @note
+ *      If USE_BG is false, the background color will be ignored
+ */
+#define RK_CONFIG(TAG, BG_COLOR, FG_COLOR, USE_BG)\
+    C_LITERAL(rkLogConfig) {                      \
+        .tag = TAG,                               \
+        .background = BG_COLOR,                   \
+        .foreground = FG_COLOR,                   \
+        .useBackground = USE_BG,                  \
+    }                                             \
 
+/**
+ * Creates a configuration literal for the rkLogConfig struct with a background color
+ * 
+ * @param TAG
+ *      The tag title for the severity level
+ * @param BG_COLOR
+ *      The background color of the log message
+ * @param FG_COLOR
+ *      The foreground color of the log message
+ * @note
+ *      This macro sets the useBackground flag to true, indicating that the background color should be used.
+ */
+#define RK_CONFIG_BG(TAG, BG_COLOR, FG_COLOR)\
+    C_LITERAL(rkLogConfig) {                 \
+        .tag = TAG,                          \
+        .background = BG_COLOR,              \
+        .foreground = FG_COLOR,              \
+        .useBackground = true,               \
+    }                                        \
+
+/**
+ * Creates a configuration literal for the rkLogConfig struct without a background color
+ * 
+ * @param TAG
+ *      The tag title for the severity level
+ * @param FG_COLOR
+ *      The foreground color of the log message
+ * @note
+ *      This macro sets the useBackground flag to false, indicating that no background color should be used.
+ */
+#define RK_CONFIG_NO_BG(TAG, FG_COLOR)\
+    C_LITERAL(rkLogConfig) {          \
+        .tag = TAG,                   \
+        .background = RK_COLOR_BLACK, \
+        .foreground = FG_COLOR,       \
+        .useBackground = false,       \
+    }                                 \
+
+/**
+ * Creates a style literal for the rkLogStyle struct
+ *
+ * @param CFG_INFO
+ *      The configuration for info logs
+ * @param CFG_WARNING
+ *      The configuration for warning logs
+ * @param CFG_ERROR
+ *      The configuration for error logs
+ * @param CFG_FATAL_ERROR
+ *      The configuration for fatal error logs
+ * @note
+ *      This macro is used to define the overall style of a logger, which includes the configurations
+ *      for each severity level. It is typically used to create a logger with a specific style
+ *      that can be passed to the logger creation functions.
+ */
 #define RK_STYLE(CFG_INFO, CFG_WARNING, CFG_ERROR, CFG_FATAL_ERROR)\
     C_LITERAL(rkLogStyle) {                                        \
         .cfgInfo = CFG_INFO,                                       \
@@ -48,41 +131,20 @@ extern "C" {
 #define RK_COLOR_WHITE  RK_COLOR(255, 255, 255)
 #define RK_COLOR_BLACK  RK_COLOR(0, 0, 0)
 
-#define RK_NO_BG_COL RK_COLOR_BLACK
-#define RK_NO_FG_COL RK_COLOR_WHITE
-
 // --- defaults ---------------------------------------------------------------
 
-#define RK_DEFAULT_INFO_CFG C_LITERAL(rkLogConfig) {\
-        .tag = "INFO",                              \
-        .background = RK_COLOR_BLACK,               \
-        .foreground = RK_COLOR_GREEN,               \
-    }                                               \
+#define RK_DEFAULT_INFO_CFG    RK_CONFIG_NO_BG("INFO", RK_COLOR_GREEN)
+#define RK_DEFAULT_WARNING_CFG RK_CONFIG_NO_BG("WARNING", RK_COLOR_YELLOW)
+#define RK_DEFAULT_ERROR_CFG   RK_CONFIG_NO_BG("ERROR", RK_COLOR_RED)
+#define RK_DEFAULT_FATAL_CFG   RK_CONFIG_BG("FATAL", RK_COLOR_RED, RK_COLOR_WHITE)
 
-#define RK_DEFAULT_WARNING_CFG (rkLogConfig) {\
-        .tag = "WARNING",                     \
-        .background = RK_COLOR_BLACK,         \
-        .foreground = RK_COLOR_YELLOW,        \
+#define RK_DEFAULT_LOG_STYLE                  \
+    C_LITERAL(rkLogStyle) {                   \
+        .cfgInfo = RK_DEFAULT_INFO_CFG,       \
+        .cfgWarning = RK_DEFAULT_WARNING_CFG, \
+        .cfgError = RK_DEFAULT_ERROR_CFG,     \
+        .cfgFatalError = RK_DEFAULT_FATAL_CFG,\
     }                                         \
-
-#define RK_DEFAULT_ERROR_CFG (rkLogConfig) {\
-        .tag = "ERROR",                     \
-        .background = RK_COLOR_BLACK,       \
-        .foreground = RK_COLOR_RED,         \
-    }                                       \
-
-#define RK_DEFAULT_FATAL_CFG (rkLogConfig) {\
-        .tag = "FATAL",                     \
-        .background = RK_COLOR_RED,         \
-        .foreground = RK_COLOR_WHITE,       \
-    }                                       \
-
-#define RK_DEFAULT_LOG_STYLE (rkLogStyle) {\
-    .cfgInfo = RK_DEFAULT_INFO_CFG,        \
-    .cfgWarning = RK_DEFAULT_WARNING_CFG,  \
-    .cfgError = RK_DEFAULT_ERROR_CFG,      \
-    .cfgFatalError = RK_DEFAULT_FATAL_CFG, \
-}                                          \
 
 // --- type definitions -------------------------------------------------------
 
@@ -101,9 +163,10 @@ typedef struct rkColor
  */
 typedef struct rkLogConfig
 {
-    const char *tag;        // tag title for the severity level
-    rkColor     background; // background color
-    rkColor     foreground; // foreground color
+    const char *tag;           // tag title for the severity level
+    rkColor     background;    // background color
+    rkColor     foreground;    // foreground color
+    bool        useBackground; // flag for whether background color is to be used or not
 } rkLogConfig;
 
 /**
@@ -279,9 +342,14 @@ void rkLogFatalArgs(rkLogger *logger, const char *fmt, va_list args);
 #if defined(RK_LOG_IMPLEMENTATION)
 
 #include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#if defined(_WIN32) || defined(_WIN64)
+#define WINDOWS_LEAN_AND_MEAN
+#include <Windows.h> // This is a rough include ... :(
+#endif
 
 // --- string tokens ----------------------------------------------------------
 
@@ -289,9 +357,6 @@ void rkLogFatalArgs(rkLogger *logger, const char *fmt, va_list args);
 #define RK_TOKEN_ESCAPE_CODE_END   "m"
 
 #define RK_TOKEN_ESCAPE_CODE_RESET RK_TOKEN_ESCAPE_CODE_START "0" RK_TOKEN_ESCAPE_CODE_END
-
-#define RK_TOKEN_FOREGROUND "38;"
-#define RK_TOKEN_BACKGROUND "48;"
 
 #define RK_TOKEN_TRUE_COLOR_MODE "2;"
 #define RK_TOKEN_256_COLOR_PALETTE_MODE "5;"
@@ -304,13 +369,21 @@ void rkLogFatalArgs(rkLogger *logger, const char *fmt, va_list args);
 //                                                        | |  |  green channel
 //                                                        | |  |  |  blue channel
 //                                                        | |  |  |  |
-#define RK_FMT_COLOR_PRELUDE RK_TOKEN_ESCAPE_CODE_START "48;2;%d;%d;%d;38;2;%d;%d;%d" RK_TOKEN_ESCAPE_CODE_END
+#define RK_FMT_COLOR_PRELUDE RK_TOKEN_ESCAPE_CODE_START "38;2;%d;%d;%d;48;2;%d;%d;%d" RK_TOKEN_ESCAPE_CODE_END
 //                                                                      | |  |  |  |
 //                                                                      | |  |  |  blue channel
 //                                                                      | |  |  green channel
 //                                                                      | |  red channel
 //                                                                      | true color mode
 //                                                                      background
+
+//                                                              foreground
+//                                                              | true color mode
+//                                                              | |  red channel
+//                                                              | |  |  green channel
+//                                                              | |  |  |  blue channel
+//                                                              | |  |  |  |
+#define RK_FMT_COLOR_PRELUDE_NO_BG RK_TOKEN_ESCAPE_CODE_START "38;2;%d;%d;%d" RK_TOKEN_ESCAPE_CODE_END
 
 #define RK_FMT_LABEL "[%s]:[%s]:[%02d:%02d:%02d]: "
 //                      |    |      |    |    |
@@ -403,7 +476,7 @@ static void rkLogInternal(FILE *out, const char *title, rkLogConfig cfg, const c
  * @param[in] foreground
  *      The foreground color of the text
  */
-static void rkGenColorPrelude(char *buf, size_t len, rkColor background, rkColor foreground);
+static void rkGenColorPrelude(char *buf, size_t len, rkLogConfig cfg);
 
 /**
  * Formats `buf` to contain the log message tag and timestamp
@@ -441,6 +514,17 @@ static rkLogger *rkNewLogger(FILE *out, const char *title, rkLogStyle style)
     logger->style = style;
     logger->output = out;
 
+#if defined(_WIN32) || defined(_WIN64)
+    if (out == stderr)
+    {
+        const HANDLE hErr = GetStdHandle(STD_ERROR_HANDLE);
+        DWORD dwMode = 0;
+        GetConsoleMode(hErr, &dwMode);
+        dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+        SetConsoleMode(hErr, dwMode);
+    }
+#endif
+
     return logger;
 }
 
@@ -455,7 +539,7 @@ static void rkLogInternal(FILE *out, const char *title, rkLogConfig cfg, const c
     if (out == stderr)
     {
         char prelude[MAX_PRELUDE_SIZE+1] = { 0 };
-        rkGenColorPrelude(prelude, MAX_PRELUDE_SIZE, cfg.foreground, cfg.background);
+        rkGenColorPrelude(prelude, MAX_PRELUDE_SIZE, cfg);
 
         fprintf(out, RK_FMT_COLOR_OUTPUT, prelude, label, message);
     }
@@ -465,12 +549,21 @@ static void rkLogInternal(FILE *out, const char *title, rkLogConfig cfg, const c
     }
 }
 
-static void rkGenColorPrelude(char *buf, size_t len, rkColor background, rkColor foreground)
+static void rkGenColorPrelude(char *buf, size_t len, rkLogConfig cfg)
 {
-    snprintf(buf, len, RK_FMT_COLOR_PRELUDE,
-        foreground.r, foreground.g, foreground.b,
-        background.r, background.g, background.b
-    );
+    if (cfg.useBackground)
+    {
+        snprintf(buf, len, RK_FMT_COLOR_PRELUDE,
+            cfg.foreground.r, cfg.foreground.g, cfg.foreground.b,
+            cfg.background.r, cfg.background.g, cfg.background.b
+        );
+    }
+    else
+    {
+        snprintf(buf, len, RK_FMT_COLOR_PRELUDE_NO_BG,
+            cfg.foreground.r, cfg.foreground.g, cfg.foreground.b
+        );
+    }
 }
 
 static void rkGenLabel(char *buf, size_t len, const char *title, const char *tag)
