@@ -36,6 +36,7 @@ add_executable(c8emu ${SOURCES} ${HEADERS})
 
 if(MSVC)
     target_compile_options(c8emu PRIVATE /W4 /WX)
+    target_compile_definitions(c8emu PRIVATE _CRT_SECURE_NO_WARNINGS)
 else()
     target_compile_options(c8emu PRIVATE -Wall -Werror -Wpedantic -Wextra)
 endif()

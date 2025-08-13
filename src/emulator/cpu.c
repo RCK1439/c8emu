@@ -146,7 +146,7 @@ static void c8Jp(C8CPU *cpu, UNUSED C8RAM *ram, const C8OpCode *op)
             cpu->pc = cpu->registers[V0] + op->address;
             break;
         default:
-            C8_ASSERT(C8_FALSE, "Invalid opcode in %s: %d", __func__, op->addressMode);
+            c8Panic(ERR_INVALID_ADDRESS_MODE, "Unexpected address mode in %s executor routine: %d", __func__, op->addressMode);
             break;
     }
 }
@@ -175,7 +175,7 @@ static void c8Se(C8CPU *cpu, UNUSED C8RAM *ram, const C8OpCode *op)
             }
             break;
         default:
-            C8_ASSERT(C8_FALSE, "Invalid opcode in %s: %d", __func__, op->addressMode);
+            c8Panic(ERR_INVALID_ADDRESS_MODE, "Unexpected address mode in %s executor routine: %d", __func__, op->addressMode);
             break;
     }
 }
@@ -197,7 +197,7 @@ static void c8Sne(C8CPU *cpu, UNUSED C8RAM *ram, const C8OpCode *op)
             }
             break;
         default:
-            C8_ASSERT(C8_FALSE, "Invalid opcode in %s: %d", __func__, op->addressMode);
+            c8Panic(ERR_INVALID_ADDRESS_MODE, "Unexpected address mode in %s executor routine: %d", __func__, op->addressMode);
             break;
     }
 }
@@ -271,7 +271,7 @@ static void c8Ld(C8CPU *cpu, C8RAM *ram, const C8OpCode *op)
             }
             break;
         default:
-            C8_ASSERT(C8_FALSE, "Invalid opcode in %s: %d", __func__, op->addressMode);
+            c8Panic(ERR_INVALID_ADDRESS_MODE, "Unexpected address mode in %s executor routine: %d", __func__, op->addressMode);
             break;
     }
 }
@@ -296,7 +296,7 @@ static void c8Add(C8CPU *cpu, UNUSED C8RAM *ram, const C8OpCode *op)
             cpu->idx += cpu->registers[op->x];
             break;
         default:
-            C8_ASSERT(C8_FALSE, "Invalid opcode %s: %d", __func__, op->addressMode);
+            c8Panic(ERR_INVALID_ADDRESS_MODE, "Unexpected address mode in %s executor routine: %d", __func__, op->addressMode);
             break;    
     }
 }

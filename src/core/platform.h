@@ -42,7 +42,7 @@
 #elif defined(C8_COMPILER_CLANG)
 #   define UNUSED __attribute__((unused))
 #elif defined(C8_COMPILER_MSVC)
-#   defined UNUSED [[maybe_unused]]
+#   define UNUSED __pragma(warning(suppress:4100))
 #endif
 
 #endif /* PLATFORM_H */

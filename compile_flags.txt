@@ -6,5 +6,5 @@
 -std=c99
 
 -Isrc/
--Ivendor/raylib/include/
+-Ivendor/raylib/src/
 -Ivendor/rklog/

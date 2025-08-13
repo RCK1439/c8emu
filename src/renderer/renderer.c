@@ -163,12 +163,12 @@ static void c8DrawDebugOverlay(const C8Renderer *renderer)
     for (size_t i = 0; i < size; i++)
     {
         const C8DebugText debugText = c8GetDebugTextAt(renderer->debugOverlay, i);
-        const Vector2 size = MeasureTextEx(renderer->font, debugText.text, 20.0f, 2.0f);
+        const Vector2 textSize = MeasureTextEx(renderer->font, debugText.text, 20.0f, 2.0f);
         const Rectangle box = {
             .x = debugText.position.x - 5.0f,
             .y = debugText.position.y - 5.0f,
-            .width = size.x + 10.0f,
-            .height = size.y + 5.0f,
+            .width = textSize.x + 10.0f,
+            .height = textSize.y + 5.0f,
         };
         const Color boxColor = {
             .r = 0,
