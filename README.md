@@ -30,6 +30,8 @@ My implementation uses the QWER-layout, which means the keys of the Chip-8 respe
 |A|S|D|F|
 |Z|X|C|V|
 
+If you wish to see some debugging information, simply press `[F3]` and a debug overlay will appear
+
 ## Building
 
 1. Clone the repository
