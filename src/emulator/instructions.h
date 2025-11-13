@@ -37,24 +37,24 @@ typedef enum C8Instr
  */
 typedef enum C8AddrMode
 {
-    AM_NONE,
-    AM_OPCODE,
-    AM_ADDR,
-    AM_VX_BYTE,
-    AM_VX_VY,
-    AM_I_ADDR,
-    AM_V0_ADDR,
-    AM_VX_VY_N,
-    AM_VX,
-    AM_VX_DT,
-    AM_VX_KEY,
-    AM_DT_VX,
-    AM_ST_VX,
-    AM_I_VX,
-    AM_FONT_VX,
-    AM_BCD_VX,
-    AM_ADDR_I_VX,
-    AM_VX_ADDR_I
+    AM_NONE      = 0x00001,
+    AM_OPCODE    = 0x00002,
+    AM_ADDR      = 0x00004,
+    AM_VX_BYTE   = 0x00008,
+    AM_VX_VY     = 0x00010,
+    AM_I_ADDR    = 0x00020,
+    AM_V0_ADDR   = 0x00040,
+    AM_VX_VY_N   = 0x00080,
+    AM_VX        = 0x00100,
+    AM_VX_DT     = 0x00200,
+    AM_VX_KEY    = 0x00400,
+    AM_DT_VX     = 0x00800,
+    AM_ST_VX     = 0x01000,
+    AM_I_VX      = 0x02000,
+    AM_FONT_VX   = 0x04000,
+    AM_BCD_VX    = 0x08000,
+    AM_ADDR_I_VX = 0x10000,
+    AM_VX_ADDR_I = 0x20000
 } C8AddrMode;
 
 /**
@@ -86,4 +86,3 @@ typedef struct C8OpCode
 C8OpCode c8DecodeOpCode(u16 raw);
 
 #endif /* INSTRUCTIONS_H */
-

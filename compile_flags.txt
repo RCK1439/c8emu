@@ -2,7 +2,6 @@
 -Wextra
 -Werror
 -Wpedantic
--Wno-typedef-redefinition
 -std=c99
 
 -Isrc/

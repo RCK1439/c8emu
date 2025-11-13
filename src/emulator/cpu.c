@@ -15,7 +15,7 @@
 
 #if defined(C8_DEBUG)
 #define C8_ENSURE_ADDR_MODE(addr_mode, expected)                 \
-    if ((addr_mode) != (expected))                               \
+    if (((addr_mode) & (expected)) == 0)                         \
         c8Panic(ERR_INVALID_ADDRESS_MODE,                        \
             "Unexpected address mode in %s executor routine: %d",\
             __func__,                                            \
@@ -54,7 +54,7 @@ static void c8Drw(C8CPU *cpu, C8RAM *ram, const C8OpCode *op);
 static void c8Skp(C8CPU *cpu, C8RAM *ram, const C8OpCode *op);
 static void c8Sknp(C8CPU *cpu, C8RAM *ram, const C8OpCode *op);
 
-static const C8ExecProc s_Executors[] = {
+static const C8ExecProc s_executors[] = {
     [IN_RAW] = c8Raw,
     [IN_CLS] = c8Cls,
     [IN_RET] = c8Ret,
@@ -96,7 +96,7 @@ void c8StepCPU(C8CPU *cpu, C8RAM *ram)
         cpu->pc += 2;
 
         const C8OpCode opcode = c8DecodeOpCode(raw);
-        s_Executors[opcode.instr](cpu, ram, &opcode);
+        s_executors[opcode.instr](cpu, ram, &opcode);
     }
 
     if (cpu->dt > 0)
@@ -137,6 +137,7 @@ static void c8Ret(C8CPU *cpu, UNUSED C8RAM *ram, UNUSED const C8OpCode *op)
 
 static void c8Jp(C8CPU *cpu, UNUSED C8RAM *ram, const C8OpCode *op)
 {
+    C8_ENSURE_ADDR_MODE(op->addressMode, AM_ADDR | AM_V0_ADDR);
     switch (op->addressMode)
     {
         case AM_ADDR:
@@ -146,8 +147,7 @@ static void c8Jp(C8CPU *cpu, UNUSED C8RAM *ram, const C8OpCode *op)
             cpu->pc = cpu->registers[V0] + op->address;
             break;
         default:
-            c8Panic(ERR_INVALID_ADDRESS_MODE, "Unexpected address mode in %s executor routine: %d", __func__, op->addressMode);
-            break;
+            UNREACHABLE();
     }
 }
 
@@ -160,6 +160,7 @@ static void c8Call(C8CPU *cpu, UNUSED C8RAM *ram, const C8OpCode *op)
 
 static void c8Se(C8CPU *cpu, UNUSED C8RAM *ram, const C8OpCode *op)
 {
+    C8_ENSURE_ADDR_MODE(op->addressMode, AM_VX_BYTE | AM_VX_VY);
     switch (op->addressMode)
     {
         case AM_VX_BYTE:
@@ -175,13 +176,13 @@ static void c8Se(C8CPU *cpu, UNUSED C8RAM *ram, const C8OpCode *op)
             }
             break;
         default:
-            c8Panic(ERR_INVALID_ADDRESS_MODE, "Unexpected address mode in %s executor routine: %d", __func__, op->addressMode);
-            break;
+            UNREACHABLE();
     }
 }
 
 static void c8Sne(C8CPU *cpu, UNUSED C8RAM *ram, const C8OpCode *op)
 {
+    C8_ENSURE_ADDR_MODE(op->addressMode, AM_VX_BYTE | AM_VX_VY);
     switch (op->addressMode)
     {
         case AM_VX_BYTE:
@@ -197,13 +198,15 @@ static void c8Sne(C8CPU *cpu, UNUSED C8RAM *ram, const C8OpCode *op)
             }
             break;
         default:
-            c8Panic(ERR_INVALID_ADDRESS_MODE, "Unexpected address mode in %s executor routine: %d", __func__, op->addressMode);
-            break;
+            UNREACHABLE();
     }
 }
 
 static void c8Ld(C8CPU *cpu, C8RAM *ram, const C8OpCode *op)
 {
+    C8_ENSURE_ADDR_MODE(op->addressMode,
+        AM_VX_BYTE | AM_VX_VY | AM_I_ADDR | AM_VX_DT | AM_VX_KEY | AM_DT_VX |
+        AM_ST_VX | AM_FONT_VX | AM_BCD_VX | AM_ADDR_I_VX | AM_VX_ADDR_I);
     switch (op->addressMode)
     {
         case AM_VX_BYTE:
@@ -271,13 +274,13 @@ static void c8Ld(C8CPU *cpu, C8RAM *ram, const C8OpCode *op)
             }
             break;
         default:
-            c8Panic(ERR_INVALID_ADDRESS_MODE, "Unexpected address mode in %s executor routine: %d", __func__, op->addressMode);
-            break;
+            UNREACHABLE();
     }
 }
 
 static void c8Add(C8CPU *cpu, UNUSED C8RAM *ram, const C8OpCode *op)
 {
+    C8_ENSURE_ADDR_MODE(op->addressMode, AM_VX_BYTE | AM_VX_VY | AM_I_VX);
     switch (op->addressMode)
     {
         case AM_VX_BYTE:
@@ -296,8 +299,7 @@ static void c8Add(C8CPU *cpu, UNUSED C8RAM *ram, const C8OpCode *op)
             cpu->idx += cpu->registers[op->x];
             break;
         default:
-            c8Panic(ERR_INVALID_ADDRESS_MODE, "Unexpected address mode in %s executor routine: %d", __func__, op->addressMode);
-            break;    
+            UNREACHABLE();   
     }
 }
 
