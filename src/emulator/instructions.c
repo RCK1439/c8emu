@@ -35,7 +35,7 @@ static C8OpCode c8DecodeD(u16 raw);
 static C8OpCode c8DecodeE(u16 raw);
 static C8OpCode c8DecodeF(u16 raw);
 
-static const C8DecodeProc s_Decoders[] = {
+static const C8DecodeProc s_decoders[] = {
     c8Decode0, c8Decode1, c8Decode2, c8Decode3,
     c8Decode4, c8Decode5, c8Decode6, c8Decode7,
     c8Decode8, c8Decode9, c8DecodeA, c8DecodeB,
@@ -47,7 +47,7 @@ static const C8DecodeProc s_Decoders[] = {
 C8OpCode c8DecodeOpCode(u16 raw)
 {
     const size_t idx = (size_t)((raw >> 12) & 0x000F);
-    return s_Decoders[idx](raw);
+    return s_decoders[idx](raw);
 }
 
 // --- decoder implementation -------------------------------------------------
@@ -72,7 +72,7 @@ static C8OpCode c8Decode0(u16 raw)
         {
             code.instr = IN_RAW;
             code.addressMode = AM_OPCODE;
-            code.raw = raw;
+            code.args.raw = raw;
         } break;
     }
 
@@ -84,7 +84,7 @@ static C8OpCode c8Decode1(u16 raw)
     const C8OpCode code = {
         .instr = IN_JP,
         .addressMode = AM_ADDR,
-        .address = NNN(raw)
+        .args.address = NNN(raw)
     };
 
     return code;
@@ -95,7 +95,7 @@ static C8OpCode c8Decode2(u16 raw)
     const C8OpCode code = {
         .instr = IN_CALL,
         .addressMode = AM_ADDR,
-        .address = NNN(raw),
+        .args.address = NNN(raw),
     };
 
     return code;
@@ -106,8 +106,8 @@ static C8OpCode c8Decode3(u16 raw)
     const C8OpCode code = {
         .instr = IN_SE,
         .addressMode = AM_VX_BYTE,
-        .x = X(raw),
-        .byte = KK(raw),
+        .args.vxByte.x = X(raw),
+        .args.vxByte.byte = KK(raw),
     };
 
     return code;
@@ -118,8 +118,8 @@ static C8OpCode c8Decode4(u16 raw)
     const C8OpCode code = {
         .instr = IN_SNE,
         .addressMode = AM_VX_BYTE,
-        .x = X(raw),
-        .byte = KK(raw),
+        .args.vxByte.x = X(raw),
+        .args.vxByte.byte = KK(raw),
     };
 
     return code;
@@ -130,8 +130,8 @@ static C8OpCode c8Decode5(u16 raw)
     const C8OpCode code = {
         .instr = IN_SE,
         .addressMode = AM_VX_VY,
-        .x = X(raw),
-        .y = Y(raw),
+        .args.vxVy.x = X(raw),
+        .args.vxVy.y = Y(raw),
     };
 
     return code;
@@ -142,8 +142,8 @@ static C8OpCode c8Decode6(u16 raw)
     const C8OpCode code = {
         .instr = IN_LD,
         .addressMode = AM_VX_BYTE,
-        .x = X(raw),
-        .byte = KK(raw),
+        .args.vxByte.x = X(raw),
+        .args.vxByte.byte = KK(raw),
     };
 
     return code;
@@ -154,8 +154,8 @@ static C8OpCode c8Decode7(u16 raw)
     const C8OpCode code = {
         .instr = IN_ADD,
         .addressMode = AM_VX_BYTE,
-        .x = X(raw),
-        .byte = KK(raw),
+        .args.vxByte.x = X(raw),
+        .args.vxByte.byte = KK(raw),
     };
 
     return code;
@@ -165,8 +165,8 @@ static C8OpCode c8Decode8(u16 raw)
 {
     C8OpCode code = {
         .addressMode = AM_VX_VY,
-        .x = X(raw),
-        .y = Y(raw),
+        .args.vxVy.x = X(raw),
+        .args.vxVy.y = Y(raw),
     };
 
     switch (raw & 0x000F)
@@ -184,7 +184,7 @@ static C8OpCode c8Decode8(u16 raw)
         {
             code.instr = IN_RAW;
             code.addressMode = AM_OPCODE;
-            code.raw = raw;
+            code.args.raw = raw;
         } break;
     }
 
@@ -196,8 +196,8 @@ static C8OpCode c8Decode9(u16 raw)
     const C8OpCode code = {
         .instr = IN_SNE,
         .addressMode = AM_VX_VY,
-        .x = X(raw),
-        .y = Y(raw),
+        .args.vxVy.x = X(raw),
+        .args.vxVy.y = Y(raw),
     };
 
     return code;
@@ -208,7 +208,7 @@ static C8OpCode c8DecodeA(u16 raw)
     const C8OpCode code = {
         .instr = IN_LD,
         .addressMode = AM_I_ADDR,
-        .address = NNN(raw),
+        .args.address = NNN(raw),
     };
     
     return code;
@@ -219,7 +219,7 @@ static C8OpCode c8DecodeB(u16 raw)
     const C8OpCode code = {
         .instr = IN_JP, 
         .addressMode = AM_V0_ADDR,
-        .address = NNN(raw),
+        .args.address = NNN(raw),
     };
 
     return code;
@@ -230,8 +230,8 @@ static C8OpCode c8DecodeC(u16 raw)
     const C8OpCode code = {
         .instr = IN_RND,
         .addressMode = AM_VX_BYTE,
-        .x = X(raw),
-        .byte = KK(raw),
+        .args.vxByte.x = X(raw),
+        .args.vxByte.byte = KK(raw),
     };
     
     return code;
@@ -242,9 +242,9 @@ static C8OpCode c8DecodeD(u16 raw)
     const C8OpCode code = {
         .instr = IN_DRW,
         .addressMode = AM_VX_VY_N,
-        .x = X(raw),
-        .y = Y(raw),
-        .nibble = N(raw),
+        .args.vxVyN.x = X(raw),
+        .args.vxVyN.y = Y(raw),
+        .args.vxVyN.n = N(raw),
     };
     
     return code;
@@ -260,19 +260,19 @@ static C8OpCode c8DecodeE(u16 raw)
         {
             code.instr = IN_SKP;
             code.addressMode = AM_VX;
-            code.x = X(raw);
+            code.args.x = X(raw);
         } break;
         case 0xA1:
         {
             code.instr = IN_SKNP;
             code.addressMode = AM_VX;
-            code.x = X(raw);
+            code.args.x = X(raw);
         } break;
         default:
         {
             code.instr = IN_RAW;
             code.addressMode = AM_OPCODE;
-            code.raw = raw;
+            code.args.raw = raw;
         } break;
     }
 
@@ -289,61 +289,61 @@ static C8OpCode c8DecodeF(u16 raw)
         {
             code.instr = IN_LD;
             code.addressMode = AM_VX_DT;
-            code.x = X(raw);
+            code.args.x = X(raw);
         } break;
         case 0x0A:
         {
             code.instr = IN_LD;
             code.addressMode = AM_VX_KEY;
-            code.x = X(raw);
+            code.args.x = X(raw);
         } break;
         case 0x15:
         {
             code.instr = IN_LD;
             code.addressMode = AM_DT_VX;
-            code.x = X(raw);
+            code.args.x = X(raw);
         } break;
         case 0x18:
         {
             code.instr = IN_LD;
             code.addressMode = AM_ST_VX;
-            code.x = X(raw);
+            code.args.x = X(raw);
         } break;
         case 0x1E:
         {
             code.instr = IN_ADD;
             code.addressMode = AM_I_VX;
-            code.x = X(raw);
+            code.args.x = X(raw);
         } break;
         case 0x29:
         {
             code.instr = IN_LD;
             code.addressMode = AM_FONT_VX;
-            code.x = X(raw);
+            code.args.x = X(raw);
         } break;
         case 0x33:
         {
             code.instr = IN_LD;
             code.addressMode = AM_BCD_VX;
-            code.x = X(raw);
+            code.args.x = X(raw);
         } break;
         case 0x55:
         {
             code.instr = IN_LD;
             code.addressMode = AM_ADDR_I_VX;
-            code.x = X(raw);
+            code.args.x = X(raw);
         } break;
         case 0x65:
         {
             code.instr = IN_LD;
             code.addressMode = AM_VX_ADDR_I;
-            code.x = X(raw);
+            code.args.x = X(raw);
         } break;
         default:
         {
             code.instr = IN_RAW;
             code.addressMode = AM_OPCODE;
-            code.raw = raw;
+            code.args.raw = raw;
         } break;
     }
 
