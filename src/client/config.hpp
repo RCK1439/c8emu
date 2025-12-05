@@ -1,7 +1,6 @@
-#ifndef CONFIG_H
-#define CONFIG_H
+#pragma once
 
-#include "core/platform.h"
+#include "core/platform.hpp"
 
 // --- utility macros ---------------------------------------------------------
 
@@ -13,18 +12,19 @@
 #define C8_VERSION_MAJOR 1
 #define C8_VERSION_MINOR 6
 
-#define C8_VERSION_STRING "v"STR(C8_VERSION_MAJOR)"."STR(C8_VERSION_MINOR)
+#define C8_VERSION_STRING "v" STR(C8_VERSION_MAJOR) "." STR(C8_VERSION_MINOR)
 
 // --- window details ---------------------------------------------------------
 
 #define C8_PROG_NAME "c8emu"
 
 #if defined(C8_DEBUG)
-#   define C8_WINDOW_TITLE C8_PROG_NAME"-"C8_VERSION_STRING"-debug"
+#define C8_WINDOW_TITLE C8_PROG_NAME "-" C8_VERSION_STRING "-debug"
 #else
-#   define C8_WINDOW_TITLE C8_PROG_NAME"-"C8_VERSION_STRING
+#define C8_WINDOW_TITLE C8_PROG_NAME "-" C8_VERSION_STRING
 #endif
-#define C8_WINDOW_WIDTH 1024
-#define C8_WINDOW_HEIGHT 512
+template<typename T>
+constexpr T C8_WINDOW_WIDTH = static_cast<T>(1024);
+template<typename T>
+constexpr T C8_WINDOW_HEIGHT = static_cast<T>(512);
 
-#endif /* CONFIG_H */

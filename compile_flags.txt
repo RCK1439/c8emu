@@ -2,8 +2,9 @@
 -Wextra
 -Werror
 -Wpedantic
--std=c99
+-fno-exceptions
+-std=c++23
 
 -Isrc/
 -Ivendor/raylib/src/
--Ivendor/rklog/
+-Ivendor/rklog-cpp/include

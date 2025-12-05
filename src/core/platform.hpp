@@ -1,5 +1,4 @@
-#ifndef PLATFORM_H
-#define PLATFORM_H
+#pragma once
 
 // --- operating system detection ---------------------------------------------
 
@@ -44,5 +43,3 @@
 #define UNUSED __pragma(warning(suppress:4100))
 #define UNREACHABLE() __assume(false)
 #endif
-
-#endif /* PLATFORM_H */
