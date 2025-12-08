@@ -1,0 +1,7 @@
+-Wall
+-Werror
+-Wextra
+-Wpedantic
+-std=c++23
+
+-Iinclude/
