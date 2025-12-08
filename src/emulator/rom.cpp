@@ -36,7 +36,6 @@ bool ROM::Load(std::filesystem::path filePath) noexcept
 ROM::~ROM() noexcept
 {
     delete[] m_Data;
-    C8_LOG_WARNING("ROM unloaded");
 }
 
 }
