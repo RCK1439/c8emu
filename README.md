@@ -1,6 +1,6 @@
 # c8emu: An interpreter for Chip-8
 
-c8emu is a mini Chip-8 emulator/interpreter for the [Chip-8](https://en.wikipedia.org/wiki/CHIP-8) programming language. This project is an educational project for me with regard to getting into emulator development as well as programming portable and cross-platform C code.
+c8emu is a mini Chip-8 emulator/interpreter for the [Chip-8](https://en.wikipedia.org/wiki/CHIP-8) programming language. This project is an educational project for me with regard to getting into emulator development as well as programming portable and cross-platform C++ code.
 
 ![[image]](resources/test_opcode.png)
 
