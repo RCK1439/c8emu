@@ -78,7 +78,7 @@ After successful compilation, the executable should be placed in a `bin/` direct
 ## Libraries
 
 - [raylib](https://www.raylib.com/) v5.5 for graphics, input, sound and window management
-- [rklog](https://github.com/RCK1439/rklog) for debugging and logging
+- [rklog-cpp](https://github.com/RCK1439/rklog-cpp) for debugging and logging
 
 
 ## Sources used for development
