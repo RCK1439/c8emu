@@ -24,7 +24,7 @@
 #define C8_WINDOW_TITLE C8_PROG_NAME "-" C8_VERSION_STRING
 #endif
 template<typename T>
-constexpr T C8_WINDOW_WIDTH = static_cast<T>(1024);
+constexpr T C8_WINDOW_WIDTH = 1024;
 template<typename T>
-constexpr T C8_WINDOW_HEIGHT = static_cast<T>(512);
+constexpr T C8_WINDOW_HEIGHT = 512;
 

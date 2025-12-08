@@ -12,7 +12,8 @@ bool ROM::Load(std::filesystem::path filePath) noexcept
     std::ifstream rom(filePath, std::ios::in | std::ios::binary);
     if (!rom.is_open())
     {
-        Panic(ErrorCode::FAILED_TO_OPEN_FILE, "Couldn't open file: {}", filePath.string());
+        C8_LOG_ERROR("Couldn't open file: {}", filePath.string());
+        return false;
     }
 
     rom.seekg(0, std::ios::end);
@@ -27,7 +28,7 @@ bool ROM::Load(std::filesystem::path filePath) noexcept
     m_Data = new u8[m_Size];
     rom.read(reinterpret_cast<char*>(m_Data), sizeof(u8) * m_Size);
     
-    m_Name = filePath.filename().string();
+    m_Name = filePath.filename().replace_extension().string();
     C8_LOG_INFO("ROM successfully loaded {} bytes: {}", m_Size, filePath.filename().string());
     return true;
 }

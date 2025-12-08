@@ -19,7 +19,7 @@ Client::Client(i32 argc, char** argv) noexcept
 
     if (argc < 2)
     {
-        C8_LOG_FATAL("usage: {} <rom_file>", argv[0]);
+        C8_LOG_WARNING("usage: {} <rom_file>", argv[0]);
     }
 
     ::SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT | FLAG_WINDOW_RESIZABLE);
