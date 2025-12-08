@@ -84,7 +84,7 @@ static OpCode Decode0(u16 raw) noexcept
         {
             code.instr = Instr::RAW;
             code.addressMode = AddrMode::OPCODE;
-            code.args.raw = raw;
+            code.args = raw;
         } break;
     }
 
@@ -96,7 +96,7 @@ static OpCode Decode1(u16 raw) noexcept
     const OpCode code = {
         .instr = Instr::JP,
         .addressMode = AddrMode::ADDR,
-        .args { .address = NNN(raw) }
+        .args = NNN(raw),
     };
 
     return code;
@@ -107,7 +107,7 @@ static OpCode Decode2(u16 raw) noexcept
     const OpCode code = {
         .instr = Instr::CALL,
         .addressMode = AddrMode::ADDR,
-        .args { .address = NNN(raw) },
+        .args = NNN(raw),
     };
 
     return code;
@@ -118,12 +118,7 @@ static OpCode Decode3(u16 raw) noexcept
     const OpCode code = {
         .instr = Instr::SE,
         .addressMode = AddrMode::VX_BYTE,
-        .args { 
-            .vxByte {
-                .x = X(raw),
-                .byte = KK(raw) 
-            }
-        },
+        .args = VxByte(raw),
     };
 
     return code;
@@ -134,12 +129,7 @@ static OpCode Decode4(u16 raw) noexcept
     const OpCode code = {
         .instr = Instr::SNE,
         .addressMode = AddrMode::VX_BYTE,
-        .args {
-            .vxByte {
-                .x = X(raw),
-                .byte = KK(raw),
-            }
-        }
+        .args = VxByte(raw),
     };
 
     return code;
@@ -150,12 +140,7 @@ static OpCode Decode5(u16 raw) noexcept
     const OpCode code = {
         .instr = Instr::SE,
         .addressMode = AddrMode::VX_VY,
-        .args {
-            .vxVy {
-                .x = X(raw),
-                .y = Y(raw),
-            }
-        }
+        .args = VxVy(raw),
     };
 
     return code;
@@ -166,12 +151,7 @@ static OpCode Decode6(u16 raw) noexcept
     const OpCode code = {
         .instr = Instr::LD,
         .addressMode = AddrMode::VX_BYTE,
-        .args {
-            .vxByte {
-                .x = X(raw),
-                .byte = KK(raw),
-            }
-        }
+        .args = VxByte(raw),
     };
 
     return code;
@@ -182,12 +162,7 @@ static OpCode Decode7(u16 raw) noexcept
     const OpCode code = {
         .instr = Instr::ADD,
         .addressMode = AddrMode::VX_BYTE,
-        .args {
-            .vxByte {
-                .x = X(raw),
-                .byte = KK(raw),
-            }
-        }
+        .args = VxByte(raw),
     };
 
     return code;
@@ -198,12 +173,7 @@ static OpCode Decode8(u16 raw) noexcept
     OpCode code = {
         .instr = Instr::RAW,
         .addressMode = AddrMode::VX_VY,
-        .args {
-            .vxVy {
-                .x = X(raw),
-                .y = Y(raw),
-            }
-        }
+        .args = VxVy(raw),
     };
 
     switch (raw & 0x000F)
@@ -221,7 +191,7 @@ static OpCode Decode8(u16 raw) noexcept
         {
             code.instr = Instr::RAW;
             code.addressMode = AddrMode::OPCODE;
-            code.args.raw = raw;
+            code.args = raw;
         } break;
     }
 
@@ -233,12 +203,7 @@ static OpCode Decode9(u16 raw) noexcept
     const OpCode code = {
         .instr = Instr::SNE,
         .addressMode = AddrMode::VX_VY,
-        .args {
-            .vxVy {
-                .x = X(raw),
-                .y = Y(raw),
-            }
-        }
+        .args = VxVy(raw),
     };
 
     return code;
@@ -249,7 +214,7 @@ static OpCode DecodeA(u16 raw) noexcept
     const OpCode code = {
         .instr = Instr::LD,
         .addressMode = AddrMode::I_ADDR,
-        .args { .address = NNN(raw), }
+        .args = NNN(raw),
     };
     
     return code;
@@ -260,7 +225,7 @@ static OpCode DecodeB(u16 raw) noexcept
     const OpCode code = {
         .instr = Instr::JP, 
         .addressMode = AddrMode::V0_ADDR,
-        .args { .address = NNN(raw), }
+        .args = NNN(raw),
     };
 
     return code;
@@ -271,12 +236,7 @@ static OpCode DecodeC(u16 raw) noexcept
     const OpCode code = {
         .instr = Instr::RND,
         .addressMode = AddrMode::VX_BYTE,
-        .args {
-            .vxByte {
-                .x = X(raw),
-                .byte = KK(raw),
-            }
-        }
+        .args = VxByte(raw),
     };
     
     return code;
@@ -287,13 +247,7 @@ static OpCode DecodeD(u16 raw) noexcept
     const OpCode code = {
         .instr = Instr::DRW,
         .addressMode = AddrMode::VX_VY_N,
-        .args {
-            .vxVyN {
-                .x = X(raw),
-                .y = Y(raw),
-                .n = N(raw),
-            }
-        }
+        .args = VxVyN(raw),
     };
     
     return code;
@@ -309,19 +263,19 @@ static OpCode DecodeE(u16 raw) noexcept
         {
             code.instr = Instr::SKP;
             code.addressMode = AddrMode::VX;
-            code.args.x = X(raw);
+            code.args = X(raw);
         } break;
         case 0xA1:
         {
             code.instr = Instr::SKNP;
             code.addressMode = AddrMode::VX;
-            code.args.x = X(raw);
+            code.args = X(raw);
         } break;
         default:
         {
             code.instr = Instr::RAW;
             code.addressMode = AddrMode::OPCODE;
-            code.args.raw = raw;
+            code.args = raw;
         } break;
     }
 
@@ -338,65 +292,77 @@ static OpCode DecodeF(u16 raw) noexcept
         {
             code.instr = Instr::LD;
             code.addressMode = AddrMode::VX_DT;
-            code.args.x = X(raw);
+            code.args = X(raw);
         } break;
         case 0x0A:
         {
             code.instr = Instr::LD;
             code.addressMode = AddrMode::VX_KEY;
-            code.args.x = X(raw);
+            code.args = X(raw);
         } break;
         case 0x15:
         {
             code.instr = Instr::LD;
             code.addressMode = AddrMode::DT_VX;
-            code.args.x = X(raw);
+            code.args = X(raw);
         } break;
         case 0x18:
         {
             code.instr = Instr::LD;
             code.addressMode = AddrMode::ST_VX;
-            code.args.x = X(raw);
+            code.args = X(raw);
         } break;
         case 0x1E:
         {
             code.instr = Instr::ADD;
             code.addressMode = AddrMode::I_VX;
-            code.args.x = X(raw);
+            code.args = X(raw);
         } break;
         case 0x29:
         {
             code.instr = Instr::LD;
             code.addressMode = AddrMode::FONT_VX;
-            code.args.x = X(raw);
+            code.args = X(raw);
         } break;
         case 0x33:
         {
             code.instr = Instr::LD;
             code.addressMode = AddrMode::BCD_VX;
-            code.args.x = X(raw);
+            code.args = X(raw);
         } break;
         case 0x55:
         {
             code.instr = Instr::LD;
             code.addressMode = AddrMode::ADDR_I_VX;
-            code.args.x = X(raw);
+            code.args = X(raw);
         } break;
         case 0x65:
         {
             code.instr = Instr::LD;
             code.addressMode = AddrMode::VX_ADDR_I;
-            code.args.x = X(raw);
+            code.args = X(raw);
         } break;
         default:
         {
             code.instr = Instr::RAW;
             code.addressMode = AddrMode::OPCODE;
-            code.args.raw = raw;
+            code.args = raw;
         } break;
     }
 
     return code;
 }
+
+constexpr VxByte::VxByte(u16 raw) noexcept :
+    x(X(raw)), byte(KK(raw)) {}
+
+constexpr VxVy::VxVy(u16 raw) noexcept :
+    x(X(raw)), y(Y(raw)) {}
+
+constexpr VxVyN::VxVyN(u16 raw) noexcept :
+    x(X(raw)), y(Y(raw)), n(N(raw)) {}
+
+constexpr VxAddr::VxAddr(u16 raw) noexcept :
+    addr(NNN(raw)), x(X(raw)) {}
 
 }

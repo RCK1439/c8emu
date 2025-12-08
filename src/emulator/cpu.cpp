@@ -14,7 +14,7 @@
         ::c8emu::Panic(::c8emu::ErrorCode::INVALID_ADDRESS_MODE,         \
             "Unexpected address mode in {} executor routine: {}",        \
             __func__,                                                    \
-            static_cast<u32>(addr_mode))
+            static_cast<::c8emu::u32>(addr_mode))
 #else
 #define C8_ENSURE_ADDR_MODE(addr_mode, expected)
 #endif
@@ -99,7 +99,7 @@ void CPU::SetKey(u8 key, u8 val) noexcept
 void Raw(UNUSED CPU& cpu, UNUSED RAM& ram, UNUSED const OpCode& op) noexcept
 {
     C8_ENSURE_ADDR_MODE(op.addressMode, AddrMode::OPCODE);
-    C8_LOG_ERROR("Unsupported opcode detected ({:#x})", op.args.raw);
+    C8_LOG_ERROR("Unsupported opcode detected (0x{:X})", op.GetArgs<u16>());
 }
 
 void Cls(CPU& cpu, UNUSED RAM& ram, UNUSED const OpCode& op) noexcept
@@ -117,14 +117,19 @@ void Ret(CPU& cpu, UNUSED RAM& ram, UNUSED const OpCode& op) noexcept
 void Jp(CPU& cpu, UNUSED RAM& ram, const OpCode& op) noexcept
 {
     C8_ENSURE_ADDR_MODE(op.addressMode, AddrMode::ADDR | AddrMode::V0_ADDR);
+    
     switch (op.addressMode)
     {
         case AddrMode::ADDR:
-            cpu.m_PC = op.args.address;
-            break;
+        {
+            const u16 addr = op.GetArgs<u16>();
+            cpu.m_PC = addr;
+        } break;
         case AddrMode::V0_ADDR:
-            cpu.m_PC = cpu.m_Registers[RegisterID::V0] + op.args.address;
-            break;
+        {
+            const u16 addr = op.GetArgs<u16>();
+            cpu.m_PC = cpu.m_Registers[RegisterID::V0] + addr;
+        } break;
         default:
             UNREACHABLE();
     }
@@ -133,8 +138,10 @@ void Jp(CPU& cpu, UNUSED RAM& ram, const OpCode& op) noexcept
 void Call(CPU& cpu, UNUSED RAM& ram, const OpCode& op) noexcept
 {
     C8_ENSURE_ADDR_MODE(op.addressMode, AddrMode::ADDR);
+    
+    const u16 addr = op.GetArgs<u16>();
     cpu.m_CallStack.PushAddr(cpu.m_PC);
-    cpu.m_PC = op.args.address;
+    cpu.m_PC = addr;
 }
 
 void Se(CPU& cpu, UNUSED RAM& ram, const OpCode& op) noexcept
@@ -143,17 +150,21 @@ void Se(CPU& cpu, UNUSED RAM& ram, const OpCode& op) noexcept
     switch (op.addressMode)
     {
         case AddrMode::VX_BYTE:
-            if (cpu.m_Registers[op.args.vxByte.x] == op.args.vxByte.byte)
+        {
+            const auto [x, byte] = op.GetArgs<VxByte>();
+            if (cpu.m_Registers[x] == byte)
             {
                 cpu.m_PC += 2;
             }
-            break;
+        } break;
         case AddrMode::VX_VY:
-            if (cpu.m_Registers[op.args.vxVy.x] == cpu.m_Registers[op.args.vxVy.y])
+        {
+            const auto [x, y] = op.GetArgs<VxVy>();
+            if (cpu.m_Registers[x] == cpu.m_Registers[y])
             {
                 cpu.m_PC += 2;
             }
-            break;
+        } break;
         default:
             UNREACHABLE();
     }
@@ -165,17 +176,21 @@ void Sne(CPU& cpu, UNUSED RAM& ram, const OpCode& op) noexcept
     switch (op.addressMode)
     {
         case AddrMode::VX_BYTE:
-            if (cpu.m_Registers[op.args.vxByte.x] != op.args.vxByte.byte)
+        {
+            const auto [x, byte] = op.GetArgs<VxByte>();
+            if (cpu.m_Registers[x] != byte)
             {
                 cpu.m_PC += 2;
             }
-            break;
+        } break;
         case AddrMode::VX_VY:
-            if (cpu.m_Registers[op.args.vxVy.x] != cpu.m_Registers[op.args.vxVy.y])
+        {
+            const auto [x, y] = op.GetArgs<VxVy>();
+            if (cpu.m_Registers[x] != cpu.m_Registers[y])
             {
                 cpu.m_PC += 2;
             }
-            break;
+        } break;
         default:
             UNREACHABLE();
     }
@@ -186,29 +201,40 @@ void Ld(CPU& cpu, RAM& ram, const OpCode& op) noexcept
     C8_ENSURE_ADDR_MODE(op.addressMode,
         AddrMode::VX_BYTE | AddrMode::VX_VY | AddrMode::I_ADDR | AddrMode::VX_DT | AddrMode::VX_KEY | AddrMode::DT_VX |
         AddrMode::ST_VX | AddrMode::FONT_VX | AddrMode::BCD_VX | AddrMode::ADDR_I_VX | AddrMode::VX_ADDR_I);
+
     switch (op.addressMode)
     {
         case AddrMode::VX_BYTE:
-            cpu.m_Registers[op.args.vxByte.x] = op.args.vxByte.byte;
-            break;
+        {
+            const auto [x, byte] = op.GetArgs<VxByte>();
+            cpu.m_Registers[x] = byte;
+        } break;
         case AddrMode::VX_VY:
-            cpu.m_Registers[op.args.vxVy.x] = cpu.m_Registers[op.args.vxVy.y];
-            break;
+        {
+            const auto [x, y] = op.GetArgs<VxVy>();
+            cpu.m_Registers[x] = cpu.m_Registers[y];
+        } break;
         case AddrMode::I_ADDR:
-            cpu.m_Idx = op.args.address;
-            break;
+        {
+            const u16 addr = op.GetArgs<u16>();
+            cpu.m_Idx = addr;
+        } break;
         case AddrMode::VX_DT:
-            cpu.m_Registers[op.args.x] = cpu.m_DT;
-            break;
+        {
+            const u8 x = op.GetArgs<u8>();
+            cpu.m_Registers[x] = cpu.m_DT;
+        } break;
         case AddrMode::VX_KEY:
         {
+            const u8 x = op.GetArgs<u8>();
+
             bool found = false;
             for (u8 i = 0; i < C8_NUM_KEYS; i++)
             {
                 if (cpu.m_Keypad[i])
                 {
                     found = true;
-                    cpu.m_Registers[op.args.x] = i;
+                    cpu.m_Registers[x] = i;
                     break;
                 }
             }
@@ -219,19 +245,26 @@ void Ld(CPU& cpu, RAM& ram, const OpCode& op) noexcept
             }
         } break;
         case AddrMode::DT_VX:
-            cpu.m_DT = cpu.m_Registers[op.args.x];
-            break;
+        {
+            const u8 x = op.GetArgs<u8>();
+            cpu.m_DT = cpu.m_Registers[x];
+        } break;
         case AddrMode::ST_VX:
-            cpu.m_ST = cpu.m_Registers[op.args.x];
-            break;
+        {
+            const u8 x = op.GetArgs<u8>();
+            cpu.m_ST = cpu.m_Registers[x];
+        } break;
         case AddrMode::FONT_VX:
         {
-            const u8 digit = cpu.m_Registers[op.args.x];
+            const u8 x = op.GetArgs<u8>();
+            const u8 digit = cpu.m_Registers[x];
             cpu.m_Idx = C8_ADDR_FONT + (5 * digit);
         } break;
         case AddrMode::BCD_VX:
         {
-            u8 value = cpu.m_Registers[op.args.x];
+            const u8 x = op.GetArgs<u8>();
+
+            u8 value = cpu.m_Registers[x];
             ram[cpu.m_Idx + 2] = value % 10;
             value /= 10;
 
@@ -241,17 +274,21 @@ void Ld(CPU& cpu, RAM& ram, const OpCode& op) noexcept
             ram[cpu.m_Idx + 0] = value % 10;
         } break;
         case AddrMode::ADDR_I_VX:
-            for (u8 i = 0; i <= op.args.x; i++)
+        {
+            const u8 x = op.GetArgs<u8>();
+            for (u8 i = 0; i <= x; i++)
             {
                 ram[cpu.m_Idx++] = cpu.m_Registers[i];
             }
-            break;
+        } break;
         case AddrMode::VX_ADDR_I:
-            for (u8 i = 0; i <= op.args.x; i++)
+        {
+            const u8 x = op.GetArgs<u8>();
+            for (u8 i = 0; i <= x; i++)
             {
                 cpu.m_Registers[i] = ram[cpu.m_Idx++];
             }
-            break;
+        } break;
         default:
             UNREACHABLE();
     }
@@ -264,19 +301,23 @@ void Add(CPU& cpu, UNUSED RAM& ram, const OpCode& op) noexcept
     {
         case AddrMode::VX_BYTE:
         {
-            const u16 sum = (u16)cpu.m_Registers[op.args.vxByte.x] + (u16)op.args.vxByte.byte;
-            cpu.m_Registers[op.args.vxByte.x] = (u8)(sum & 0x00FF);
+            const auto [x, byte] = op.GetArgs<VxByte>();
+            const u16 sum = static_cast<u16>(cpu.m_Registers[x]) + static_cast<u16>(byte);
+            cpu.m_Registers[x] = static_cast<u8>(sum & 0x00FF);
             cpu.m_Registers[RegisterID::VF] = sum > 0x00FF;
         } break;
         case AddrMode::VX_VY:
         {
-            const u16 sum = (u16)cpu.m_Registers[op.args.vxVy.x] + (u16)cpu.m_Registers[op.args.vxVy.y];
-            cpu.m_Registers[op.args.vxVy.x] = (u8)(sum & 0x00FF);
+            const auto [x, y] = op.GetArgs<VxVy>();
+            const u16 sum = static_cast<u16>(cpu.m_Registers[x]) + static_cast<u16>(cpu.m_Registers[y]);
+            cpu.m_Registers[x] = static_cast<u8>(sum & 0x00FF);
             cpu.m_Registers[RegisterID::VF] = sum > 0x00FF;
         } break;
         case AddrMode::I_VX:
-            cpu.m_Idx += cpu.m_Registers[op.args.x];
-            break;
+        {
+            const u8 x = op.GetArgs<u8>();
+            cpu.m_Idx += cpu.m_Registers[x];
+        } break;
         default:
             UNREACHABLE();   
     }
@@ -285,74 +326,84 @@ void Add(CPU& cpu, UNUSED RAM& ram, const OpCode& op) noexcept
 void Or(CPU& cpu, UNUSED RAM& ram, const OpCode& op) noexcept
 {
     C8_ENSURE_ADDR_MODE(op.addressMode, AddrMode::VX_VY);
-    cpu.m_Registers[op.args.vxVy.x] |= cpu.m_Registers[op.args.vxVy.y];
+    const auto [x, y] = op.GetArgs<VxVy>();
+    cpu.m_Registers[x] |= cpu.m_Registers[y];
     cpu.m_Registers[RegisterID::VF] = 0;
 }
 
 void And(CPU& cpu, UNUSED RAM& ram, const OpCode& op) noexcept
 {
     C8_ENSURE_ADDR_MODE(op.addressMode, AddrMode::VX_VY);
-    cpu.m_Registers[op.args.vxVy.x] &= cpu.m_Registers[op.args.vxVy.y];
+    const auto [x, y] = op.GetArgs<VxVy>();
+    cpu.m_Registers[x] &= cpu.m_Registers[y];
     cpu.m_Registers[RegisterID::VF] = 0;
 }
 
 void Xor(CPU& cpu, UNUSED RAM& ram, const OpCode& op) noexcept
 {
     C8_ENSURE_ADDR_MODE(op.addressMode, AddrMode::VX_VY);
-    cpu.m_Registers[op.args.vxVy.x] ^= cpu.m_Registers[op.args.vxVy.y];
+    const auto [x, y] = op.GetArgs<VxVy>();
+    cpu.m_Registers[x] ^= cpu.m_Registers[y];
     cpu.m_Registers[RegisterID::VF] = 0;
 }
 
 void Sub(CPU& cpu, UNUSED RAM& ram, const OpCode& op) noexcept
 {
     C8_ENSURE_ADDR_MODE(op.addressMode, AddrMode::VX_VY);
-    const u16 diff = (u16)cpu.m_Registers[op.args.vxVy.x] - (u16)cpu.m_Registers[op.args.vxVy.y];
-    cpu.m_Registers[op.args.vxVy.x] = (u8)(diff & 0x00FF);
+    const auto [x, y] = op.GetArgs<VxVy>();
+    const u16 diff = static_cast<u16>(cpu.m_Registers[x]) - static_cast<u16>(cpu.m_Registers[y]);
+    cpu.m_Registers[x] = static_cast<u8>(diff & 0x00FF);
     cpu.m_Registers[RegisterID::VF] = diff <= 0x00FF;
 }
 
 void Shr(CPU& cpu, UNUSED RAM& ram, const OpCode& op) noexcept
 {
     C8_ENSURE_ADDR_MODE(op.addressMode, AddrMode::VX_VY);
-    const u8 bit = cpu.m_Registers[op.args.vxVy.y] & 0x01;
-    cpu.m_Registers[op.args.vxVy.x] = cpu.m_Registers[op.args.vxVy.y] >> 1;
+    const auto [x, y] = op.GetArgs<VxVy>();
+    const u8 bit = cpu.m_Registers[y] & 0x01;
+    cpu.m_Registers[x] = cpu.m_Registers[y] >> 1;
     cpu.m_Registers[RegisterID::VF] = bit > 0;
 }
 
 void Subn(CPU& cpu, UNUSED RAM& ram, const OpCode& op) noexcept
 {
     C8_ENSURE_ADDR_MODE(op.addressMode, AddrMode::VX_VY);
-    const u16 diff = (u16)cpu.m_Registers[op.args.vxVy.y] - (u16)cpu.m_Registers[op.args.vxVy.x];
-    cpu.m_Registers[op.args.vxVy.x] = (u8)(diff & 0x00FF);
+    const auto [x, y] = op.GetArgs<VxVy>();
+    const u16 diff = static_cast<u16>(cpu.m_Registers[y]) - static_cast<u16>(cpu.m_Registers[x]);
+    cpu.m_Registers[x] = static_cast<u8>(diff & 0x00FF);
     cpu.m_Registers[RegisterID::VF] = diff <= 0x00FF;
 }
 
 void Shl(CPU& cpu, UNUSED RAM& ram, const OpCode& op) noexcept
 {
     C8_ENSURE_ADDR_MODE(op.addressMode, AddrMode::VX_VY);
-    const u8 bit = cpu.m_Registers[op.args.vxVy.y] & 0x80;
-    cpu.m_Registers[op.args.vxVy.x] = cpu.m_Registers[op.args.vxVy.y] << 1;
+    const auto [x, y] = op.GetArgs<VxVy>();
+    const u8 bit = cpu.m_Registers[y] & 0x80;
+    cpu.m_Registers[x] = cpu.m_Registers[y] << 1;
     cpu.m_Registers[RegisterID::VF] = bit > 0;
 }
 
 void Rnd(CPU& cpu, UNUSED RAM& ram, const OpCode& op) noexcept
 {
     C8_ENSURE_ADDR_MODE(op.addressMode, AddrMode::VX_BYTE);
-    cpu.m_Registers[op.args.vxByte.x] = GetRandomValue(0, 255) & op.args.vxByte.byte;
+    const auto [x, byte] = op.GetArgs<VxByte>();
+    cpu.m_Registers[x] = GetRandomValue(0, 255) & byte;
 }
 
 void Drw(CPU& cpu, RAM& ram, const OpCode& op) noexcept
 {
     C8_ENSURE_ADDR_MODE(op.addressMode, AddrMode::VX_VY_N);
+
+    const auto [x, y, n] = op.GetArgs<VxVyN>();
     
-    const u8 height = op.args.vxVyN.n;
-    const u8 x0 = cpu.m_Registers[op.args.vxVy.x] % C8_SCREEN_BUFFER_WIDTH;
-    const u8 y0 = cpu.m_Registers[op.args.vxVy.y] % C8_SCREEN_BUFFER_HEIGHT;
+    const u8 height = n;
+    const u8 x0 = cpu.m_Registers[x] % C8_SCREEN_BUFFER_WIDTH;
+    const u8 y0 = cpu.m_Registers[y] % C8_SCREEN_BUFFER_HEIGHT;
 
     cpu.m_Registers[RegisterID::VF] = 0;
     for (u8 y = 0; y < height; y++)
     {
-        const u16 y1 = (u16)(y0 + y);
+        const u16 y1 = static_cast<u16>(y0 + y);
         if (y1 >= C8_SCREEN_BUFFER_HEIGHT)
         {
             continue;
@@ -361,7 +412,7 @@ void Drw(CPU& cpu, RAM& ram, const OpCode& op) noexcept
         const u8 sprite = ram[cpu.m_Idx + y];
         for (u8 x = 0; x < 8; x++)
         {
-            const u16 x1 = (u16)(x0 + x);
+            const u16 x1 = static_cast<u16>(x0 + x);
             if (x1 >= C8_SCREEN_BUFFER_WIDTH)
             {
                 continue;
@@ -385,7 +436,8 @@ void Drw(CPU& cpu, RAM& ram, const OpCode& op) noexcept
 void Skp(CPU& cpu, UNUSED RAM& ram, const OpCode& op) noexcept
 {
     C8_ENSURE_ADDR_MODE(op.addressMode, AddrMode::VX);
-    const u8 key = cpu.m_Registers[op.args.x];
+    const u8 x = op.GetArgs<u8>();
+    const u8 key = cpu.m_Registers[x];
     if (cpu.m_Keypad[key])
     {
         cpu.m_PC += 2;
@@ -395,7 +447,8 @@ void Skp(CPU& cpu, UNUSED RAM& ram, const OpCode& op) noexcept
 void Sknp(CPU& cpu, UNUSED RAM& ram, const OpCode& op) noexcept
 {
     C8_ENSURE_ADDR_MODE(op.addressMode, AddrMode::VX);
-    const u8 key = cpu.m_Registers[op.args.x];
+    const u8 x = op.GetArgs<u8>();
+    const u8 key = cpu.m_Registers[x];
     if (!cpu.m_Keypad[key])
     {
         cpu.m_PC += 2;

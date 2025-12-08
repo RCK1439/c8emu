@@ -1,7 +1,9 @@
 #pragma once
 
 #include "core/types.hpp"
+
 #include <cstddef>
+#include <variant>
 
 namespace c8emu {
 
@@ -73,41 +75,67 @@ constexpr std::size_t operator|(size_t a, AddrMode b) noexcept
 
 struct VxByte final
 {
+public:
     u8 x, byte;
+
+public:
+    constexpr VxByte(u16 raw) noexcept;
 };
 
 struct VxVy final
 {
+public:
     u8 x, y;
+
+public:
+    constexpr VxVy(u16 raw) noexcept;
 };
 
 struct VxVyN final
 {
+public:
     u8 x, y, n;
+
+public:
+    constexpr VxVyN(u16 raw) noexcept;
 };
 
 struct VxAddr final
 {
+public:
     u16 addr;
     u8 x;
+
+public:
+    constexpr VxAddr(u16 raw) noexcept;
 };
 
-union Args final
-{
-    u16    address;
-    VxByte vxByte;
-    VxVy   vxVy;
-    VxVyN  vxVyN;
-    VxAddr vxAddr;
-    u16    raw;
-    u8     x;
-};
+typedef std::variant<u16, VxByte, VxVy, VxVyN, VxAddr, u8> Args;
+
+// union Args final
+// {
+//     u16    address;
+//     VxByte vxByte;
+//     VxVy   vxVy;
+//     VxVyN  vxVyN;
+//     VxAddr vxAddr;
+//     u16    raw;
+//     u8     x;
+// };
 
 struct OpCode final
 {
+public:
     Instr    instr;
     AddrMode addressMode;
     Args     args;
+
+public:
+    template<typename T>
+    constexpr T GetArgs() const noexcept
+    {
+        return std::get<T>(args);
+    }
 };
 
 OpCode DecodeOpCode(u16 raw) noexcept;
