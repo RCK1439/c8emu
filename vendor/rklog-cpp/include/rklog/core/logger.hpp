@@ -3,7 +3,6 @@
 #include "level.hpp"
 #include "time.hpp"
 #include "style.hpp"
-#include "platform.hpp"
 
 #include <filesystem>
 #include <format>
@@ -11,10 +10,6 @@
 #include <iostream>
 #include <print>
 #include <string>
-#if defined(RKLOG_PLATFORM_WINDOWS)
-#define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
-#endif
 
 namespace rklog {
 
@@ -149,17 +144,7 @@ public:
      * @param title
      *      The title of the logger
      */
-    explicit ConsoleLogger(std::string_view title) noexcept :
-        Logger(title)
-    {
-#if defined(RKLOG_PLATFORM_WINDOWS)
-        const HANDLE hErr = GetStdHandle(STD_ERROR_HANDLE);
-        DWORD dwMode = 0;
-        GetConsoleMode(hErr, &dwMode);
-        dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
-        SetConsoleMode(hErr, dwMode);
-#endif
-    }
+    explicit ConsoleLogger(std::string_view title) noexcept;
 
     /**
      * Creates an instance of the `ConsoleLogger` with custom styling
@@ -169,17 +154,7 @@ public:
      * @param style
      *      The style of the log messages
      */
-    explicit ConsoleLogger(std::string_view title, LogStyle style) noexcept :
-        Logger(title, style)
-    {
-#if defined(RKLOG_PLATFORM_WINDOWS)
-        const HANDLE hErr = GetStdHandle(STD_ERROR_HANDLE);
-        DWORD dwMode = 0;
-        GetConsoleMode(hErr, &dwMode);
-        dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
-        SetConsoleMode(hErr, dwMode);
-#endif
-    }
+    explicit ConsoleLogger(std::string_view title, LogStyle style) noexcept;
 
 protected:
     /**

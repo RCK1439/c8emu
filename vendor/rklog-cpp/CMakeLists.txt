@@ -12,7 +12,10 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug)
 endif()
 
-set(rklog_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/rklog.cpp)
+set(rklog_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/rklog.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/logger.cpp
+)
 set(rklog_HEADERS 
     ${CMAKE_CURRENT_SOURCE_DIR}/include/rklog/core/config.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/rklog/core/level.hpp

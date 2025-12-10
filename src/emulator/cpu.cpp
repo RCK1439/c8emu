@@ -401,24 +401,24 @@ void Drw(CPU& cpu, RAM& ram, const OpCode& op) noexcept
     const u8 y0 = cpu.m_Registers[y] % C8_SCREEN_BUFFER_HEIGHT;
 
     cpu.m_Registers[RegisterID::VF] = 0;
-    for (u8 y = 0; y < height; y++)
+    for (u8 vy = 0; vy < height; vy++)
     {
-        const u16 y1 = static_cast<u16>(y0 + y);
+        const u16 y1 = static_cast<u16>(y0 + vy);
         if (y1 >= C8_SCREEN_BUFFER_HEIGHT)
         {
             continue;
         }
 
-        const u8 sprite = ram[cpu.m_Idx + y];
-        for (u8 x = 0; x < 8; x++)
+        const u8 sprite = ram[cpu.m_Idx + vy];
+        for (u8 vx = 0; vx < 8; vx++)
         {
-            const u16 x1 = static_cast<u16>(x0 + x);
+            const u16 x1 = static_cast<u16>(x0 + vx);
             if (x1 >= C8_SCREEN_BUFFER_WIDTH)
             {
                 continue;
             }
 
-            const u8 spritePx = sprite & (0x80 >> x);
+            const u8 spritePx = sprite & (0x80 >> vx);
             if (spritePx > 0)
             {
                 const u16 idx = x1 + y1 * C8_SCREEN_BUFFER_WIDTH;
