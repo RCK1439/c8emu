@@ -6,7 +6,7 @@
 
 int WINAPI WinMain(UNUSED HINSTANCE hInstance, UNUSED HINSTANCE hPrevInstance, UNUSED LPSTR lpCmdLine, UNUSED int nShowCmd)
 {
-    c8::Client client(__argc, __argv);
+    c8emu::Client client(__argc, __argv);
     client.Run();
 
     return 0;
