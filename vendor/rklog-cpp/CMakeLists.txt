@@ -5,24 +5,28 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-set(rklog_VERSION_MAJOR 0)
-set(rklog_VERSION_MINOR 1)
+set(rklog_VERSION_MAJOR 1)
+set(rklog_VERSION_MINOR 0)
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug)
 endif()
 
 set(rklog_SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/rklog.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/logger.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/LogImpl.cpp
 )
 set(rklog_HEADERS 
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/rklog/core/config.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/rklog/core/level.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/rklog/core/logger.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/rklog/core/platform.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/rklog/core/style.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/rklog/core/time.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/rklog/Config/Color.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/rklog/Config/Config.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/rklog/Config/Level.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/rklog/Config/Style.hpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/rklog/Core/Platform.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/rklog/Core/Time.hpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/rklog/Logger/BasicLogger.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/rklog/Logger/Logger.hpp
+
     ${CMAKE_CURRENT_SOURCE_DIR}/include/rklog/rklog.hpp
 )
 

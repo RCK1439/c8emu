@@ -15,8 +15,6 @@ namespace c8emu {
 Client::Client(i32 argc, char** argv) noexcept
 {
     ::SetTraceLogLevel(LOG_NONE);
-    C8_INIT_LOGGING();
-
     if (argc < 2)
     {
         C8_LOG_WARNING("usage: {} <rom_file>", argv[0]);

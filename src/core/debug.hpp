@@ -14,19 +14,19 @@
 #endif
 
 #if defined(C8_DEBUG)
-#define C8_ASSERT(expr, ...) if (!(expr)) ::c8emu::Panic(::c8emu::ErrorCode::ASSERTION_FAILED, __VA_ARGS__)
+#define C8_ASSERT(expr, ...) if (!(expr)) c8emu::Panic(::c8emu::ErrorCode::ASSERTION_FAILED, __VA_ARGS__)
 #else
 #define C8_ASSERT(expr, ...) (void)0
 #endif
 
 #if defined(C8_DEBUG)
-#define C8_INIT_LOGGING()   ::rklog::GlobalLogger::InitConsole("c8emu")
-#define C8_LOG_INFO(...)    ::rklog::GlobalLogger::Get()->Info(__VA_ARGS__)
-#define C8_LOG_WARNING(...) ::rklog::GlobalLogger::Get()->Warn(__VA_ARGS__)
-#define C8_LOG_ERROR(...)   ::rklog::GlobalLogger::Get()->Error(__VA_ARGS__)
-#define C8_LOG_FATAL(...)   ::rklog::GlobalLogger::Get()->Fatal(__VA_ARGS__)
+#define C8_LOG_DEBUG(...)   rklog::GetColorLogger("c8emu").Debug(__VA_ARGS__)
+#define C8_LOG_INFO(...)    rklog::GetColorLogger("c8emu").Info(__VA_ARGS__)
+#define C8_LOG_WARNING(...) rklog::GetColorLogger("c8emu").Warn(__VA_ARGS__)
+#define C8_LOG_ERROR(...)   rklog::GetColorLogger("c8emu").Error(__VA_ARGS__)
+#define C8_LOG_FATAL(...)   rklog::GetColorLogger("c8emu").Fatal(__VA_ARGS__)
 #else
-#define C8_INIT_LOGGING()   (void)0
+#define C8_LOG_DEBUG(...)   (void)0
 #define C8_LOG_INFO(...)    (void)0
 #define C8_LOG_WARNING(...) (void)0
 #define C8_LOG_ERROR(...)   (void)0

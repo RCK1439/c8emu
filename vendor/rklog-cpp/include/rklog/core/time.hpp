@@ -1,6 +1,6 @@
 #pragma once
 
-#include "platform.hpp"
+#include "Platform.hpp"
 
 #include <format>
 #include <cstdint>
@@ -9,18 +9,16 @@
 namespace rklog {
 
 /**
- * Class representing the time stamp according to the system clock
+ * Class containing the timestamp data of each log
  */
 class TimeStamp final
 {
 public:
-    TimeStamp() = default;
-
     /**
-     * Gets the current time of the system clock
+     * Queries the system clock for the current time
      *
      * @return
-     *      The current system time stamp
+     *      The current time
      */
     static TimeStamp Now() noexcept
     {
@@ -29,7 +27,7 @@ public:
 
 #if defined(RKLOG_PLATFORM_WINDOWS)
         std::tm localTime;
-        const errno_t err = localtime_s(&localTime, &cNow);
+        const ::errno_t err = ::localtime_s(&localTime, &cNow);
         if (err == 0)
         {
             return TimeStamp(static_cast<uint32_t>(localTime.tm_hour), static_cast<uint32_t>(localTime.tm_min), static_cast<uint32_t>(localTime.tm_sec));
@@ -43,7 +41,7 @@ public:
     }
 
     /**
-     * Gets the hours of the time stamp
+     * Gets the hours from the timestamp
      *
      * @return
      *      The number of hours
@@ -54,7 +52,7 @@ public:
     }
 
     /**
-     * Gets the minutes of the time stamp
+     * Gets the minutes from the timestamp
      *
      * @return
      *      The number of minutes
@@ -65,7 +63,7 @@ public:
     }
 
     /**
-     * Gets the seconds of the time stamp
+     * Gets the seconds from the timestamp
      *
      * @return
      *      The number of seconds
@@ -76,23 +74,28 @@ public:
     }
 
 private:
+    TimeStamp() = default;
+
     /**
-     * Creates a new instance of the `TimeStamp`
+     * Creates a new instance of a timestamp
      *
-     * @param hours
-     *      The number of hours
-     * @param minutes
-     *      The number of minutes
-     * @param seconds
-     *      The number of seconds
+     * @param[in] hours
+     *      The hours of the timestamp
+     * @param[in] minutes
+     *      The minutes of the timestamp
+     * @param[in] seconds
+     *      The seconds of the timestamp
      */
     constexpr explicit TimeStamp(uint32_t hours, uint32_t minutes, uint32_t seconds) noexcept :
         m_Hours(hours), m_Minutes(minutes), m_Seconds(seconds) {}
 
 private:
-    const uint32_t m_Hours = 0;   // The hours of the time stamp
-    const uint32_t m_Minutes = 0; // The minutes of the time stamp
-    const uint32_t m_Seconds = 0; // The seconds of the time stamp
+    /// The number of hours
+    const uint32_t m_Hours = 0;
+    /// The number of minutes
+    const uint32_t m_Minutes = 0;
+    /// The number of seconds
+    const uint32_t m_Seconds = 0;
 };
 
 }
