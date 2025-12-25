@@ -34,7 +34,11 @@ set(HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/Renderer/Renderer.hpp
 )
 
-add_executable(c8emu ${SOURCES} ${HEADERS})
+if(WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Release")
+    add_executable(c8emu WIN32 ${SOURCES} ${HEADERS})
+else()
+    add_executable(c8emu ${SOURCES} ${HEADERS})
+endif()
 
 if(MSVC)
     target_compile_options(c8emu PRIVATE /W4 /WX)
