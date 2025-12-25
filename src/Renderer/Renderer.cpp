@@ -1,7 +1,6 @@
-#include "renderer.hpp"
-#include "debug_overlay.hpp"
+#include "Renderer.hpp"
 
-#include "core/debug.hpp"
+#include "Core/Debug.hpp"
 
 #include <raylib.h>
 

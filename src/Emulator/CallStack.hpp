@@ -1,8 +1,8 @@
 #pragma once
 
-#include "specifications.hpp"
+#include "Spec.hpp"
 
-#include "core/types.hpp"
+#include "Core/Types.hpp"
 
 #include <array>
 

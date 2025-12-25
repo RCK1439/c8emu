@@ -1,12 +1,12 @@
-#include "client.hpp"
-#include "config.hpp"
+#include "Client.hpp"
+#include "Config.hpp"
 
-#include "core/debug.hpp"
+#include "Core/Debug.hpp"
 
-#include "emulator/chip8.hpp"
-#include "emulator/specifications.hpp"
+#include "Emulator/Chip8.hpp"
+#include "Emulator/Spec.hpp"
 
-#include "renderer/renderer.hpp"
+#include "Renderer/Renderer.hpp"
 
 #include <raylib.h>
 

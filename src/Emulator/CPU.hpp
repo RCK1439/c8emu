@@ -1,11 +1,11 @@
 #pragma once
 
-#include "instructions.hpp"
-#include "ram.hpp"
-#include "specifications.hpp"
-#include "stack.hpp"
+#include "Instructions.hpp"
+#include "RAM.hpp"
+#include "Spec.hpp"
+#include "CallStack.hpp"
 
-#include "core/types.hpp"
+#include "Core/Types.hpp"
 
 #include <array>
 

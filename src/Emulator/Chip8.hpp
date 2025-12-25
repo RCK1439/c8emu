@@ -1,9 +1,9 @@
 #pragma once
 
-#include "ram.hpp"
-#include "cpu.hpp"
+#include "RAM.hpp"
+#include "CPU.hpp"
 
-#include "renderer/renderer.hpp"
+#include "Renderer/Renderer.hpp"
 
 namespace c8emu {
 

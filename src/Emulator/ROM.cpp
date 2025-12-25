@@ -1,7 +1,7 @@
-#include "rom.hpp"
-#include "specifications.hpp"
+#include "ROM.hpp"
+#include "Spec.hpp"
 
-#include "core/debug.hpp"
+#include "Core/Debug.hpp"
 
 #include <fstream>
 

@@ -1,11 +1,11 @@
 #pragma once
 
-#include "core/types.hpp"
+#include "Core/Types.hpp"
 
-#include "emulator/chip8.hpp"
-#include "emulator/rom.hpp"
+#include "Emulator/Chip8.hpp"
+#include "Emulator/ROM.hpp"
 
-#include "renderer/renderer.hpp"
+#include "Renderer/Renderer.hpp"
 
 namespace c8emu {
 

@@ -1,37 +1,37 @@
 set(SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/client/client.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Client/Client.cpp
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/emulator/chip8.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/emulator/cpu.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/emulator/instructions.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/emulator/ram.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/emulator/rom.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/emulator/stack.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Emulator/Chip8.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Emulator/CPU.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Emulator/Instructions.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Emulator/RAM.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Emulator/ROM.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Emulator/CallStack.cpp
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/renderer/renderer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Renderer/Renderer.cpp
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/EntryPoint.cpp
 )
 
 set(HEADERS
-    ${CMAKE_CURRENT_SOURCE_DIR}/client/client.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/client/config.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Client/Client.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Client/Config.hpp
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/core/debug.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/core/platform.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/core/types.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Debug.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Platform.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Types.hpp
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/emulator/chip8.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/emulator/cpu.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/emulator/instructions.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/emulator/keyboard.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/emulator/ram.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/emulator/rom.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/emulator/specifications.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/emulator/stack.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Emulator/Chip8.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Emulator/CPU.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Emulator/Instructions.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Emulator/Keyboard.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Emulator/RAM.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Emulator/ROM.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Emulator/Spec.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Emulator/CallStack.hpp
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/renderer/debug_overlay.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/renderer/renderer.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Renderer/DebugOverlay.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Renderer/Renderer.hpp
 )
 
 add_executable(c8emu ${SOURCES} ${HEADERS})

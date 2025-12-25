@@ -1,7 +1,7 @@
 #pragma once
 
-#include "platform.hpp"
-#include "types.hpp"
+#include "Platform.hpp"
+#include "Types.hpp"
 
 #include <cstdlib>
 #include <format>
@@ -14,7 +14,7 @@
 #endif
 
 #if defined(C8_DEBUG)
-#define C8_ASSERT(expr, ...) if (!(expr)) c8emu::Panic(::c8emu::ErrorCode::ASSERTION_FAILED, __VA_ARGS__)
+#define C8_ASSERT(expr, ...) if (!(expr)) c8emu::Panic(c8emu::ErrorCode::ASSERTION_FAILED, __VA_ARGS__)
 #else
 #define C8_ASSERT(expr, ...) (void)0
 #endif

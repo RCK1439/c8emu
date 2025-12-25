@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/platform.hpp"
+#include "Core/Platform.hpp"
 
 // --- utility macros ---------------------------------------------------------
 

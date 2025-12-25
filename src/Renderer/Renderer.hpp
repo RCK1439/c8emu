@@ -1,8 +1,8 @@
 #pragma once
 
-#include "debug_overlay.hpp"
+#include "DebugOverlay.hpp"
 
-#include "core/types.hpp"
+#include "Core/Types.hpp"
 
 #include <format>
 

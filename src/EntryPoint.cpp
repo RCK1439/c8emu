@@ -1,5 +1,5 @@
-#include "client/client.hpp"
-#include "core/platform.hpp"
+#include "Client/Client.hpp"
+#include "Core/Platform.hpp"
 
 #if defined(C8_PLATFORM_WINDOWS) && defined(C8_RELEASE)
 

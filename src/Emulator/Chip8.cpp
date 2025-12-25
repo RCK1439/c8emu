@@ -1,12 +1,12 @@
-#include "chip8.hpp"
-#include "cpu.hpp"
-#include "keyboard.hpp"
-#include "ram.hpp"
-#include "rom.hpp"
+#include "Chip8.hpp"
+#include "CPU.hpp"
+#include "Keyboard.hpp"
+#include "RAM.hpp"
+#include "ROM.hpp"
 
-#include "core/types.hpp"
+#include "Core/Types.hpp"
 
-#include "renderer/renderer.hpp"
+#include "Renderer/Renderer.hpp"
 
 #include <raylib.h>
 

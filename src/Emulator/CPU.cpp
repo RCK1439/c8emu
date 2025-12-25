@@ -1,10 +1,10 @@
-#include "cpu.hpp"
-#include "instructions.hpp"
-#include "ram.hpp"
+#include "CPU.hpp"
+#include "Instructions.hpp"
+#include "RAM.hpp"
 
-#include "core/debug.hpp"
-#include "core/platform.hpp"
-#include "core/types.hpp"
+#include "Core/Debug.hpp"
+#include "Core/Platform.hpp"
+#include "Core/Types.hpp"
 
 #include <raylib.h>
 

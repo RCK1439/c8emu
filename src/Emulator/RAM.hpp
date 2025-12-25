@@ -1,7 +1,7 @@
 #pragma once
 
-#include "rom.hpp"
-#include "specifications.hpp"
+#include "ROM.hpp"
+#include "Spec.hpp"
 
 #include <array>
 

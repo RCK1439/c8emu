@@ -1,6 +1,6 @@
-#include "stack.hpp"
+#include "CallStack.hpp"
 
-#include "core/debug.hpp"
+#include "Core/Debug.hpp"
 
 namespace c8emu {
 

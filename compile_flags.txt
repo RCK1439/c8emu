@@ -7,4 +7,4 @@
 
 -Isrc/
 -Ivendor/raylib/src/
--Ivendor/rklog-cpp/include
+-Ivendor/rklog-cpp/include/

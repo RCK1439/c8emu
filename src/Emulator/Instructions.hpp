@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/types.hpp"
+#include "Core/Types.hpp"
 
 #include <cstddef>
 #include <variant>
