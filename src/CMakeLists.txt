@@ -34,15 +34,15 @@ set(HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/Renderer/Renderer.hpp
 )
 
-if(WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Release")
-    add_executable(c8emu WIN32 ${SOURCES} ${HEADERS})
-else()
-    add_executable(c8emu ${SOURCES} ${HEADERS})
-endif()
+add_executable(c8emu ${SOURCES} ${HEADERS})
 
-if(MSVC)
-    target_compile_options(c8emu PRIVATE /W4 /WX)
-    target_compile_definitions(c8emu PRIVATE _CRT_SECURE_NO_WARNINGS)
+if(WIN32)
+    if(MSVC)
+        target_compile_options(c8emu PRIVATE /W4 /WX)
+        target_compile_definitions(c8emu PRIVATE _CRT_SECURE_NO_WARNINGS)
+    else()
+        target_compile_options(c8emu PRIVATE -Wall -Wextra -Wpedantic -Werror -fno-exceptions)
+    endif()
 else()
     target_compile_options(c8emu PRIVATE -Wall -Wextra -Wpedantic -Werror -fno-exceptions)
 endif()
