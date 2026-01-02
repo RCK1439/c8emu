@@ -42,11 +42,11 @@ private:
     void DrawDebugOverlay() noexcept;
 
 private:
-    Font            m_Font;
-    RenderTexture2D m_Target;
-    DebugOverlay    m_DebugOverlay;
-    bool            m_DrawDebugOverlay;
-    float           m_Scale;
+    Font            m_Font{};
+    RenderTexture2D m_Target{};
+    DebugOverlay    m_DebugOverlay{};
+    bool            m_DrawDebugOverlay{};
+    float           m_Scale{};
 };
 
 }

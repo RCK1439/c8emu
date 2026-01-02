@@ -57,7 +57,7 @@ public:
 private:
     using RegisterBuffer = std::array<u8, C8_NUM_REGISTERS>;
     
-    RegisterBuffer m_Registers = { 0 };
+    RegisterBuffer m_Registers{};
 };
 
 class CPU final
@@ -96,14 +96,14 @@ private:
     friend class Chip8;
 
 private:
-    VideoBuffer m_Video = {0 };
-    CallStack   m_CallStack;
-    KeyPad      m_Keypad = { 0 };
-    Registers   m_Registers;
-    u16         m_Idx;
-    u16         m_PC = C8_ADDR_PC;
-    u8          m_DT;
-    u8          m_ST;
+    VideoBuffer m_Video{};
+    CallStack   m_CallStack{};
+    KeyPad      m_Keypad{};
+    Registers   m_Registers{};
+    u16         m_Idx{};
+    u16         m_PC{C8_ADDR_PC};
+    u8          m_DT{};
+    u8          m_ST{};
 };
 
 }

@@ -12,33 +12,18 @@ public:
     ROM() noexcept = default;
     ~ROM() noexcept;
 
-    bool Load(std::filesystem::path filePath) noexcept;
+    [[nodiscard]] bool Load(std::filesystem::path filePath) noexcept;
 
-    inline const u8* Data() const noexcept
-    {
-        return m_Data;
-    }
-
-    inline std::size_t Size() const noexcept
-    {
-        return m_Size;
-    }
-
-    inline std::string_view Name() const noexcept
-    {
-        return m_Name;
-    }
-
-    inline bool IsLoaded() const noexcept
-    {
-        return m_IsLoaded;
-    }
+    inline const u8* Data() const noexcept { return m_Data; }
+    inline std::size_t Size() const noexcept { return m_Size; }
+    inline std::string_view Name() const noexcept { return m_Name; }
+    inline bool IsLoaded() const noexcept { return m_IsLoaded; }
 
 private:
-    std::string m_Name;
-    u8*         m_Data = nullptr;
-    std::size_t m_Size = 0;
-    bool        m_IsLoaded = false;
+    std::string m_Name{};
+    u8*         m_Data{};
+    std::size_t m_Size{};
+    bool        m_IsLoaded{};
 };
 
 }

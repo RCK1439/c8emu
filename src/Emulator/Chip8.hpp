@@ -22,10 +22,10 @@ private:
     void ProcessInput() noexcept;
 
 private:
-    RAM   m_RAM;
-    CPU   m_CPU;
-    bool  m_ROMLoaded = false;
-    float m_Tick = 0.0f;
+    RAM   m_RAM{};
+    CPU   m_CPU{};
+    bool  m_ROMLoaded{};
+    float m_Tick{};
 };
 
 }

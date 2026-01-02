@@ -23,12 +23,12 @@ private:
     void OnResize() noexcept;
 
 private:
-    Chip8    m_Chip8;
-    Renderer m_Renderer;
-    ROM      m_ROM;
-    float    m_UpdateTime = 0.0f;
-    float    m_RenderTime = 0.0f;
-    bool     m_IsRunning = true;
+    Chip8    m_Chip8{};
+    Renderer m_Renderer{};
+    ROM      m_ROM{};
+    float    m_UpdateTime{};
+    float    m_RenderTime{};
+    bool     m_IsRunning{};
 };
 
 }

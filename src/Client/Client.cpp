@@ -49,6 +49,7 @@ Client::~Client() noexcept
 
 void Client::Run() noexcept
 {
+    m_IsRunning = true;
     while (m_IsRunning)
     {
         OnUpdate();

@@ -19,8 +19,8 @@ public:
 private:
     using StackBuffer = std::array<u16, C8_CALLSTACK_SIZE>;
     
-    StackBuffer m_Stack = { 0 };
-    u8          m_Ptr   = 0;
+    StackBuffer m_Stack{};
+    u8          m_Ptr{};
 };
 
 }

@@ -29,8 +29,8 @@ public:
     }
 
 private:
-    std::string m_Text;
-    Vector2     m_Position;
+    std::string m_Text{};
+    Vector2     m_Position{};
 };
 
 class DebugOverlay final
@@ -110,8 +110,8 @@ public:
     }
 
 private:
-    std::vector<DebugText> m_Buffer;
-    Vector2                m_NextPosition = INIT_POSITION;
+    std::vector<DebugText> m_Buffer{};
+    Vector2                m_NextPosition{INIT_POSITION};
 };
 
 }

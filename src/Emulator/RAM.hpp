@@ -32,7 +32,7 @@ private:
 private:
     using MemoryBuffer = std::array<u8, C8_MEMORY_SIZE>;
     
-    MemoryBuffer m_Buffer = { 0 };
+    MemoryBuffer m_Buffer{};
 };
 
 }
