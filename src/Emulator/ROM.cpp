@@ -25,8 +25,8 @@ bool ROM::Load(std::filesystem::path filePath) noexcept
     }
     rom.seekg(0, std::ios::beg);
 
-    m_Data = new u8[m_Size];
-    rom.read(reinterpret_cast<char*>(m_Data), sizeof(u8) * m_Size);
+    m_Data = new Byte[m_Size];
+    rom.read(reinterpret_cast<char*>(m_Data), sizeof(Byte) * m_Size);
     
     m_Name = filePath.filename().replace_extension().string();
     C8_LOG_INFO("ROM successfully loaded {} bytes: {}", m_Size, filePath.filename().string());

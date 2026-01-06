@@ -32,7 +32,7 @@ inline static constexpr u16 NNN(u16 raw) noexcept
     return raw & 0x0FFF;
 }
 
-typedef OpCode (*DecodeProc)(u16);
+using DecodeProc = OpCode (*)(u16);
 
 static OpCode Decode0(u16 raw) noexcept;
 static OpCode Decode1(u16 raw) noexcept;

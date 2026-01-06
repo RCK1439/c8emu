@@ -14,14 +14,14 @@ public:
 
     [[nodiscard]] bool Load(std::filesystem::path filePath) noexcept;
 
-    inline const u8* Data() const noexcept { return m_Data; }
+    inline const Byte* Data() const noexcept { return m_Data; }
     inline std::size_t Size() const noexcept { return m_Size; }
     inline std::string_view Name() const noexcept { return m_Name; }
     inline bool IsLoaded() const noexcept { return m_IsLoaded; }
 
 private:
     std::string m_Name{};
-    u8*         m_Data{};
+    Byte*       m_Data{};
     std::size_t m_Size{};
     bool        m_IsLoaded{};
 };

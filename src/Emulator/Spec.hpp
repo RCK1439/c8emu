@@ -17,11 +17,11 @@ constexpr size_t C8_SCREEN_BUFFER_HEIGHT = 32;
 
 // --- memory -----------------------------------------------------------------
 
-constexpr u16 C8_ADDR_ROM    = 0x0200; // Starting address for ROM data
-constexpr u16 C8_ADDR_SCREEN = 0x0F00; // Starting address for Screen
-constexpr u16 C8_ADDR_STACK  = 0x0FA0; // Starting address for call stack
-constexpr u16 C8_ADDR_PC     = 0x0200; // Starting address for program counter
-constexpr u16 C8_ADDR_FONT   = 0x0050; // Starting address for system font
+constexpr Address C8_ADDR_ROM    = 0x0200; // Starting address for ROM data
+constexpr Address C8_ADDR_SCREEN = 0x0F00; // Starting address for Screen
+constexpr Address C8_ADDR_STACK  = 0x0FA0; // Starting address for call stack
+constexpr Address C8_ADDR_PC     = 0x0200; // Starting address for program counter
+constexpr Address C8_ADDR_FONT   = 0x0050; // Starting address for system font
 
 constexpr size_t C8_FONTSET_SIZE = 80;
 constexpr size_t C8_MEMORY_SIZE  = 4 * 1024;

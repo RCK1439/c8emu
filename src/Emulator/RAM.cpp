@@ -16,7 +16,7 @@ void RAM::LoadROM(const ROM& rom)
 
 void RAM::LoadFont()
 {
-    const u8 fontset[C8_FONTSET_SIZE] = {
+    const Byte fontset[C8_FONTSET_SIZE] = {
     	0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
     	0x20, 0x60, 0x20, 0x20, 0x70, // 1
     	0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
@@ -35,7 +35,7 @@ void RAM::LoadFont()
     	0xF0, 0x80, 0xF0, 0x80, 0x80  // F
     };
 
-    for (u8 i = 0; i < C8_FONTSET_SIZE; i++)
+    for (std::size_t i = 0; i < C8_FONTSET_SIZE; i++)
     {
         m_Buffer[C8_ADDR_FONT + i] = fontset[i];
     }

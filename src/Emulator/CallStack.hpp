@@ -13,14 +13,14 @@ class CallStack final
 public:
     CallStack() = default;
 
-    void PushAddr(u16 addr) noexcept;
-    u16 PopAddr() noexcept;
+    void PushAddr(Address addr) noexcept;
+    Address PopAddr() noexcept;
 
 private:
-    using StackBuffer = std::array<u16, C8_CALLSTACK_SIZE>;
+    using StackBuffer = std::array<Address, C8_CALLSTACK_SIZE>;
     
     StackBuffer m_Stack{};
-    u8          m_Ptr{};
+    std::size_t m_Ptr{};
 };
 
 }

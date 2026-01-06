@@ -76,7 +76,8 @@ constexpr std::size_t operator|(size_t a, AddrMode b) noexcept
 struct VxByte final
 {
 public:
-    u8 x, byte;
+    u8   x;
+    Byte byte;
 
 public:
     constexpr VxByte(u16 raw) noexcept;
@@ -103,25 +104,14 @@ public:
 struct VxAddr final
 {
 public:
-    u16 addr;
-    u8 x;
+    Address addr;
+    u8      x;
 
 public:
     constexpr VxAddr(u16 raw) noexcept;
 };
 
-typedef std::variant<u16, VxByte, VxVy, VxVyN, VxAddr, u8> Args;
-
-// union Args final
-// {
-//     u16    address;
-//     VxByte vxByte;
-//     VxVy   vxVy;
-//     VxVyN  vxVyN;
-//     VxAddr vxAddr;
-//     u16    raw;
-//     u8     x;
-// };
+using Args = std::variant<Address, VxByte, VxVy, VxVyN, VxAddr, u8>;
 
 struct OpCode final
 {

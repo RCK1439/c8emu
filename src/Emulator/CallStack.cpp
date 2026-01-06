@@ -4,16 +4,16 @@
 
 namespace c8emu {
 
-void CallStack::PushAddr(u16 addr) noexcept
+void CallStack::PushAddr(Address addr) noexcept
 {
     C8_ASSERT(m_Ptr < C8_CALLSTACK_SIZE, "Cannot push; call stack is full");
-    m_Stack[static_cast<std::size_t>(m_Ptr++)] = addr;
+    m_Stack[m_Ptr++] = addr;
 }
 
-u16 CallStack::PopAddr() noexcept
+Address CallStack::PopAddr() noexcept
 {
     C8_ASSERT(m_Ptr > 0, "Cannot pop; call stack is empty");
-    return m_Stack.at(static_cast<std::size_t>(--m_Ptr));
+    return m_Stack.at(--m_Ptr);
 }
 
 }

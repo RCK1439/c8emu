@@ -70,8 +70,8 @@ void Chip8::OnRender(Renderer& renderer) const noexcept
         renderer.AddDebugText("- Index register: {}", m_CPU.m_Idx);
         renderer.AddDebugText("- Program counter: {}", m_CPU.m_PC);
 
-        renderer.AddDebugText("- Delay timer: {}", (i32)m_CPU.m_DT);
-        renderer.AddDebugText("- Sound timer: {}", (i32)m_CPU.m_ST);
+        renderer.AddDebugText("- Delay timer: {}", m_CPU.m_DT);
+        renderer.AddDebugText("- Sound timer: {}", m_CPU.m_ST);
 
         renderer.AddDebugText("- Keypad:");
         renderer.AddDebugText("  (K1={}, K2={}, K3={}, KC={})",

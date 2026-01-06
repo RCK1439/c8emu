@@ -69,7 +69,7 @@ public:
     void SetKey(u8 key, u8 val) noexcept;
 
 private:
-    using VideoBuffer = std::array<u8, C8_SCREEN_BUFFER_WIDTH * C8_SCREEN_BUFFER_HEIGHT>;
+    using VideoBuffer = std::array<Byte, C8_SCREEN_BUFFER_WIDTH * C8_SCREEN_BUFFER_HEIGHT>;
     using KeyPad      = std::array<u8, C8_NUM_KEYS>;
 
     friend void Raw(CPU& cpu, RAM& ram, const OpCode& op) noexcept;

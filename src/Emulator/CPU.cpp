@@ -11,17 +11,17 @@
 #if defined(C8_DEBUG)
 #define C8_ENSURE_ADDR_MODE(addr_mode, expected)                         \
     if (((addr_mode) & (expected)) == 0 && (addr_mode) != AddrMode::NONE)\
-        ::c8emu::Panic(::c8emu::ErrorCode::INVALID_ADDRESS_MODE,         \
+        c8emu::Panic(c8emu::ErrorCode::INVALID_ADDRESS_MODE,             \
             "Unexpected address mode in {} executor routine: {}",        \
             __func__,                                                    \
-            static_cast<::c8emu::u32>(addr_mode))
+            static_cast<c8emu::u32>(addr_mode))
 #else
 #define C8_ENSURE_ADDR_MODE(addr_mode, expected)
 #endif
 
 namespace c8emu {
 
-typedef void (*ExecProc)(CPU&, RAM&, const OpCode&);
+using ExecProc = void(*)(CPU&, RAM&, const OpCode&);
 
 void Raw(CPU& cpu, RAM& ram, const OpCode& op) noexcept;
 void Cls(CPU& cpu, RAM& ram, const OpCode& op) noexcept;
@@ -122,12 +122,12 @@ void Jp(CPU& cpu, UNUSED RAM& ram, const OpCode& op) noexcept
     {
         case AddrMode::ADDR:
         {
-            const u16 addr = op.GetArgs<u16>();
+            const Address addr = op.GetArgs<Address>();
             cpu.m_PC = addr;
         } break;
         case AddrMode::V0_ADDR:
         {
-            const u16 addr = op.GetArgs<u16>();
+            const Address addr = op.GetArgs<Address>();
             cpu.m_PC = cpu.m_Registers[RegisterID::V0] + addr;
         } break;
         default:
@@ -139,7 +139,7 @@ void Call(CPU& cpu, UNUSED RAM& ram, const OpCode& op) noexcept
 {
     C8_ENSURE_ADDR_MODE(op.addressMode, AddrMode::ADDR);
     
-    const u16 addr = op.GetArgs<u16>();
+    const Address addr = op.GetArgs<Address>();
     cpu.m_CallStack.PushAddr(cpu.m_PC);
     cpu.m_PC = addr;
 }
@@ -216,7 +216,7 @@ void Ld(CPU& cpu, RAM& ram, const OpCode& op) noexcept
         } break;
         case AddrMode::I_ADDR:
         {
-            const u16 addr = op.GetArgs<u16>();
+            const Address addr = op.GetArgs<Address>();
             cpu.m_Idx = addr;
         } break;
         case AddrMode::VX_DT:
