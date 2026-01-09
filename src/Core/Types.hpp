@@ -14,7 +14,7 @@ using i16 = int16_t;
 using i32 = int32_t;
 using i64 = int64_t;
 
-using Address = u16;
-using Byte = u8;
+using Address = uint16_t;
+using Byte = uint8_t;
 
 }

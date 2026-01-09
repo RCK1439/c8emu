@@ -59,54 +59,49 @@ public:
         m_NextPosition.y += 20.0f + 5.0f; // font size + spacing
     }
     
-    inline std::size_t Size() const noexcept
+    [[nodiscard]] inline std::size_t Size() const noexcept
     {
         return m_Buffer.size();
     }
 
-    inline ConstIter cbegin() const
+    [[nodiscard]] inline ConstIter cbegin() const
     {
         return m_Buffer.cbegin();
     }
 
-    inline ConstIter cend() const
+    [[nodiscard]] inline ConstIter cend() const
     {
         return m_Buffer.cend();
     }
 
-    inline Iter begin()
+    [[nodiscard]] inline Iter begin()
     {
         return m_Buffer.begin();
     }
 
-    inline Iter end()
+    [[nodiscard]] inline Iter end()
     {
         return m_Buffer.end();
     }
 
-    inline RevConstIter crbegin() const
+    [[nodiscard]] inline RevConstIter crbegin() const
     {
         return m_Buffer.crbegin();
     }
 
-    inline RevConstIter crend() const
+    [[nodiscard]] inline RevConstIter crend() const
     {
         return m_Buffer.crend();
     }
 
-    inline RevConstIter rbegin() const
+    [[nodiscard]] inline RevConstIter rbegin() const
     {
         return m_Buffer.rbegin();
     }
 
-    inline RevConstIter rend() const
+    [[nodiscard]] inline RevConstIter rend() const
     {
         return m_Buffer.rend();
-    }
-    
-    constexpr const DebugText& operator[](std::size_t idx) const noexcept
-    {
-        return m_Buffer.at(idx);
     }
 
 private:

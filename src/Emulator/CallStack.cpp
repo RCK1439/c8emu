@@ -10,7 +10,7 @@ void CallStack::PushAddr(Address addr) noexcept
     m_Stack[m_Ptr++] = addr;
 }
 
-Address CallStack::PopAddr() noexcept
+[[nodiscard]] Address CallStack::PopAddr() noexcept
 {
     C8_ASSERT(m_Ptr > 0, "Cannot pop; call stack is empty");
     return m_Stack.at(--m_Ptr);

@@ -14,7 +14,7 @@ public:
     CallStack() = default;
 
     void PushAddr(Address addr) noexcept;
-    Address PopAddr() noexcept;
+    [[nodiscard]] Address PopAddr() noexcept;
 
 private:
     using StackBuffer = std::array<Address, C8_CALLSTACK_SIZE>;

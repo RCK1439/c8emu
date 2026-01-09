@@ -14,13 +14,13 @@ public:
 
     void LoadROM(const ROM& rom);
 
-    constexpr Byte& operator[](Address addr)
+    [[nodiscard]] constexpr Byte& operator[](Address addr)
     {
         addr &= 0x0FFF;
         return m_Buffer.at(static_cast<std::size_t>(addr));
     }
 
-    constexpr const Byte& operator[](Address addr) const
+    [[nodiscard]] constexpr const Byte& operator[](Address addr) const
     {
         addr &= 0x0FFF;
         return m_Buffer.at(static_cast<std::size_t>(addr));

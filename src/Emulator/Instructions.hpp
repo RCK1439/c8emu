@@ -124,7 +124,7 @@ public:
     explicit OpCode(u16 raw) noexcept;
 
     template<typename T>
-    constexpr T GetArgs() const noexcept
+    [[nodiscard]] constexpr T GetArgs() const noexcept
     {
         return std::get<T>(args);
     }
