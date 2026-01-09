@@ -116,18 +116,18 @@ using Args = std::variant<Address, VxByte, VxVy, VxVyN, VxAddr, u8>;
 struct OpCode final
 {
 public:
-    Instr    instr;
-    AddrMode addressMode;
-    Args     args;
+    Instr    instr{};
+    AddrMode addressMode{};
+    Args     args{};
 
 public:
+    explicit OpCode(u16 raw) noexcept;
+
     template<typename T>
     constexpr T GetArgs() const noexcept
     {
         return std::get<T>(args);
     }
 };
-
-OpCode DecodeOpCode(u16 raw) noexcept;
 
 }

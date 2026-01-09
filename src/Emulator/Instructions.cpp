@@ -32,24 +32,24 @@ inline static constexpr u16 NNN(u16 raw) noexcept
     return raw & 0x0FFF;
 }
 
-using DecodeProc = OpCode (*)(u16);
+using DecodeProc = void (*)(OpCode&, u16);
 
-static OpCode Decode0(u16 raw) noexcept;
-static OpCode Decode1(u16 raw) noexcept;
-static OpCode Decode2(u16 raw) noexcept;
-static OpCode Decode3(u16 raw) noexcept;
-static OpCode Decode4(u16 raw) noexcept;
-static OpCode Decode5(u16 raw) noexcept;
-static OpCode Decode6(u16 raw) noexcept;
-static OpCode Decode7(u16 raw) noexcept;
-static OpCode Decode8(u16 raw) noexcept;
-static OpCode Decode9(u16 raw) noexcept;
-static OpCode DecodeA(u16 raw) noexcept;
-static OpCode DecodeB(u16 raw) noexcept;
-static OpCode DecodeC(u16 raw) noexcept;
-static OpCode DecodeD(u16 raw) noexcept;
-static OpCode DecodeE(u16 raw) noexcept;
-static OpCode DecodeF(u16 raw) noexcept;
+static void Decode0(OpCode& code, u16 raw) noexcept;
+static void Decode1(OpCode& code, u16 raw) noexcept;
+static void Decode2(OpCode& code, u16 raw) noexcept;
+static void Decode3(OpCode& code, u16 raw) noexcept;
+static void Decode4(OpCode& code, u16 raw) noexcept;
+static void Decode5(OpCode& code, u16 raw) noexcept;
+static void Decode6(OpCode& code, u16 raw) noexcept;
+static void Decode7(OpCode& code, u16 raw) noexcept;
+static void Decode8(OpCode& code, u16 raw) noexcept;
+static void Decode9(OpCode& code, u16 raw) noexcept;
+static void DecodeA(OpCode& code, u16 raw) noexcept;
+static void DecodeB(OpCode& code, u16 raw) noexcept;
+static void DecodeC(OpCode& code, u16 raw) noexcept;
+static void DecodeD(OpCode& code, u16 raw) noexcept;
+static void DecodeE(OpCode& code, u16 raw) noexcept;
+static void DecodeF(OpCode& code, u16 raw) noexcept;
 
 static constexpr DecodeProc s_Decoders[] = {
     Decode0, Decode1, Decode2, Decode3,
@@ -58,16 +58,14 @@ static constexpr DecodeProc s_Decoders[] = {
     DecodeC, DecodeD, DecodeE, DecodeF
 };
 
-OpCode DecodeOpCode(u16 raw) noexcept
+OpCode::OpCode(u16 raw) noexcept
 {
     const size_t idx = (size_t)(Instr(raw));
-    return s_Decoders[idx](raw);
+    s_Decoders[idx](*this, raw);
 }
 
-static OpCode Decode0(u16 raw) noexcept
+static void Decode0(OpCode& code, u16 raw) noexcept
 {
-    OpCode code = {};
-
     switch (raw & 0x00FF)
     {
         case 0xE0:
@@ -87,94 +85,62 @@ static OpCode Decode0(u16 raw) noexcept
             code.args = raw;
         } break;
     }
-
-    return code;
 }
 
-static OpCode Decode1(u16 raw) noexcept
+static void Decode1(OpCode& code, u16 raw) noexcept
 {
-    const OpCode code = {
-        .instr = Instr::JP,
-        .addressMode = AddrMode::ADDR,
-        .args = NNN(raw),
-    };
-
-    return code;
+    code.instr = Instr::JP;
+    code.addressMode = AddrMode::ADDR;
+    code.args = NNN(raw);
 }
 
-static OpCode Decode2(u16 raw) noexcept
+static void Decode2(OpCode& code, u16 raw) noexcept
 {
-    const OpCode code = {
-        .instr = Instr::CALL,
-        .addressMode = AddrMode::ADDR,
-        .args = NNN(raw),
-    };
-
-    return code;
+    code.instr = Instr::CALL;
+    code.addressMode = AddrMode::ADDR;
+    code.args = NNN(raw);
 }
 
-static OpCode Decode3(u16 raw) noexcept
+static void Decode3(OpCode& code, u16 raw) noexcept
 {
-    const OpCode code = {
-        .instr = Instr::SE,
-        .addressMode = AddrMode::VX_BYTE,
-        .args = VxByte(raw),
-    };
-
-    return code;
+    code.instr = Instr::SE;
+    code.addressMode = AddrMode::VX_BYTE;
+    code.args = VxByte(raw);
 }
 
-static OpCode Decode4(u16 raw) noexcept
+static void Decode4(OpCode& code, u16 raw) noexcept
 {
-    const OpCode code = {
-        .instr = Instr::SNE,
-        .addressMode = AddrMode::VX_BYTE,
-        .args = VxByte(raw),
-    };
-
-    return code;
+    code.instr = Instr::SNE;
+    code.addressMode = AddrMode::VX_BYTE;
+    code.args = VxByte(raw);
 }
 
-static OpCode Decode5(u16 raw) noexcept
+static void Decode5(OpCode& code, u16 raw) noexcept
 {
-    const OpCode code = {
-        .instr = Instr::SE,
-        .addressMode = AddrMode::VX_VY,
-        .args = VxVy(raw),
-    };
-
-    return code;
+    code.instr = Instr::SE;
+    code.addressMode = AddrMode::VX_VY;
+    code.args = VxVy(raw);
 }
 
-static OpCode Decode6(u16 raw) noexcept
+static void Decode6(OpCode& code, u16 raw) noexcept
 {
-    const OpCode code = {
-        .instr = Instr::LD,
-        .addressMode = AddrMode::VX_BYTE,
-        .args = VxByte(raw),
-    };
-
-    return code;
+    code.instr = Instr::LD;
+    code.addressMode = AddrMode::VX_BYTE;
+    code.args = VxByte(raw);
 }
 
-static OpCode Decode7(u16 raw) noexcept
+static void Decode7(OpCode& code, u16 raw) noexcept
 {
-    const OpCode code = {
-        .instr = Instr::ADD,
-        .addressMode = AddrMode::VX_BYTE,
-        .args = VxByte(raw),
-    };
-
-    return code;
+    code.instr = Instr::ADD;
+    code.addressMode = AddrMode::VX_BYTE;
+    code.args = VxByte(raw);
 }
 
-static OpCode Decode8(u16 raw) noexcept
+static void Decode8(OpCode& code, u16 raw) noexcept
 {
-    OpCode code = {
-        .instr = Instr::RAW,
-        .addressMode = AddrMode::VX_VY,
-        .args = VxVy(raw),
-    };
+    code.instr = Instr::RAW;
+    code.addressMode = AddrMode::VX_VY;
+    code.args = VxVy(raw);
 
     switch (raw & 0x000F)
     {
@@ -194,69 +160,45 @@ static OpCode Decode8(u16 raw) noexcept
             code.args = raw;
         } break;
     }
-
-    return code;
 }
 
-static OpCode Decode9(u16 raw) noexcept
+static void Decode9(OpCode& code, u16 raw) noexcept
 {
-    const OpCode code = {
-        .instr = Instr::SNE,
-        .addressMode = AddrMode::VX_VY,
-        .args = VxVy(raw),
-    };
-
-    return code;
+    code.instr = Instr::SNE;
+    code.addressMode = AddrMode::VX_VY;
+    code.args = VxVy(raw);
 }
 
-static OpCode DecodeA(u16 raw) noexcept
+static void DecodeA(OpCode& code, u16 raw) noexcept
 {
-    const OpCode code = {
-        .instr = Instr::LD,
-        .addressMode = AddrMode::I_ADDR,
-        .args = NNN(raw),
-    };
-    
-    return code;
+    code.instr = Instr::LD;
+    code.addressMode = AddrMode::I_ADDR;
+    code.args = NNN(raw);
 }
 
-static OpCode DecodeB(u16 raw) noexcept
+static void DecodeB(OpCode& code, u16 raw) noexcept
 {
-    const OpCode code = {
-        .instr = Instr::JP, 
-        .addressMode = AddrMode::V0_ADDR,
-        .args = NNN(raw),
-    };
-
-    return code;
+    code.instr = Instr::JP;
+    code.addressMode = AddrMode::V0_ADDR;
+    code.args = NNN(raw);
 }
 
-static OpCode DecodeC(u16 raw) noexcept
+static void DecodeC(OpCode& code, u16 raw) noexcept
 {
-    const OpCode code = {
-        .instr = Instr::RND,
-        .addressMode = AddrMode::VX_BYTE,
-        .args = VxByte(raw),
-    };
-    
-    return code;
+    code.instr = Instr::RND;
+    code.addressMode = AddrMode::VX_BYTE;
+    code.args = VxByte(raw);
 }
 
-static OpCode DecodeD(u16 raw) noexcept
+static void DecodeD(OpCode& code, u16 raw) noexcept
 {
-    const OpCode code = {
-        .instr = Instr::DRW,
-        .addressMode = AddrMode::VX_VY_N,
-        .args = VxVyN(raw),
-    };
-    
-    return code;
+    code.instr = Instr::DRW;
+    code.addressMode = AddrMode::VX_VY_N;
+    code.args = VxVyN(raw);
 }
 
-static OpCode DecodeE(u16 raw) noexcept
+static void DecodeE(OpCode& code, u16 raw) noexcept
 {
-    OpCode code = {};
-
     switch (raw & 0x00FF)
     {
         case 0x9E:
@@ -278,14 +220,10 @@ static OpCode DecodeE(u16 raw) noexcept
             code.args = raw;
         } break;
     }
-
-    return code;
 }
 
-static OpCode DecodeF(u16 raw) noexcept
+static void DecodeF(OpCode& code, u16 raw) noexcept
 {
-    OpCode code = {};
-
     switch (raw & 0x00FF)
     {
         case 0x07:
@@ -349,8 +287,6 @@ static OpCode DecodeF(u16 raw) noexcept
             code.args = raw;
         } break;
     }
-
-    return code;
 }
 
 constexpr VxByte::VxByte(u16 raw) noexcept :

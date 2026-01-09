@@ -74,7 +74,7 @@ void CPU::Step(RAM& ram) noexcept
         const u16 raw = (static_cast<u16>(ram[m_PC]) << 8) | static_cast<u16>(ram[m_PC + 1]);
         m_PC += 2;
 
-        const OpCode opcode = DecodeOpCode(raw);
+        const OpCode opcode(raw);
         s_Executors[static_cast<std::size_t>(opcode.instr)](*this, ram, opcode);
     }
 
