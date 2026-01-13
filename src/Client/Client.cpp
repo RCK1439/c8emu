@@ -10,6 +10,7 @@
 #include "Renderer/Renderer.hpp"
 
 #include <SFML/Window/VideoMode.hpp>
+#include <chrono>
 
 namespace c8emu {
 
@@ -52,7 +53,7 @@ void Client::Run() noexcept
     m_IsRunning = true;
     while (m_IsRunning)
     {
-        const float t0 = Time::Now();
+        const auto t0 = std::chrono::high_resolution_clock::now();
         while (const auto e = m_Window.pollEvent())
         {
             const sf::Event event = e.value();
@@ -62,7 +63,8 @@ void Client::Run() noexcept
         OnUpdate();
         OnRender();
 
-        m_DeltaTime = Time::Now() - t0;
+        const std::chrono::duration<float> elapsed = std::chrono::high_resolution_clock::now() - t0;
+        m_DeltaTime = elapsed.count();
     }
 }
 
@@ -105,14 +107,16 @@ void Client::OnEvent(const sf::Event& event) noexcept
 
 void Client::OnUpdate() noexcept
 {
-    const float t0 = Time::Now();
+    const auto t0 = std::chrono::high_resolution_clock::now();
     m_Chip8.OnUpdate(m_DeltaTime);
-    m_UpdateTime = Time::Now() - t0;
+
+    const std::chrono::duration<float> elapsed = std::chrono::high_resolution_clock::now() - t0;
+    m_UpdateTime = elapsed.count();
 }
 
 void Client::OnRender() noexcept
 {
-    const float t0 = Time::Now();
+    const auto t0 = std::chrono::high_resolution_clock::now();
 
     RenderContext ctx = m_Renderer.Begin();
     if (ctx.DebugOverlayEnabled())
@@ -122,15 +126,16 @@ void Client::OnRender() noexcept
         const float frameTime = m_DeltaTime * 1000.0f;
 
         ctx.AddDebugText("CLIENT:");
-        ctx.AddDebugText("RESOLUTION: {}x{}", windowSize.x, windowSize.y);
-        ctx.AddDebugText("{} FPS, {:.2f}MS", fps, frameTime);
-        ctx.AddDebugText("UPDATE TIME: {:.5f}MS", m_UpdateTime * 1000.0f);
-        ctx.AddDebugText("RENDER TIME: {:.5f}MS", m_RenderTime * 1000.0f);
+        ctx.AddDebugText(" {} FPS, {:.2f}MS", fps, frameTime);
+        ctx.AddDebugText(" RESOLUTION: {}x{}", windowSize.x, windowSize.y);
+        ctx.AddDebugText(" UPDATE TIME: {:.5f}MS", m_UpdateTime * 1000.0f);
+        ctx.AddDebugText(" RENDER TIME: {:.5f}MS", m_RenderTime * 1000.0f);
     }
     m_Chip8.OnRender(ctx);
     m_Renderer.End(ctx, m_Window);
 
-    m_RenderTime = Time::Now() - t0;
+    const std::chrono::duration<float> elapsed = std::chrono::high_resolution_clock::now() - t0;
+    m_RenderTime = elapsed.count();
 }
 
 void Client::OnResize(sf::Vector2u newSize) noexcept

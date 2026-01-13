@@ -45,8 +45,7 @@ RenderContext Renderer::Begin() noexcept
 void Renderer::End(RenderContext& ctx, sf::RenderWindow& window) noexcept
 {
     ctx.~RenderContext();
-
-    window.clear();
+    m_Target.display();
 
     // const Rectangle src = {
     //     .x = 0.0f,
@@ -65,10 +64,7 @@ void Renderer::End(RenderContext& ctx, sf::RenderWindow& window) noexcept
 
     const sf::Texture& frameBuffer = m_Target.getTexture();
     const sf::Vector2u frameBufferSize = frameBuffer.getSize();
-    const sf::Vector2f scale = {
-        static_cast<float>(frameBufferSize.x) * m_Scale,
-        static_cast<float>(frameBufferSize.y) * m_Scale,
-    };
+    const sf::Vector2f scale = { m_Scale, m_Scale, };
     const sf::Vector2f position = {
         0.0f,
         (static_cast<float>(window.getSize().y) - static_cast<float>(frameBufferSize.y) * m_Scale) * 0.5f,
@@ -77,8 +73,8 @@ void Renderer::End(RenderContext& ctx, sf::RenderWindow& window) noexcept
     sf::Sprite sprite(frameBuffer);
     sprite.setPosition(position);
     sprite.setScale(scale);
-    sprite.setOrigin({ 0.0f, 0.0f });
     
+    window.clear(C8_BG_COLOR);
     window.draw(sprite);
     DrawDebugOverlay(window);
 
@@ -128,7 +124,7 @@ void Renderer::ToggleDebugOverlay() noexcept
 
 void Renderer::DrawDebugOverlay(sf::RenderWindow& window) noexcept
 {
-    for (const DebugText& debugText : m_DebugOverlay)
+    for (const auto& [string, position] : m_DebugOverlay)
     {
         // const std::string_view text = debugText.Text();
         // const Vector2 textSize = ::MeasureTextEx(m_Font, text.data(), 20.0f, 2.0f);
@@ -148,18 +144,15 @@ void Renderer::DrawDebugOverlay(sf::RenderWindow& window) noexcept
         // ::DrawRectangleRec(box, boxColor);
         // ::DrawTextEx(m_Font, text.data(), position, 20.0f, 2.0f, WHITE);
 
-        const sf::String string = debugText.Text().data();
-        const sf::Vector2f position = debugText.Position();
-        
-        sf::Text text(m_Font, string, 24);
+        sf::Text text(m_Font, string, DebugOverlay::FONT_SIZE<u32>);
         text.setPosition(position);
         
-        // const sf::Vector2f textScale = text.getScale();
-        // sf::RectangleShape box({ 16.0f*textScale.x + 10.0f, 16.0f*textScale.y + 5.0f });
-        // box.setPosition({ position.x - 5.0f, position.y - 5.0f });
-        // box.setFillColor(sf::Color(0, 0, 0, 128));
+        const sf::FloatRect bounds = text.getLocalBounds();
+        sf::RectangleShape box(bounds.size + sf::Vector2f{ 10.0f, 10.0f });
+        box.setPosition(position - sf::Vector2f{5.0f, 5.0f});
+        box.setFillColor(sf::Color(0, 0, 0, 128));
 
-        // window.draw(box);
+        window.draw(box);
         window.draw(text);
     }
 

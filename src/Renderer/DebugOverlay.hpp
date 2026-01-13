@@ -1,34 +1,37 @@
 #pragma once
 
 #include <SFML/System/Vector2.hpp>
+#include <SFML/System/String.hpp>
 
 #include <cstddef>
 
 #include <format>
 #include <vector>
-#include <string>
 
 namespace c8emu {
 
 constexpr sf::Vector2f INIT_POSITION = { 5.0f, 5.0f };
 
-class DebugText final
+struct DebugText final
 {
 public:
-    DebugText(std::string&& text, sf::Vector2f position) noexcept :
-        m_Text(text), m_Position(position) {}
-
-    inline std::string_view Text() const noexcept { return m_Text; }
-    inline sf::Vector2f Position() const noexcept { return m_Position; }
-
-private:
-    std::string  m_Text{};
+    sf::String   m_Text{};
     sf::Vector2f m_Position{};
+
+public:
+    DebugText(sf::String&& text, sf::Vector2f position) noexcept :
+        m_Text(text),
+        m_Position(position) {}
 };
 
 class DebugOverlay final
 {
 public:
+    template<typename T>
+    static constexpr T FONT_SIZE = static_cast<T>(16);
+    template<typename T>
+    static constexpr T FONT_SPACING = static_cast<T>(8);
+
     using ConstIter = std::vector<DebugText>::const_iterator;
     using Iter = std::vector<DebugText>::iterator;
 
@@ -49,7 +52,7 @@ public:
     void Append(std::format_string<Args...> fmt, Args&& ... args) noexcept
     {
         m_Buffer.emplace_back(std::format(fmt, std::forward<Args>(args)...), m_NextPosition);
-        m_NextPosition.y += 20.0f + 5.0f; // font size + spacing
+        m_NextPosition.y += FONT_SIZE<float> + FONT_SPACING<float>;
     }
     
     [[nodiscard]] inline std::size_t Size() const noexcept { return m_Buffer.size(); }

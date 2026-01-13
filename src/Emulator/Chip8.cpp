@@ -46,58 +46,58 @@ void Chip8::OnRender(RenderContext& ctx) const noexcept
     if (ctx.DebugOverlayEnabled())
     {
         ctx.AddDebugText("CPU:");
-        ctx.AddDebugText("REGISTERS:");
-        ctx.AddDebugText(" V0:{} V1:{} V2:{} V3:{}",
+        ctx.AddDebugText(" REGISTERS:");
+        ctx.AddDebugText("  V0:{} V1:{} V2:{} V3:{}",
             m_CPU.m_Registers[RegisterID::V0],
             m_CPU.m_Registers[RegisterID::V1],
             m_CPU.m_Registers[RegisterID::V2],
             m_CPU.m_Registers[RegisterID::V3]
         );
-        ctx.AddDebugText(" V4:{} V5:{} V6:{} V7:{}",
+        ctx.AddDebugText("  V4:{} V5:{} V6:{} V7:{}",
             m_CPU.m_Registers[RegisterID::V4],
             m_CPU.m_Registers[RegisterID::V5],
             m_CPU.m_Registers[RegisterID::V6],
             m_CPU.m_Registers[RegisterID::V7]
         );
-        ctx.AddDebugText(" V8:{} V9:{} VA:{} VB:{}",
+        ctx.AddDebugText("  V8:{} V9:{} VA:{} VB:{}",
             m_CPU.m_Registers[RegisterID::V8],
             m_CPU.m_Registers[RegisterID::V9],
             m_CPU.m_Registers[RegisterID::VA],
             m_CPU.m_Registers[RegisterID::VB]
         );
-        ctx.AddDebugText(" VC:{} VD:{} VE:{} VF:{}",
+        ctx.AddDebugText("  VC:{} VD:{} VE:{} VF:{}",
             m_CPU.m_Registers[RegisterID::VC],
             m_CPU.m_Registers[RegisterID::VD],
             m_CPU.m_Registers[RegisterID::VE],
             m_CPU.m_Registers[RegisterID::VF]
         );
 
-        ctx.AddDebugText("INDEX REGISTER: {}", m_CPU.m_Idx);
-        ctx.AddDebugText("PROGRAM COUNTER: {}", m_CPU.m_PC);
+        ctx.AddDebugText(" INDEX REGISTER: {}", m_CPU.m_Idx);
+        ctx.AddDebugText(" PROGRAM COUNTER: {}", m_CPU.m_PC);
 
-        ctx.AddDebugText("DELAY TIMER: {}", m_CPU.m_DT);
-        ctx.AddDebugText("SOUND TIMER: {}", m_CPU.m_ST);
+        ctx.AddDebugText(" DELAY TIMER: {}", m_CPU.m_DT);
+        ctx.AddDebugText(" SOUND TIMER: {}", m_CPU.m_ST);
 
-        ctx.AddDebugText("KEYPAD:");
-        ctx.AddDebugText(" K1:{} K2:{} K3:{} KC:{}",
+        ctx.AddDebugText(" KEYPAD:");
+        ctx.AddDebugText("  K1:{} K2:{} K3:{} KC:{}",
             m_CPU.m_Keypad[0x1],
             m_CPU.m_Keypad[0x2],
             m_CPU.m_Keypad[0x3],
             m_CPU.m_Keypad[0xC]
         );
-        ctx.AddDebugText(" K4:{} K5:{} K6:{} KD:{}",
+        ctx.AddDebugText("  K4:{} K5:{} K6:{} KD:{}",
             m_CPU.m_Keypad[0x4],
             m_CPU.m_Keypad[0x5],
             m_CPU.m_Keypad[0x6],
             m_CPU.m_Keypad[0xD]
         );
-        ctx.AddDebugText(" K7:{} K8:{} K9:{} KE:{}",
+        ctx.AddDebugText("  K7:{} K8:{} K9:{} KE:{}",
             m_CPU.m_Keypad[0x7],
             m_CPU.m_Keypad[0x8],
             m_CPU.m_Keypad[0x9],
             m_CPU.m_Keypad[0xE]
         );
-        ctx.AddDebugText(" KA:{} K0:{} KB:{} KF:{}",
+        ctx.AddDebugText("  KA:{} K0:{} KB:{} KF:{}",
             m_CPU.m_Keypad[0xA],
             m_CPU.m_Keypad[0x0],
             m_CPU.m_Keypad[0xB],
@@ -105,8 +105,6 @@ void Chip8::OnRender(RenderContext& ctx) const noexcept
         );
     }
 }
-
-// --- static function implementations ----------------------------------------
 
 void Chip8::ProcessInput(const sf::Event::KeyPressed& key) noexcept
 {
