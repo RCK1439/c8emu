@@ -6,6 +6,9 @@
 #include "Emulator/ROM.hpp"
 
 #include "Renderer/Renderer.hpp"
+#include "SFML/Window/Event.hpp"
+
+#include <SFML/Graphics/RenderWindow.hpp>
 
 namespace c8emu {
 
@@ -18,17 +21,20 @@ public:
     void Run() noexcept;
 
 private:
+    void OnEvent(const sf::Event& event) noexcept;
     void OnUpdate() noexcept;
     void OnRender() noexcept;
-    void OnResize() noexcept;
+    void OnResize(sf::Vector2u newSize) noexcept;
 
 private:
-    Chip8    m_Chip8{};
-    Renderer m_Renderer{};
-    ROM      m_ROM{};
-    float    m_UpdateTime{};
-    float    m_RenderTime{};
-    bool     m_IsRunning{};
+    Chip8            m_Chip8{};
+    Renderer         m_Renderer{};
+    sf::RenderWindow m_Window{};
+    ROM              m_ROM{};
+    float            m_UpdateTime{};
+    float            m_RenderTime{};
+    float            m_DeltaTime{};
+    bool             m_IsRunning{};
 };
 
 }

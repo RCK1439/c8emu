@@ -6,5 +6,5 @@
 -std=c++23
 
 -Isrc/
--Ivendor/raylib/src/
+-Ivendor/SFML-3.0.2/include/
 -Ivendor/rklog-cpp/include/

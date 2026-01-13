@@ -5,6 +5,9 @@
 
 #include "Renderer/Renderer.hpp"
 
+#include <SFML/Window/Event.hpp>
+#include <SFML/Window/Keyboard.hpp>
+
 namespace c8emu {
 
 class Chip8 final
@@ -15,11 +18,12 @@ public:
 
     void LoadROM(const ROM& rom) noexcept;
 
-    void OnUpdate() noexcept;
-    void OnRender(Renderer& renderer) const noexcept;
+    void OnEvent(const sf::Event& event) noexcept;
+    void OnUpdate(float dt) noexcept;
+    void OnRender(RenderContext& ctx) const noexcept;
 
 private:
-    void ProcessInput() noexcept;
+    void ProcessInput(const sf::Event::KeyPressed& key) noexcept;
 
 private:
     RAM   m_RAM{};

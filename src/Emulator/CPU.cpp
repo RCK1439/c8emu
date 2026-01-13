@@ -4,9 +4,8 @@
 
 #include "Core/Debug.hpp"
 #include "Core/Platform.hpp"
+#include "Core/Random.hpp"
 #include "Core/Types.hpp"
-
-#include <raylib.h>
 
 #if defined(C8_DEBUG)
 #define C8_ENSURE_ADDR_MODE(addr_mode, expected)                         \
@@ -387,7 +386,7 @@ void Rnd(CPU& cpu, UNUSED RAM& ram, const OpCode& op) noexcept
 {
     C8_ENSURE_ADDR_MODE(op.addressMode, AddrMode::VX_BYTE);
     const auto [x, byte] = op.GetArgs<VxByte>();
-    cpu.m_Registers[x] = GetRandomValue(0, 255) & byte;
+    cpu.m_Registers[x] = static_cast<u8>(Random::GetValue<i32>(0, 255)) & byte;
 }
 
 void Drw(CPU& cpu, RAM& ram, const OpCode& op) noexcept

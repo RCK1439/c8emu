@@ -8,6 +8,7 @@
 #include "Core/Types.hpp"
 
 #include <array>
+#include <random>
 
 namespace c8emu {
 
@@ -96,14 +97,14 @@ private:
     friend class Chip8;
 
 private:
-    VideoBuffer m_Video{};
-    CallStack   m_CallStack{};
-    KeyPad      m_Keypad{};
-    Registers   m_Registers{};
-    u16         m_Idx{};
-    u16         m_PC{C8_ADDR_PC};
-    u8          m_DT{};
-    u8          m_ST{};
+    VideoBuffer  m_Video{};
+    CallStack    m_CallStack{};
+    KeyPad       m_Keypad{};
+    Registers    m_Registers{};
+    u16          m_Idx{};
+    u16          m_PC{C8_ADDR_PC};
+    u8           m_DT{};
+    u8           m_ST{};
 };
 
 }

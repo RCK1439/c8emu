@@ -4,28 +4,24 @@
 
 #include "Core/Types.hpp"
 
+#include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/RenderTexture.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
+
 #include <format>
 
 namespace c8emu {
 
-class Renderer final
+struct RenderContext final
 {
 public:
-    Renderer() = default;
-    ~Renderer() = default;
-
-    void Init(std::size_t width, std::size_t height) noexcept;
-    void Shutdown() noexcept;
-
-    void Begin() noexcept;
-    void End() noexcept;
-
-    void OnResize() noexcept;
+    RenderContext() = delete;
+    RenderContext(const RenderContext&) = delete;
+    RenderContext(RenderContext&&) = delete;
 
     void DrawBuffer(const u8* buffer, std::size_t width, std::size_t height) const noexcept;
 
-    void ToggleDebugOverlay() noexcept;
-    bool DebugOverlayEnabled() const noexcept;
+    inline bool DebugOverlayEnabled() const noexcept { return m_DrawDebugOverlay; }
 
     template<typename ... Args>
     void AddDebugText(std::format_string<Args...> fmt, Args&& ... args) noexcept
@@ -39,14 +35,44 @@ public:
     }
 
 private:
-    void DrawDebugOverlay() noexcept;
+    friend class Renderer;
+
+    explicit RenderContext(sf::RenderTexture& target, DebugOverlay& overlay, bool drawDebugOverlay) :
+        m_Target(target),
+        m_DebugOverlay(overlay),
+        m_DrawDebugOverlay(drawDebugOverlay) {};
 
 private:
-    Font            m_Font{};
-    RenderTexture2D m_Target{};
-    DebugOverlay    m_DebugOverlay{};
-    bool            m_DrawDebugOverlay{};
-    float           m_Scale{};
+    sf::RenderTexture& m_Target;
+    DebugOverlay&      m_DebugOverlay;
+    const bool         m_DrawDebugOverlay{};
+};
+
+class Renderer final
+{
+public:
+    Renderer() = default;
+    ~Renderer() = default;
+
+    void Init(const sf::RenderWindow& window, std::size_t width, std::size_t height) noexcept;
+    void Shutdown() noexcept;
+
+    [[nodiscard]] RenderContext Begin() noexcept;
+    void End(RenderContext& ctx, sf::RenderWindow& window) noexcept;
+
+    void OnResize(sf::Vector2u newSize) noexcept;
+
+    void ToggleDebugOverlay() noexcept;
+
+private:
+    void DrawDebugOverlay(sf::RenderWindow& window) noexcept;
+
+private:
+    sf::RenderTexture m_Target{};
+    sf::Font          m_Font{};
+    DebugOverlay      m_DebugOverlay{};
+    float             m_Scale{};
+    bool              m_DrawDebugOverlay{};
 };
 
 }

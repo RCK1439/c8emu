@@ -19,6 +19,8 @@ set(HEADERS
 
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Debug.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Platform.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Random.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Time.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Types.hpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/Emulator/Chip8.hpp

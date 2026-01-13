@@ -2,31 +2,32 @@
 #include "Config.hpp"
 
 #include "Core/Debug.hpp"
+#include "Core/Time.hpp"
 
 #include "Emulator/Chip8.hpp"
 #include "Emulator/Spec.hpp"
 
 #include "Renderer/Renderer.hpp"
 
-#include <raylib.h>
+#include <SFML/Window/VideoMode.hpp>
 
 namespace c8emu {
 
 Client::Client(i32 argc, char** argv) noexcept
 {
-    ::SetTraceLogLevel(LOG_NONE);
     if (argc < 2)
     {
         C8_LOG_WARNING("usage: {} <rom_file>", argv[0]);
     }
 
-    ::SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT | FLAG_WINDOW_RESIZABLE);
-    ::InitWindow(C8_WINDOW_WIDTH<i32>, C8_WINDOW_HEIGHT<i32>, C8_WINDOW_TITLE);
-    ::InitAudioDevice();
+    const sf::Vector2u windowSize(C8_WINDOW_WIDTH<u32>, C8_WINDOW_HEIGHT<u32>);
+    const sf::VideoMode videoMode(windowSize);
+    
+    m_Window.create(videoMode, C8_WINDOW_TITLE);
+    m_Window.setVerticalSyncEnabled(true);
+    m_Window.setMinimumSize(windowSize);
 
-    ::SetWindowMinSize(C8_WINDOW_WIDTH<i32>, C8_WINDOW_HEIGHT<i32>);
-
-    m_Renderer.Init(C8_SCREEN_BUFFER_WIDTH, C8_SCREEN_BUFFER_HEIGHT);
+    m_Renderer.Init(m_Window, C8_SCREEN_BUFFER_WIDTH, C8_SCREEN_BUFFER_HEIGHT);
 
     if (argc > 1)
     {
@@ -36,14 +37,13 @@ Client::Client(i32 argc, char** argv) noexcept
         }
 
         m_Chip8.LoadROM(m_ROM);
-        ::SetWindowTitle(::TextFormat("%s - %s", C8_WINDOW_TITLE, m_ROM.Name().data()));
+        m_Window.setTitle(std::format("{} - {}", C8_WINDOW_TITLE, m_ROM.Name().data()));
     }
 }
 
 Client::~Client() noexcept
-{   
-    ::CloseAudioDevice();
-    ::CloseWindow();
+{
+    m_Window.close();
     m_Renderer.Shutdown();
 }
 
@@ -52,71 +52,92 @@ void Client::Run() noexcept
     m_IsRunning = true;
     while (m_IsRunning)
     {
+        const float t0 = Time::Now();
+        while (const auto e = m_Window.pollEvent())
+        {
+            const sf::Event event = e.value();
+            OnEvent(event);
+        }
+
         OnUpdate();
         OnRender();
+
+        m_DeltaTime = Time::Now() - t0;
+    }
+}
+
+void Client::OnEvent(const sf::Event& event) noexcept
+{
+    if (const auto key = event.getIf<sf::Event::KeyPressed>())
+    {
+        if (key->code == sf::Keyboard::Key::F3)
+        {
+            m_Renderer.ToggleDebugOverlay();
+        }
+        else if (key->code == sf::Keyboard::Key::F11)
+        {
+            const sf::VideoMode desktopMode = sf::VideoMode::getDesktopMode();
+            const bool fullScreen = desktopMode.size == m_Window.getSize();
+            if (!fullScreen)
+            {
+                // TODO: Set window title to the current title
+                m_Window.create(desktopMode, C8_WINDOW_TITLE, sf::Style::Default, sf::State::Fullscreen);
+            }
+            else
+            {
+                // TODO: Set window title to the current title
+                m_Window.create(desktopMode, C8_WINDOW_TITLE, sf::Style::Default, sf::State::Windowed);
+            }
+
+            OnResize(desktopMode.size);
+        }
+        else if (key->code == sf::Keyboard::Key::Escape)
+        {
+            m_IsRunning = false;
+        }
+    }
+    else if (const auto resizeData = event.getIf<sf::Event::Resized>())
+    {
+        const sf::Vector2u newSize = resizeData->size;
+        OnResize(newSize);
     }
 }
 
 void Client::OnUpdate() noexcept
 {
-    const float t0 = static_cast<float>(::GetTime());
-    if (::IsKeyPressed(KEY_F3))
-    {
-        m_Renderer.ToggleDebugOverlay();
-    }
-
-    if (::IsKeyPressed(KEY_F11))
-    {
-        if (!::IsWindowFullscreen())
-        {
-            const i32 monitorHandle = ::GetCurrentMonitor();
-            const i32 monitorWidth = ::GetMonitorWidth(monitorHandle);
-            const i32 monitorHeight = ::GetMonitorHeight(monitorHandle);
-            C8_LOG_WARNING("monitor ({}) resolution: {}x{}", monitorHandle, monitorWidth, monitorHeight);
-
-            ::SetWindowSize(monitorWidth, monitorHeight);
-        }
-        
-        ::ToggleFullscreen();
-        OnResize();
-
-        C8_LOG_WARNING("Window resized to {}x{}", ::GetScreenWidth(), ::GetScreenHeight());
-    }
-    else if (::IsWindowResized())
-    {
-        OnResize();
-        C8_LOG_WARNING("Window resized to {}x{}", ::GetScreenWidth(), ::GetScreenHeight());
-    }
-
-    m_Chip8.OnUpdate();
-
-    m_IsRunning = !::WindowShouldClose();
-    m_UpdateTime = static_cast<float>(::GetTime()) - t0;
+    const float t0 = Time::Now();
+    m_Chip8.OnUpdate(m_DeltaTime);
+    m_UpdateTime = Time::Now() - t0;
 }
 
 void Client::OnRender() noexcept
 {
-    const float t0 = static_cast<float>(::GetTime());
+    const float t0 = Time::Now();
 
-    if (m_Renderer.DebugOverlayEnabled())
+    RenderContext ctx = m_Renderer.Begin();
+    if (ctx.DebugOverlayEnabled())
     {
-        m_Renderer.AddDebugText("Client:");
-        m_Renderer.AddDebugText("- Resolution: {}x{}", ::GetScreenWidth(), ::GetScreenHeight());
-        m_Renderer.AddDebugText("- {} FPS ({:.2f}ms)", ::GetFPS(), ::GetFrameTime() * 1000.0f);
-        m_Renderer.AddDebugText("- Update time: {:.5f}ms", m_UpdateTime * 1000.0f);
-        m_Renderer.AddDebugText("- Render time: {:.5f}ms", m_RenderTime * 1000.0f);
+        const sf::Vector2u windowSize = m_Window.getSize();
+        const i32 fps = static_cast<i32>(1.0f / m_DeltaTime);
+        const float frameTime = m_DeltaTime * 1000.0f;
+
+        ctx.AddDebugText("CLIENT:");
+        ctx.AddDebugText("RESOLUTION: {}x{}", windowSize.x, windowSize.y);
+        ctx.AddDebugText("{} FPS, {:.2f}MS", fps, frameTime);
+        ctx.AddDebugText("UPDATE TIME: {:.5f}MS", m_UpdateTime * 1000.0f);
+        ctx.AddDebugText("RENDER TIME: {:.5f}MS", m_RenderTime * 1000.0f);
     }
+    m_Chip8.OnRender(ctx);
+    m_Renderer.End(ctx, m_Window);
 
-    m_Renderer.Begin(); 
-        m_Chip8.OnRender(m_Renderer);
-    m_Renderer.End();
-
-    m_RenderTime = static_cast<float>(::GetTime()) - t0;
+    m_RenderTime = Time::Now() - t0;
 }
 
-void Client::OnResize() noexcept
+void Client::OnResize(sf::Vector2u newSize) noexcept
 {
-    m_Renderer.OnResize();
+    m_Window.setSize(newSize);
+    m_Renderer.OnResize(newSize);
+    C8_LOG_WARNING("Window resized to {}x{}", newSize.x, newSize.y);
 }
 
 }
