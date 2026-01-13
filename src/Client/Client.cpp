@@ -84,11 +84,13 @@ void Client::OnEvent(const sf::Event& event) noexcept
             {
                 // TODO: Set window title to the current title
                 m_Window.create(desktopMode, C8_WINDOW_TITLE, sf::Style::Default, sf::State::Fullscreen);
+                m_Window.setVerticalSyncEnabled(true);
             }
             else
             {
                 // TODO: Set window title to the current title
                 m_Window.create(desktopMode, C8_WINDOW_TITLE, sf::Style::Default, sf::State::Windowed);
+                m_Window.setVerticalSyncEnabled(true);
             }
 
             OnResize(desktopMode.size);
