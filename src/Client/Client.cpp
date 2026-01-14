@@ -13,6 +13,10 @@
 
 namespace c8emu {
 
+using Clock     = std::chrono::high_resolution_clock;
+using Duration  = std::chrono::duration<float>;
+using TimePoint = std::chrono::time_point<Clock, Duration>;
+
 Client::Client(i32 argc, char** argv) noexcept
 {
     if (argc < 2)
@@ -53,7 +57,7 @@ void Client::Run() noexcept
     m_IsRunning = true;
     while (m_IsRunning)
     {
-        const auto t0 = std::chrono::high_resolution_clock::now();
+        const TimePoint t0 = Clock::now();
         while (const auto e = m_Window.pollEvent())
         {
             const sf::Event event = e.value();
@@ -63,7 +67,7 @@ void Client::Run() noexcept
         OnUpdate();
         OnRender();
 
-        const std::chrono::duration<float> elapsed = std::chrono::high_resolution_clock::now() - t0;
+        const Duration elapsed = Clock::now() - t0;
         m_DeltaTime = elapsed.count();
     }
 }
@@ -111,16 +115,16 @@ void Client::OnEvent(const sf::Event& event) noexcept
 
 void Client::OnUpdate() noexcept
 {
-    const auto t0 = std::chrono::high_resolution_clock::now();
+    const TimePoint t0 = Clock::now();
     m_Chip8.OnUpdate(m_DeltaTime);
 
-    const std::chrono::duration<float> elapsed = std::chrono::high_resolution_clock::now() - t0;
+    const Duration elapsed = Clock::now() - t0;
     m_UpdateTime = elapsed.count();
 }
 
 void Client::OnRender() noexcept
 {
-    const auto t0 = std::chrono::high_resolution_clock::now();
+    const TimePoint t0 = Clock::now();
 
     RenderContext ctx = m_Renderer.Begin();
     if (ctx.DebugOverlayEnabled())
@@ -138,7 +142,7 @@ void Client::OnRender() noexcept
     m_Chip8.OnRender(ctx);
     m_Renderer.End(std::move(ctx), m_Window);
 
-    const std::chrono::duration<float> elapsed = std::chrono::high_resolution_clock::now() - t0;
+    const Duration elapsed = Clock::now() - t0;
     m_RenderTime = elapsed.count();
 }
 
