@@ -17,13 +17,13 @@ public:
     [[nodiscard]] constexpr Byte& operator[](Address addr)
     {
         addr &= 0x0FFF;
-        return m_Buffer.at(static_cast<std::size_t>(addr));
+        return m_Buffer.at(static_cast<size_t>(addr));
     }
 
     [[nodiscard]] constexpr const Byte& operator[](Address addr) const
     {
         addr &= 0x0FFF;
-        return m_Buffer.at(static_cast<std::size_t>(addr));
+        return m_Buffer.at(static_cast<size_t>(addr));
     }
 
 private:

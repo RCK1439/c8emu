@@ -74,7 +74,7 @@ void CPU::Step(RAM& ram) noexcept
         m_PC += 2;
 
         const OpCode opcode(raw);
-        s_Executors[static_cast<std::size_t>(opcode.instr)](*this, ram, opcode);
+        s_Executors[static_cast<size_t>(opcode.instr)](*this, ram, opcode);
     }
 
     if (m_DT > 0)
@@ -227,7 +227,7 @@ void Ld(CPU& cpu, RAM& ram, const OpCode& op) noexcept
         {
             const u8 x = op.GetArgs<u8>();
 
-            bool found = false;
+            bool found{};
             for (u8 i{}; i < C8_NUM_KEYS; i++)
             {
                 if (cpu.m_Keypad[i])
@@ -396,14 +396,14 @@ void Drw(CPU& cpu, RAM& ram, const OpCode& op) noexcept
     const auto [x, y, n] = op.GetArgs<VxVyN>();
     
     const u8 height = n;
-    const u8 x0 = cpu.m_Registers[x] % C8_SCREEN_BUFFER_WIDTH;
-    const u8 y0 = cpu.m_Registers[y] % C8_SCREEN_BUFFER_HEIGHT;
+    const u8 x0 = cpu.m_Registers[x] % C8_SCREEN_BUFFER_WIDTH<u8>;
+    const u8 y0 = cpu.m_Registers[y] % C8_SCREEN_BUFFER_HEIGHT<u8>;
 
     cpu.m_Registers[RegisterID::VF] = 0;
     for (u8 vy{}; vy < height; vy++)
     {
         const u16 y1 = static_cast<u16>(y0 + vy);
-        if (y1 >= C8_SCREEN_BUFFER_HEIGHT)
+        if (y1 >= C8_SCREEN_BUFFER_HEIGHT<u16>)
         {
             continue;
         }
@@ -412,7 +412,7 @@ void Drw(CPU& cpu, RAM& ram, const OpCode& op) noexcept
         for (u8 vx{}; vx < 8; vx++)
         {
             const u16 x1 = static_cast<u16>(x0 + vx);
-            if (x1 >= C8_SCREEN_BUFFER_WIDTH)
+            if (x1 >= C8_SCREEN_BUFFER_WIDTH<u16>)
             {
                 continue;
             }
@@ -420,7 +420,7 @@ void Drw(CPU& cpu, RAM& ram, const OpCode& op) noexcept
             const u8 spritePx = sprite & (0x80 >> vx);
             if (spritePx > 0)
             {
-                const u16 idx = x1 + y1 * C8_SCREEN_BUFFER_WIDTH;
+                const u16 idx = x1 + y1 * C8_SCREEN_BUFFER_WIDTH<u16>;
                 if (cpu.m_Video[idx] == 0xFF)
                 {
                     cpu.m_Registers[RegisterID::VF] = 1;

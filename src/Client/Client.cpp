@@ -2,7 +2,6 @@
 #include "Config.hpp"
 
 #include "Core/Debug.hpp"
-#include "Core/Time.hpp"
 
 #include "Emulator/Chip8.hpp"
 #include "Emulator/Spec.hpp"
@@ -22,13 +21,14 @@ Client::Client(i32 argc, char** argv) noexcept
     }
 
     const sf::Vector2u windowSize(C8_WINDOW_WIDTH<u32>, C8_WINDOW_HEIGHT<u32>);
+    const sf::Vector2u targetSize(C8_SCREEN_BUFFER_WIDTH<u32>, C8_SCREEN_BUFFER_HEIGHT<u32>);
     const sf::VideoMode videoMode(windowSize);
     
     m_Window.create(videoMode, C8_WINDOW_TITLE);
     m_Window.setVerticalSyncEnabled(true);
     m_Window.setMinimumSize(windowSize);
 
-    m_Renderer.Init(m_Window, C8_SCREEN_BUFFER_WIDTH, C8_SCREEN_BUFFER_HEIGHT);
+    m_Renderer.Init(windowSize, targetSize);
 
     if (argc > 1)
     {
@@ -136,7 +136,7 @@ void Client::OnRender() noexcept
         ctx.AddDebugText(" RENDER TIME: {:.5f}MS", m_RenderTime * 1000.0f);
     }
     m_Chip8.OnRender(ctx);
-    m_Renderer.End(ctx, m_Window);
+    m_Renderer.End(std::move(ctx), m_Window);
 
     const std::chrono::duration<float> elapsed = std::chrono::high_resolution_clock::now() - t0;
     m_RenderTime = elapsed.count();

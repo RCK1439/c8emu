@@ -12,13 +12,13 @@ namespace c8emu {
 constexpr sf::Color C8_BG_COLOR = { 0,   0,   255, 255 };
 constexpr sf::Color C8_FG_COLOR = { 255, 255, 255, 255 };
 
-void RenderContext::DrawBuffer(const u8* buffer, std::size_t width, std::size_t height) const noexcept
+void RenderContext::DrawBuffer(const Byte* buffer, size_t width, size_t height) const noexcept
 {
-    for (std::size_t y{}; y < height; y++)
+    for (size_t y{}; y < height; y++)
     {
-        for (std::size_t x{}; x < width; x++)
+        for (size_t x{}; x < width; x++)
         {
-            const std::size_t idx = x + y * width;
+            const size_t idx = x + y * width;
             if (!buffer[idx])
             {
                 continue;
@@ -39,23 +39,20 @@ void RenderContext::DrawBuffer(const u8* buffer, std::size_t width, std::size_t 
     }
 }
 
-void Renderer::Init(const sf::RenderWindow& window, std::size_t width, std::size_t height) noexcept
+void Renderer::Init(sf::Vector2u windowSize, sf::Vector2u targetSize) noexcept
 {
-    C8_ASSERT(window.isOpen(), "Window not yet open");
-
     if (!m_Font.openFromFile("resources/font/nintendo-nes-font.otf"))
     {
         Panic(ErrorCode::FAILED_TO_OPEN_FILE, "Failed to load font");
     }
     
-    const sf::Vector2u frameBufferSize = { static_cast<u32>(width), static_cast<u32>(height) };
-    if (!m_Target.resize(frameBufferSize))
+    if (!m_Target.resize(targetSize))
     {
         Panic(ErrorCode::FAILED_TO_LOAD_TARGET, "Failed to load render target");
     }
     
     m_DrawDebugOverlay = false;
-    m_Scale = static_cast<float>(window.getSize().x) / static_cast<float>(width);
+    m_Scale = static_cast<float>(windowSize.x) / static_cast<float>(targetSize.x);
 }
 
 void Renderer::Shutdown() noexcept
@@ -69,7 +66,7 @@ RenderContext Renderer::Begin() noexcept
     return RenderContext(m_Target, m_DebugOverlay, m_DrawDebugOverlay);
 }
 
-void Renderer::End(RenderContext& ctx, sf::RenderWindow& window) noexcept
+void Renderer::End(RenderContext&& ctx, sf::RenderWindow& window) noexcept
 {
     ctx.~RenderContext();
     m_Target.display();

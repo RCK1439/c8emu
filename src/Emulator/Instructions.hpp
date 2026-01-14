@@ -53,24 +53,24 @@ enum class AddrMode : u32
     VX_ADDR_I = 1 << 16,
 };
 
-constexpr std::size_t operator|(AddrMode a, AddrMode b) noexcept
+constexpr size_t operator|(AddrMode a, AddrMode b) noexcept
 {
-    return static_cast<std::size_t>(a) | static_cast<size_t>(b);
+    return static_cast<size_t>(a) | static_cast<size_t>(b);
 }
 
-constexpr std::size_t operator&(AddrMode a, AddrMode b) noexcept
+constexpr size_t operator&(AddrMode a, AddrMode b) noexcept
 {
-    return static_cast<std::size_t>(a) & static_cast<size_t>(b);
+    return static_cast<size_t>(a) & static_cast<size_t>(b);
 }
 
-constexpr std::size_t operator&(AddrMode a, size_t b) noexcept
+constexpr size_t operator&(AddrMode a, size_t b) noexcept
 {
-    return static_cast<std::size_t>(a) & b;
+    return static_cast<size_t>(a) & b;
 }
 
-constexpr std::size_t operator|(size_t a, AddrMode b) noexcept
+constexpr size_t operator|(size_t a, AddrMode b) noexcept
 {
-    return a | static_cast<std::size_t>(b);
+    return a | static_cast<size_t>(b);
 }
 
 struct VxByte final

@@ -19,7 +19,7 @@ public:
     RenderContext(const RenderContext&) = delete;
     RenderContext(RenderContext&&) = delete;
 
-    void DrawBuffer(const u8* buffer, std::size_t width, std::size_t height) const noexcept;
+    void DrawBuffer(const Byte* buffer, size_t width, size_t height) const noexcept;
 
     inline bool DebugOverlayEnabled() const noexcept { return m_DrawDebugOverlay; }
 
@@ -54,11 +54,11 @@ public:
     Renderer() = default;
     ~Renderer() = default;
 
-    void Init(const sf::RenderWindow& window, std::size_t width, std::size_t height) noexcept;
+    void Init(sf::Vector2u windowSize, sf::Vector2u targetSize) noexcept;
     void Shutdown() noexcept;
 
     [[nodiscard]] RenderContext Begin() noexcept;
-    void End(RenderContext& ctx, sf::RenderWindow& window) noexcept;
+    void End(RenderContext&& ctx, sf::RenderWindow& window) noexcept;
 
     void OnResize(sf::Vector2u newSize) noexcept;
 

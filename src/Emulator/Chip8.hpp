@@ -6,16 +6,12 @@
 #include "Renderer/Renderer.hpp"
 
 #include <SFML/Window/Event.hpp>
-#include <SFML/Window/Keyboard.hpp>
 
 namespace c8emu {
 
 class Chip8 final
 {
 public:
-    Chip8() = default;
-    ~Chip8() = default;
-
     void LoadROM(const ROM& rom) noexcept;
 
     void OnEvent(const sf::Event& event) noexcept;

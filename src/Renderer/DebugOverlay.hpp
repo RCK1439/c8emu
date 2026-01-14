@@ -3,8 +3,6 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/String.hpp>
 
-#include <cstddef>
-
 #include <format>
 #include <vector>
 
@@ -15,13 +13,12 @@ constexpr sf::Vector2f INIT_POSITION = { 5.0f, 5.0f };
 struct DebugText final
 {
 public:
-    sf::String   m_Text{};
-    sf::Vector2f m_Position{};
+    sf::String   Text{};
+    sf::Vector2f Position{};
 
 public:
     DebugText(sf::String&& text, sf::Vector2f position) noexcept :
-        m_Text(text),
-        m_Position(position) {}
+        Text(text), Position(position) {}
 };
 
 class DebugOverlay final
@@ -55,7 +52,7 @@ public:
         m_NextPosition.y += FONT_SIZE<float> + FONT_SPACING<float>;
     }
     
-    [[nodiscard]] inline std::size_t Size() const noexcept { return m_Buffer.size(); }
+    [[nodiscard]] inline size_t Size() const noexcept { return m_Buffer.size(); }
 
     [[nodiscard]] inline ConstIter cbegin() const { return m_Buffer.cbegin(); }
     [[nodiscard]] inline ConstIter cend() const { return m_Buffer.cend(); }

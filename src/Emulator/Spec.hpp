@@ -12,8 +12,10 @@ constexpr size_t C8_NUM_KEYS = 16;
 
 constexpr size_t C8_NUM_REGISTERS = 16;
 
-constexpr size_t C8_SCREEN_BUFFER_WIDTH  = 64;
-constexpr size_t C8_SCREEN_BUFFER_HEIGHT = 32;
+template<typename T>
+constexpr T C8_SCREEN_BUFFER_WIDTH = static_cast<T>(64);
+template<typename T>
+constexpr T C8_SCREEN_BUFFER_HEIGHT = static_cast<T>(32);
 
 // --- memory -----------------------------------------------------------------
 

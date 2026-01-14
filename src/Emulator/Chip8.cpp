@@ -57,7 +57,7 @@ void Chip8::OnUpdate(float dt) noexcept
 
 void Chip8::OnRender(RenderContext& ctx) const noexcept
 {
-    ctx.DrawBuffer(m_CPU.m_Video.data(), C8_SCREEN_BUFFER_WIDTH, C8_SCREEN_BUFFER_HEIGHT);
+    ctx.DrawBuffer(m_CPU.m_Video.data(), C8_SCREEN_BUFFER_WIDTH<size_t>, C8_SCREEN_BUFFER_HEIGHT<size_t>);
 
     if (ctx.DebugOverlayEnabled())
     {

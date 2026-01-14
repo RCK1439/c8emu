@@ -36,22 +36,22 @@ class Registers final
 public:
     constexpr u8& operator[](u8 idx) noexcept
     {
-        return m_Registers.at(static_cast<std::size_t>(idx));
+        return m_Registers.at(static_cast<size_t>(idx));
     }
 
     constexpr const u8& operator[](u8 idx) const noexcept
     {
-        return m_Registers.at(static_cast<std::size_t>(idx));
+        return m_Registers.at(static_cast<size_t>(idx));
     }
 
     constexpr u8& operator[](RegisterID id) noexcept
     {
-        return m_Registers.at(static_cast<std::size_t>(id));
+        return m_Registers.at(static_cast<size_t>(id));
     }
 
     constexpr const u8& operator[](RegisterID id) const noexcept
     {
-        return m_Registers.at(static_cast<std::size_t>(id));
+        return m_Registers.at(static_cast<size_t>(id));
     }
 
 private:
@@ -69,7 +69,7 @@ public:
     void SetKey(u8 key, u8 val) noexcept;
 
 private:
-    using VideoBuffer = std::array<Byte, C8_SCREEN_BUFFER_WIDTH * C8_SCREEN_BUFFER_HEIGHT>;
+    using VideoBuffer = std::array<Byte, C8_SCREEN_BUFFER_WIDTH<size_t> * C8_SCREEN_BUFFER_HEIGHT<size_t>>;
     using KeyPad      = std::array<u8, C8_NUM_KEYS>;
 
     friend void Raw(CPU& cpu, RAM& ram, const OpCode& op) noexcept;

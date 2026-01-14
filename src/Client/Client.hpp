@@ -6,7 +6,6 @@
 #include "Emulator/ROM.hpp"
 
 #include "Renderer/Renderer.hpp"
-#include "SFML/Window/Event.hpp"
 
 #include <SFML/Graphics/RenderWindow.hpp>
 

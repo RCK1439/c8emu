@@ -20,7 +20,7 @@ private:
     using StackBuffer = std::array<Address, C8_CALLSTACK_SIZE>;
     
     StackBuffer m_Stack{};
-    std::size_t m_Ptr{};
+    size_t      m_Ptr{};
 };
 
 }
