@@ -1,5 +1,6 @@
 #include "Chip8.hpp"
 #include "CPU.hpp"
+#include "Core/Debug.hpp"
 #include "Keyboard.hpp"
 #include "RAM.hpp"
 #include "ROM.hpp"
@@ -18,9 +19,25 @@ void Chip8::LoadROM(const ROM& rom) noexcept
 
 void Chip8::OnEvent(const sf::Event& event) noexcept
 {
-    if (const auto key = event.getIf<sf::Event::KeyPressed>())
+    if (const auto keyPress = event.getIf<sf::Event::KeyPressed>())
     {
-        ProcessInput(*key);
+        for (u8 k{}; k < C8_NUM_KEYS; k++)
+        {
+            if (keyPress->code == C8_KEYS[k])
+            {
+                m_CPU.SetKey(k, 1);
+            }
+        }
+    }
+    else if (const auto keyRelease = event.getIf<sf::Event::KeyReleased>())
+    {
+        for (u8 k{}; k < C8_NUM_KEYS; k++)
+        {
+            if (keyRelease->code == C8_KEYS[k])
+            {
+                m_CPU.SetKey(k, 0);
+            }
+        }
     }
 }
 
@@ -103,21 +120,6 @@ void Chip8::OnRender(RenderContext& ctx) const noexcept
             m_CPU.m_Keypad[0xB],
             m_CPU.m_Keypad[0xF]
         );
-    }
-}
-
-void Chip8::ProcessInput(const sf::Event::KeyPressed& key) noexcept
-{
-    for (u8 k = 0; k < C8_NUM_KEYS; k++)
-    {
-        if (key.code == C8_KEYS[k])
-        {
-            m_CPU.SetKey(k, 1);
-        }
-        else
-        {
-            m_CPU.SetKey(k, 0);
-        }
     }
 }
 

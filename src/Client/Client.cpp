@@ -105,6 +105,8 @@ void Client::OnEvent(const sf::Event& event) noexcept
         const sf::Vector2u newSize = resizeData->size;
         OnResize(newSize);
     }
+
+    m_Chip8.OnEvent(event);
 }
 
 void Client::OnUpdate() noexcept

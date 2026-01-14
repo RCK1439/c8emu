@@ -23,9 +23,6 @@ public:
     void OnRender(RenderContext& ctx) const noexcept;
 
 private:
-    void ProcessInput(const sf::Event::KeyPressed& key) noexcept;
-
-private:
     RAM   m_RAM{};
     CPU   m_CPU{};
     bool  m_ROMLoaded{};
