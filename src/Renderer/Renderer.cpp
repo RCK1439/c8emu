@@ -12,6 +12,33 @@ namespace c8emu {
 constexpr sf::Color C8_BG_COLOR = { 0,   0,   255, 255 };
 constexpr sf::Color C8_FG_COLOR = { 255, 255, 255, 255 };
 
+void RenderContext::DrawBuffer(const u8* buffer, std::size_t width, std::size_t height) const noexcept
+{
+    for (std::size_t y{}; y < height; y++)
+    {
+        for (std::size_t x{}; x < width; x++)
+        {
+            const std::size_t idx = x + y * width;
+            if (!buffer[idx])
+            {
+                continue;
+            }
+
+            const sf::Vector2f position = {
+                static_cast<float>(x),
+                static_cast<float>(y),
+            };
+            const sf::Vector2f size = { 1.0f, 1.0f };
+            
+            sf::RectangleShape px(size);
+            px.setPosition(position);
+            px.setFillColor(C8_FG_COLOR);
+
+            m_Target.draw(px);
+        }
+    }
+}
+
 void Renderer::Init(const sf::RenderWindow& window, std::size_t width, std::size_t height) noexcept
 {
     C8_ASSERT(window.isOpen(), "Window not yet open");
@@ -33,7 +60,7 @@ void Renderer::Init(const sf::RenderWindow& window, std::size_t width, std::size
 
 void Renderer::Shutdown() noexcept
 {
-    // TODO: Anything?
+    // Anything? No, not really, but let's keep it anyway :)
 }
 
 RenderContext Renderer::Begin() noexcept
@@ -46,21 +73,6 @@ void Renderer::End(RenderContext& ctx, sf::RenderWindow& window) noexcept
 {
     ctx.~RenderContext();
     m_Target.display();
-
-    // const Rectangle src = {
-    //     .x = 0.0f,
-    //     .y = 0.0f,
-    //     .width = static_cast<float>(m_Target.texture.width),
-    //     .height = static_cast<float>(-m_Target.texture.height)
-    // };
-    // const Rectangle dest = {
-    //     .x = 0.0f,
-    //     .y = (static_cast<float>(::GetScreenHeight()) - static_cast<float>(m_Target.texture.height) * m_Scale) * 0.5f,
-    //     .width = static_cast<float>(m_Target.texture.width) * m_Scale,
-    //     .height = static_cast<float>(m_Target.texture.height) * m_Scale
-    // };
-    // const Vector2 origin = { .x = 0.0f, .y = 0.0f };
-    // ::DrawTexturePro(m_Target.texture, src, dest, origin, 0.0f, WHITE);
 
     const sf::Texture& frameBuffer = m_Target.getTexture();
     const sf::Vector2u frameBufferSize = frameBuffer.getSize();
@@ -90,33 +102,6 @@ void Renderer::OnResize(sf::Vector2u newSize) noexcept
     C8_LOG_WARNING("Framebuffer scale adjusted: {:.2f}", m_Scale);
 }
 
-void RenderContext::DrawBuffer(const u8* buffer, std::size_t width, std::size_t height) const noexcept
-{
-    for (std::size_t y = 0; y < height; y++)
-    {
-        for (std::size_t x = 0; x < width; x++)
-        {
-            const std::size_t idx = x + y * width;
-            if (!buffer[idx])
-            {
-                continue;
-            }
-
-            const sf::Vector2f position = {
-                static_cast<float>(x),
-                static_cast<float>(y),
-            };
-            const sf::Vector2f size = { 1.0f, 1.0f };
-            
-            sf::RectangleShape px(size);
-            px.setPosition(position);
-            px.setFillColor(C8_FG_COLOR);
-
-            m_Target.draw(px);
-        }
-    }
-}
-
 void Renderer::ToggleDebugOverlay() noexcept
 {
     m_DrawDebugOverlay = !m_DrawDebugOverlay;
@@ -124,33 +109,18 @@ void Renderer::ToggleDebugOverlay() noexcept
 
 void Renderer::DrawDebugOverlay(sf::RenderWindow& window) noexcept
 {
+    constexpr sf::Vector2f PADDING = { 5.0f, 5.0f };
+    constexpr sf::Color TEXT_BOX_COLOR = { 0, 0, 0, 128 };
+
     for (const auto& [string, position] : m_DebugOverlay)
     {
-        // const std::string_view text = debugText.Text();
-        // const Vector2 textSize = ::MeasureTextEx(m_Font, text.data(), 20.0f, 2.0f);
-        // const Vector2 position = debugText.Position();
-        // const Rectangle box = {
-        //     .x = position.x - 5.0f,
-        //     .y = position.y - 5.0f,
-        //     .width = textSize.x + 10.0f,
-        //     .height = textSize.y + 5.0f,
-        // };
-        // const Color boxColor = {
-        //     .r = 0,
-        //     .g = 0,
-        //     .b = 0,
-        //     .a = 128
-        // };
-        // ::DrawRectangleRec(box, boxColor);
-        // ::DrawTextEx(m_Font, text.data(), position, 20.0f, 2.0f, WHITE);
-
         sf::Text text(m_Font, string, DebugOverlay::FONT_SIZE<u32>);
         text.setPosition(position);
         
         const sf::FloatRect bounds = text.getLocalBounds();
-        sf::RectangleShape box(bounds.size + sf::Vector2f{ 10.0f, 10.0f });
-        box.setPosition(position - sf::Vector2f{5.0f, 5.0f});
-        box.setFillColor(sf::Color(0, 0, 0, 128));
+        sf::RectangleShape box(bounds.size + 2.0f * PADDING);
+        box.setPosition(position - PADDING);
+        box.setFillColor(TEXT_BOX_COLOR);
 
         window.draw(box);
         window.draw(text);

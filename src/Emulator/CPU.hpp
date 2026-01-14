@@ -8,7 +8,6 @@
 #include "Core/Types.hpp"
 
 #include <array>
-#include <random>
 
 namespace c8emu {
 

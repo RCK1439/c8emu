@@ -1,6 +1,5 @@
 #include "Chip8.hpp"
 #include "CPU.hpp"
-#include "Core/Debug.hpp"
 #include "Keyboard.hpp"
 #include "RAM.hpp"
 #include "ROM.hpp"

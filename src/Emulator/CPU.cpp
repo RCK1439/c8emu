@@ -68,7 +68,7 @@ static constexpr ExecProc s_Executors[] = {
 
 void CPU::Step(RAM& ram) noexcept
 {
-    for (u8 i = 0; i < C8_OPS_PER_CYCLE; i++)
+    for (u8 i{}; i < C8_OPS_PER_CYCLE; i++)
     {
         const u16 raw = (static_cast<u16>(ram[m_PC]) << 8) | static_cast<u16>(ram[m_PC + 1]);
         m_PC += 2;
@@ -228,7 +228,7 @@ void Ld(CPU& cpu, RAM& ram, const OpCode& op) noexcept
             const u8 x = op.GetArgs<u8>();
 
             bool found = false;
-            for (u8 i = 0; i < C8_NUM_KEYS; i++)
+            for (u8 i{}; i < C8_NUM_KEYS; i++)
             {
                 if (cpu.m_Keypad[i])
                 {
@@ -275,7 +275,7 @@ void Ld(CPU& cpu, RAM& ram, const OpCode& op) noexcept
         case AddrMode::ADDR_I_VX:
         {
             const u8 x = op.GetArgs<u8>();
-            for (u8 i = 0; i <= x; i++)
+            for (u8 i{}; i <= x; i++)
             {
                 ram[cpu.m_Idx++] = cpu.m_Registers[i];
             }
@@ -283,7 +283,7 @@ void Ld(CPU& cpu, RAM& ram, const OpCode& op) noexcept
         case AddrMode::VX_ADDR_I:
         {
             const u8 x = op.GetArgs<u8>();
-            for (u8 i = 0; i <= x; i++)
+            for (u8 i{}; i <= x; i++)
             {
                 cpu.m_Registers[i] = ram[cpu.m_Idx++];
             }
@@ -400,7 +400,7 @@ void Drw(CPU& cpu, RAM& ram, const OpCode& op) noexcept
     const u8 y0 = cpu.m_Registers[y] % C8_SCREEN_BUFFER_HEIGHT;
 
     cpu.m_Registers[RegisterID::VF] = 0;
-    for (u8 vy = 0; vy < height; vy++)
+    for (u8 vy{}; vy < height; vy++)
     {
         const u16 y1 = static_cast<u16>(y0 + vy);
         if (y1 >= C8_SCREEN_BUFFER_HEIGHT)
@@ -409,7 +409,7 @@ void Drw(CPU& cpu, RAM& ram, const OpCode& op) noexcept
         }
 
         const u8 sprite = ram[cpu.m_Idx + vy];
-        for (u8 vx = 0; vx < 8; vx++)
+        for (u8 vx{}; vx < 8; vx++)
         {
             const u16 x1 = static_cast<u16>(x0 + vx);
             if (x1 >= C8_SCREEN_BUFFER_WIDTH)

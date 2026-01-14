@@ -35,7 +35,7 @@ void RAM::LoadFont()
     	0xF0, 0x80, 0xF0, 0x80, 0x80  // F
     };
 
-    for (std::size_t i = 0; i < C8_FONTSET_SIZE; i++)
+for (std::size_t i{}; i < C8_FONTSET_SIZE; i++)
     {
         m_Buffer[C8_ADDR_FONT + i] = fontset[i];
     }
