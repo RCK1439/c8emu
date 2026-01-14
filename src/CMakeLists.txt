@@ -18,6 +18,7 @@ set(HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/Client/Config.hpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Debug.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Core/NintendoNESFont.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Platform.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Random.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Types.hpp

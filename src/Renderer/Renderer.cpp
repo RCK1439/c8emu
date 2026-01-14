@@ -1,6 +1,7 @@
 #include "Renderer.hpp"
 
 #include "Core/Debug.hpp"
+#include "Core/NintendoNESFont.hpp"
 
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Sprite.hpp>
@@ -41,7 +42,7 @@ void RenderContext::DrawBuffer(const Byte* buffer, size_t width, size_t height) 
 
 void Renderer::Init(sf::Vector2u windowSize, sf::Vector2u targetSize) noexcept
 {
-    if (!m_Font.openFromFile("resources/font/nintendo-nes-font.otf"))
+    if (!m_Font.openFromMemory(NINTENDO_NES_FONT_OTF, sizeof(NINTENDO_NES_FONT_OTF)))
     {
         Panic(ErrorCode::FAILED_TO_OPEN_FILE, "Failed to load font");
     }
