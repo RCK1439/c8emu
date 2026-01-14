@@ -21,8 +21,8 @@ public:
 private:
     RAM   m_RAM{};
     CPU   m_CPU{};
-    bool  m_ROMLoaded{};
     float m_Tick{};
+    bool  m_ROMLoaded{};
 };
 
 }
