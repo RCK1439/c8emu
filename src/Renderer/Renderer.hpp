@@ -27,9 +27,7 @@ public:
     void AddDebugText(std::format_string<Args...> fmt, Args&& ... args) noexcept
     {
         if (!m_DrawDebugOverlay)
-        {
             return;
-        }
 
         m_DebugOverlay.Append(fmt, std::forward<Args>(args)...);
     }

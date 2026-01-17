@@ -20,9 +20,7 @@ using TimePoint = std::chrono::time_point<Clock, Duration>;
 Client::Client(i32 argc, char** argv) noexcept
 {
     if (argc < 2)
-    {
         C8_LOG_WARNING("usage: {} <rom_file>", argv[0]);
-    }
 
     const sf::Vector2u windowSize(C8_WINDOW_WIDTH<u32>, C8_WINDOW_HEIGHT<u32>);
     const sf::Vector2u targetSize(C8_SCREEN_BUFFER_WIDTH<u32>, C8_SCREEN_BUFFER_HEIGHT<u32>);
@@ -37,9 +35,7 @@ Client::Client(i32 argc, char** argv) noexcept
     if (argc > 1)
     {
         if (!m_ROM.Load(argv[1]))
-        {
             C8_LOG_ERROR("Failed to load ROM: {}", argv[1]);
-        }
 
         m_Chip8.LoadROM(m_ROM);
         m_Window.setTitle(std::format("{} - {}", C8_WINDOW_TITLE, m_ROM.Name().data()));

@@ -21,22 +21,14 @@ void Chip8::OnEvent(const sf::Event& event) noexcept
     if (const auto keyPress = event.getIf<sf::Event::KeyPressed>())
     {
         for (u8 k{}; k < C8_NUM_KEYS; k++)
-        {
             if (keyPress->code == C8_KEYS[k])
-            {
                 m_CPU.SetKey(k, 1);
-            }
-        }
     }
     else if (const auto keyRelease = event.getIf<sf::Event::KeyReleased>())
     {
         for (u8 k{}; k < C8_NUM_KEYS; k++)
-        {
             if (keyRelease->code == C8_KEYS[k])
-            {
                 m_CPU.SetKey(k, 0);
-            }
-        }
     }
 }
 
@@ -45,9 +37,7 @@ void Chip8::OnUpdate(float dt) noexcept
     if (m_Tick >= C8_TICK_RATE)
     {
         if (m_ROMLoaded)
-        {
             m_CPU.Step(m_RAM);
-        }
 
         m_Tick -= C8_TICK_RATE;
     }

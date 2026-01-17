@@ -78,14 +78,10 @@ void CPU::Step(RAM& ram) noexcept
     }
 
     if (m_DT > 0)
-    {
         m_DT--;
-    }
 
     if (m_ST > 0)
-    {
         m_ST--;
-    }
 }
 
 void CPU::SetKey(u8 key, u8 val) noexcept
@@ -152,17 +148,13 @@ void Se(CPU& cpu, UNUSED RAM& ram, const OpCode& op) noexcept
         {
             const auto [x, byte] = op.GetArgs<VxByte>();
             if (cpu.m_Registers[x] == byte)
-            {
                 cpu.m_PC += 2;
-            }
         } break;
         case AddrMode::VX_VY:
         {
             const auto [x, y] = op.GetArgs<VxVy>();
             if (cpu.m_Registers[x] == cpu.m_Registers[y])
-            {
                 cpu.m_PC += 2;
-            }
         } break;
         default:
             UNREACHABLE();
@@ -178,17 +170,13 @@ void Sne(CPU& cpu, UNUSED RAM& ram, const OpCode& op) noexcept
         {
             const auto [x, byte] = op.GetArgs<VxByte>();
             if (cpu.m_Registers[x] != byte)
-            {
                 cpu.m_PC += 2;
-            }
         } break;
         case AddrMode::VX_VY:
         {
             const auto [x, y] = op.GetArgs<VxVy>();
             if (cpu.m_Registers[x] != cpu.m_Registers[y])
-            {
                 cpu.m_PC += 2;
-            }
         } break;
         default:
             UNREACHABLE();
@@ -239,9 +227,7 @@ void Ld(CPU& cpu, RAM& ram, const OpCode& op) noexcept
             }
 
             if (!found)
-            {
                 cpu.m_PC -= 2;
-            }
         } break;
         case AddrMode::DT_VX:
         {
@@ -276,17 +262,13 @@ void Ld(CPU& cpu, RAM& ram, const OpCode& op) noexcept
         {
             const u8 x = op.GetArgs<u8>();
             for (u8 i{}; i <= x; i++)
-            {
                 ram[cpu.m_Idx++] = cpu.m_Registers[i];
-            }
         } break;
         case AddrMode::VX_ADDR_I:
         {
             const u8 x = op.GetArgs<u8>();
             for (u8 i{}; i <= x; i++)
-            {
                 cpu.m_Registers[i] = ram[cpu.m_Idx++];
-            }
         } break;
         default:
             UNREACHABLE();
@@ -404,27 +386,21 @@ void Drw(CPU& cpu, RAM& ram, const OpCode& op) noexcept
     {
         const u16 y1 = static_cast<u16>(y0 + vy);
         if (y1 >= C8_SCREEN_BUFFER_HEIGHT<u16>)
-        {
             continue;
-        }
 
         const u8 sprite = ram[cpu.m_Idx + vy];
         for (u8 vx{}; vx < 8; vx++)
         {
             const u16 x1 = static_cast<u16>(x0 + vx);
             if (x1 >= C8_SCREEN_BUFFER_WIDTH<u16>)
-            {
                 continue;
-            }
 
             const u8 spritePx = sprite & (0x80 >> vx);
             if (spritePx > 0)
             {
                 const u16 idx = x1 + y1 * C8_SCREEN_BUFFER_WIDTH<u16>;
                 if (cpu.m_Video[idx] == 0xFF)
-                {
                     cpu.m_Registers[RegisterID::VF] = 1;
-                }
 
                 cpu.m_Video[idx] ^= 0xFF;
             }
@@ -438,9 +414,7 @@ void Skp(CPU& cpu, UNUSED RAM& ram, const OpCode& op) noexcept
     const u8 x = op.GetArgs<u8>();
     const u8 key = cpu.m_Registers[x];
     if (cpu.m_Keypad[key])
-    {
         cpu.m_PC += 2;
-    }
 }
 
 void Sknp(CPU& cpu, UNUSED RAM& ram, const OpCode& op) noexcept
@@ -449,9 +423,7 @@ void Sknp(CPU& cpu, UNUSED RAM& ram, const OpCode& op) noexcept
     const u8 x = op.GetArgs<u8>();
     const u8 key = cpu.m_Registers[x];
     if (!cpu.m_Keypad[key])
-    {
         cpu.m_PC += 2;
-    }
 }
 
 }

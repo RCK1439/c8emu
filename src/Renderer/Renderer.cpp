@@ -21,9 +21,7 @@ void RenderContext::DrawBuffer(const Byte* buffer, size_t width, size_t height) 
         {
             const size_t idx = x + y * width;
             if (!buffer[idx])
-            {
                 continue;
-            }
 
             const sf::Vector2f position = {
                 static_cast<float>(x),
@@ -43,14 +41,10 @@ void RenderContext::DrawBuffer(const Byte* buffer, size_t width, size_t height) 
 void Renderer::Init(sf::Vector2u windowSize, sf::Vector2u targetSize) noexcept
 {
     if (!m_Font.openFromMemory(NINTENDO_NES_FONT_OTF, sizeof(NINTENDO_NES_FONT_OTF)))
-    {
         Panic(ErrorCode::FAILED_TO_OPEN_FILE, "Failed to load font");
-    }
     
     if (!m_Target.resize(targetSize))
-    {
         Panic(ErrorCode::FAILED_TO_LOAD_TARGET, "Failed to load render target");
-    }
     
     m_DrawDebugOverlay = false;
     m_Scale = static_cast<float>(windowSize.x) / static_cast<float>(targetSize.x);
