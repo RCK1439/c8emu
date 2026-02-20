@@ -17,8 +17,9 @@ public:
     sf::Vector2f Position{};
 
 public:
-    DebugText(sf::String&& text, sf::Vector2f position) noexcept :
-        Text(text), Position(position) {}
+    constexpr DebugText(sf::String&& text, sf::Vector2f position) noexcept :
+        Text(text),
+        Position(position) {}
 };
 
 class DebugOverlay final
@@ -36,35 +37,35 @@ public:
     using RevIter = std::vector<DebugText>::reverse_iterator;
 
 public:
-    DebugOverlay() = default;
-    ~DebugOverlay() = default;
+    constexpr DebugOverlay() = default;
+    constexpr ~DebugOverlay() = default;
 
-    void Clear() noexcept
+    constexpr void Clear() noexcept
     {
         m_Buffer.clear();
         m_NextPosition = INIT_POSITION;
     }
 
     template<typename ... Args>
-    void Append(std::format_string<Args...> fmt, Args&& ... args) noexcept
+    constexpr void Append(std::format_string<Args...> fmt, Args&& ... args) noexcept
     {
         m_Buffer.emplace_back(std::format(fmt, std::forward<Args>(args)...), m_NextPosition);
         m_NextPosition.y += FONT_SIZE<float> + FONT_SPACING<float>;
     }
     
-    [[nodiscard]] inline size_t Size() const noexcept { return m_Buffer.size(); }
+    [[nodiscard]] constexpr size_t Size() const noexcept { return m_Buffer.size(); }
 
-    [[nodiscard]] inline ConstIter cbegin() const { return m_Buffer.cbegin(); }
-    [[nodiscard]] inline ConstIter cend() const { return m_Buffer.cend(); }
+    [[nodiscard]] constexpr ConstIter cbegin() const { return m_Buffer.cbegin(); }
+    [[nodiscard]] constexpr ConstIter cend() const { return m_Buffer.cend(); }
 
-    [[nodiscard]] inline Iter begin() { return m_Buffer.begin(); }
-    [[nodiscard]] inline Iter end() { return m_Buffer.end(); }
+    [[nodiscard]] constexpr Iter begin() { return m_Buffer.begin(); }
+    [[nodiscard]] constexpr Iter end() { return m_Buffer.end(); }
 
-    [[nodiscard]] inline RevConstIter crbegin() const { return m_Buffer.crbegin(); }
-    [[nodiscard]] inline RevConstIter crend() const { return m_Buffer.crend(); }
+    [[nodiscard]] constexpr RevConstIter crbegin() const { return m_Buffer.crbegin(); }
+    [[nodiscard]] constexpr RevConstIter crend() const { return m_Buffer.crend(); }
 
-    [[nodiscard]] inline RevConstIter rbegin() const { return m_Buffer.rbegin(); }
-    [[nodiscard]] inline RevConstIter rend() const { return m_Buffer.rend(); }
+    [[nodiscard]] constexpr RevConstIter rbegin() const { return m_Buffer.rbegin(); }
+    [[nodiscard]] constexpr RevConstIter rend() const { return m_Buffer.rend(); }
 
 private:
     std::vector<DebugText> m_Buffer{};

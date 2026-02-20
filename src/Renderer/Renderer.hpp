@@ -21,10 +21,10 @@ public:
 
     void DrawBuffer(const Byte* buffer, size_t width, size_t height) const noexcept;
 
-    inline bool DebugOverlayEnabled() const noexcept { return m_DrawDebugOverlay; }
+    constexpr bool DebugOverlayEnabled() const noexcept { return m_DrawDebugOverlay; }
 
     template<typename ... Args>
-    void AddDebugText(std::format_string<Args...> fmt, Args&& ... args) noexcept
+    constexpr void AddDebugText(std::format_string<Args...> fmt, Args&& ... args) noexcept
     {
         if (!m_DrawDebugOverlay)
             return;
@@ -35,7 +35,7 @@ public:
 private:
     friend class Renderer;
 
-    explicit RenderContext(sf::RenderTexture& target, DebugOverlay& overlay, bool drawDebugOverlay) :
+    constexpr RenderContext(sf::RenderTexture& target, DebugOverlay& overlay, bool drawDebugOverlay) :
         m_Target(target),
         m_DebugOverlay(overlay),
         m_DrawDebugOverlay(drawDebugOverlay) {};
