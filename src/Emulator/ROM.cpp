@@ -7,7 +7,7 @@
 
 namespace c8emu {
 
-bool ROM::Load(std::filesystem::path filePath) noexcept
+bool ROM::Load(const std::filesystem::path& filePath) noexcept
 {
     std::ifstream rom(filePath, std::ios::in | std::ios::binary);
     if (!rom.is_open())

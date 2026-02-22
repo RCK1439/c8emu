@@ -11,7 +11,7 @@ namespace c8emu {
 class CallStack final
 {
 public:
-    CallStack() = default;
+    constexpr CallStack() = default;
 
     void PushAddr(Address addr) noexcept;
     [[nodiscard]] Address PopAddr() noexcept;

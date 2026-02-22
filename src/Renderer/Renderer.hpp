@@ -49,8 +49,8 @@ private:
 class Renderer final
 {
 public:
-    Renderer() = default;
-    ~Renderer() = default;
+    constexpr Renderer() = default;
+    constexpr ~Renderer() = default;
 
     void Init(sf::Vector2u windowSize, sf::Vector2u targetSize) noexcept;
     void Shutdown() noexcept;

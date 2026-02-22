@@ -12,7 +12,7 @@ public:
     constexpr ROM() noexcept = default;
     ~ROM() noexcept;
 
-    [[nodiscard]] bool Load(std::filesystem::path filePath) noexcept;
+    [[nodiscard]] bool Load(const std::filesystem::path& filePath) noexcept;
 
     [[nodiscard]] constexpr const Byte* Data() const noexcept { return m_Data; }
     [[nodiscard]] constexpr size_t Size() const noexcept { return m_Size; }
