@@ -6,7 +6,8 @@ namespace c8emu {
 
 void RAM::LoadROM(const ROM& rom)
 {
-    std::memcpy(m_Buffer.data() + C8_ADDR_ROM, rom.Data(), rom.Size());
+    const Buffer<Byte>& data = rom.Data();
+    std::memcpy(m_Buffer.data() + C8_ADDR_ROM, data.Get(), rom.Size());
 }
 
 }

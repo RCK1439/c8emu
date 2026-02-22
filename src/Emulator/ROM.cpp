@@ -17,25 +17,20 @@ bool ROM::Load(const std::filesystem::path& filePath) noexcept
     }
 
     rom.seekg(0, std::ios::end);
-    m_Size = rom.tellg();
-    if (m_Size > C8_MAX_ROM_SIZE)
+    const size_t size = rom.tellg();
+    if (size > C8_MAX_ROM_SIZE)
     {
         C8_LOG_ERROR("ROM file too large!");
         return false;
     }
     rom.seekg(0, std::ios::beg);
 
-    m_Data = new Byte[m_Size];
-    rom.read(reinterpret_cast<char*>(m_Data), sizeof(Byte) * m_Size);
+    m_Data.Reset(size);
+    rom.read(reinterpret_cast<char*>(m_Data.Get()), sizeof(Byte) * size);
     
     m_Name = filePath.filename().replace_extension().string();
-    C8_LOG_INFO("ROM successfully loaded {} bytes: {}", m_Size, filePath.filename().string());
+    C8_LOG_INFO("ROM successfully loaded {} bytes: {}", size, filePath.filename().string());
     return true;
-}
-
-ROM::~ROM() noexcept
-{
-    delete[] m_Data;
 }
 
 }
