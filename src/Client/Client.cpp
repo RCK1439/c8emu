@@ -9,13 +9,8 @@
 #include "Renderer/Renderer.hpp"
 
 #include <SFML/Window/VideoMode.hpp>
-#include <chrono>
 
 namespace c8emu {
-
-using Clock     = std::chrono::high_resolution_clock;
-using Duration  = std::chrono::duration<float>;
-using TimePoint = std::chrono::time_point<Clock, Duration>;
 
 Client::Client(i32 argc, char** argv) noexcept
 {
@@ -40,6 +35,8 @@ Client::Client(i32 argc, char** argv) noexcept
         m_Chip8.LoadROM(m_ROM);
         m_Window.setTitle(std::format("{} - {}", C8_WINDOW_TITLE, m_ROM.Name().data()));
     }
+
+    m_Clock.start();
 }
 
 Client::~Client() noexcept
@@ -53,7 +50,7 @@ void Client::Run() noexcept
     m_IsRunning = true;
     while (m_IsRunning)
     {
-        const TimePoint t0 = Clock::now();
+        const sf::Time t0 = m_Clock.getElapsedTime();
         while (const auto e = m_Window.pollEvent())
         {
             const sf::Event event = e.value();
@@ -63,8 +60,8 @@ void Client::Run() noexcept
         OnUpdate();
         OnRender();
 
-        const Duration elapsed = Clock::now() - t0;
-        m_DeltaTime = elapsed.count();
+        const sf::Time elapsed = m_Clock.getElapsedTime() - t0;
+        m_DeltaTime = elapsed.asSeconds();
     }
 }
 
@@ -111,16 +108,16 @@ void Client::OnEvent(const sf::Event& event) noexcept
 
 void Client::OnUpdate() noexcept
 {
-    const TimePoint t0 = Clock::now();
+    const sf::Time t0 = m_Clock.getElapsedTime();
     m_Chip8.OnUpdate(m_DeltaTime);
 
-    const Duration elapsed = Clock::now() - t0;
-    m_UpdateTime = elapsed.count();
+    const sf::Time elapsed = m_Clock.getElapsedTime() - t0;
+    m_UpdateTime = elapsed.asSeconds();
 }
 
 void Client::OnRender() noexcept
 {
-    const TimePoint t0 = Clock::now();
+    const sf::Time t0 = m_Clock.getElapsedTime();
 
     RenderContext ctx = m_Renderer.Begin();
     if (ctx.DebugOverlayEnabled())
@@ -138,8 +135,8 @@ void Client::OnRender() noexcept
     m_Chip8.OnRender(ctx);
     m_Renderer.End(std::move(ctx), m_Window);
 
-    const Duration elapsed = Clock::now() - t0;
-    m_RenderTime = elapsed.count();
+    const sf::Time elapsed = m_Clock.getElapsedTime() - t0;
+    m_RenderTime = elapsed.asSeconds();
 }
 
 void Client::OnResize(sf::Vector2u newSize) noexcept

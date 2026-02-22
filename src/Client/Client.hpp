@@ -8,6 +8,7 @@
 #include "Renderer/Renderer.hpp"
 
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/System/Clock.hpp>
 
 namespace c8emu {
 
@@ -30,6 +31,7 @@ private:
     Renderer         m_Renderer{};
     sf::RenderWindow m_Window{};
     ROM              m_ROM{};
+    sf::Clock        m_Clock{};
     float            m_UpdateTime{};
     float            m_RenderTime{};
     float            m_DeltaTime{};
