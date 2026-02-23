@@ -15,9 +15,9 @@ public:
 
     [[nodiscard]] bool Load(const std::filesystem::path& filePath) noexcept;
 
-    [[nodiscard]] constexpr const Buffer<Byte>& Data() const noexcept { return m_Data; }
-    [[nodiscard]] constexpr size_t Size() const noexcept { return m_Data.Size(); }
-    [[nodiscard]] constexpr std::string_view Name() const noexcept { return m_Name; }
+    [[nodiscard]] constexpr const Buffer<Byte>& GetData() const noexcept { return m_Data; }
+    [[nodiscard]] constexpr size_t GetSize() const noexcept { return m_Data.GetSize(); }
+    [[nodiscard]] constexpr std::string_view GetName() const noexcept { return m_Name; }
     [[nodiscard]] constexpr bool IsLoaded() const noexcept { return m_IsLoaded; }
 
 private:

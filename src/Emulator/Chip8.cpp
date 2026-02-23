@@ -1,11 +1,7 @@
 #include "Chip8.hpp"
-#include "CPU.hpp"
 #include "Keyboard.hpp"
-#include "RAM.hpp"
-#include "ROM.hpp"
 
 #include "Core/Debug.hpp"
-#include "Core/Types.hpp"
 
 #include "Renderer/Renderer.hpp"
 

@@ -3,8 +3,6 @@
 #include "Spec.hpp"
 #include "CallStack.hpp"
 
-#include "Core/Types.hpp"
-
 #include <array>
 
 namespace c8emu {

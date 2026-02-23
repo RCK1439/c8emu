@@ -32,7 +32,7 @@ Client::Client(i32 argc, char** argv) noexcept
         if (m_Chip8.LoadROM(argv[1]))
         {
             const ROM& rom = m_Chip8.GetROM();
-            m_Window.setTitle(std::format("{} - {}", C8_WINDOW_TITLE, rom.Name().data()));
+            m_Window.setTitle(std::format("{} - {}", C8_WINDOW_TITLE, rom.GetName().data()));
         }
     }
 

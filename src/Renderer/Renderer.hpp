@@ -12,7 +12,7 @@
 
 namespace c8emu {
 
-struct RenderContext final
+class RenderContext
 {
 public:
     RenderContext() = delete;
@@ -50,7 +50,6 @@ class Renderer final
 {
 public:
     constexpr Renderer() = default;
-    constexpr ~Renderer() = default;
 
     void Init(sf::Vector2u windowSize, sf::Vector2u targetSize) noexcept;
     void Shutdown() noexcept;

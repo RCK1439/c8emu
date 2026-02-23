@@ -1,15 +1,16 @@
 #pragma once
 
-#include "RAM.hpp"
 #include "CPU.hpp"
-
-#include "Renderer/Renderer.hpp"
+#include "RAM.hpp"
+#include "ROM.hpp"
 
 #include <SFML/Window/Event.hpp>
 
 #include <filesystem>
 
 namespace c8emu {
+
+class RenderContext;
 
 class Chip8 final
 {

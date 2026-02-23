@@ -1,11 +1,12 @@
 #pragma once
 
-#include "ROM.hpp"
 #include "Spec.hpp"
 
 #include <array>
 
 namespace c8emu {
+
+class ROM;
 
 class RAM
 {

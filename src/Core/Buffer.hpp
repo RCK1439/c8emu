@@ -21,10 +21,10 @@ public:
         m_Size = size;
     }
 
-    constexpr const T* Get() const { return m_Ptr; }
-    constexpr T* Get() { return m_Ptr; }
+    constexpr const T* GetConstPtr() const { return m_Ptr; }
+    constexpr T* GetMutablePtr() { return m_Ptr; }
 
-    constexpr size_t Size() const { return m_Size; }
+    constexpr size_t GetSize() const { return m_Size; }
 
     constexpr const T& operator[](size_t idx) const { return m_Ptr[idx]; }
     constexpr T& operator[](size_t idx) { return m_Ptr[idx]; }
