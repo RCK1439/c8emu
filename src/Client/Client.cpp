@@ -29,11 +29,11 @@ Client::Client(i32 argc, char** argv) noexcept
 
     if (argc > 1)
     {
-        if (!m_ROM.Load(argv[1]))
-            C8_LOG_ERROR("Failed to load ROM: {}", argv[1]);
-
-        m_Chip8.LoadROM(m_ROM);
-        m_Window.setTitle(std::format("{} - {}", C8_WINDOW_TITLE, m_ROM.Name().data()));
+        if (m_Chip8.LoadROM(argv[1]))
+        {
+            const ROM& rom = m_Chip8.GetROM();
+            m_Window.setTitle(std::format("{} - {}", C8_WINDOW_TITLE, rom.Name().data()));
+        }
     }
 
     m_Clock.start();

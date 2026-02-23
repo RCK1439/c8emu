@@ -7,20 +7,25 @@
 
 #include <SFML/Window/Event.hpp>
 
+#include <filesystem>
+
 namespace c8emu {
 
 class Chip8 final
 {
 public:
-    void LoadROM(const ROM& rom) noexcept;
+    [[nodiscard]] bool LoadROM(const std::filesystem::path& filePath) noexcept;
 
     void OnEvent(const sf::Event& event) noexcept;
     void OnUpdate(float dt) noexcept;
     void OnRender(RenderContext& ctx) const noexcept;
 
+    [[nodiscard]] inline const ROM& GetROM() const { return m_ROM; }
+
 private:
     RAM   m_RAM{};
     CPU   m_CPU{};
+    ROM   m_ROM{};
     float m_Tick{};
     bool  m_ROMLoaded{};
 };

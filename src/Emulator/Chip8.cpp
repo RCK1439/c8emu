@@ -4,16 +4,25 @@
 #include "RAM.hpp"
 #include "ROM.hpp"
 
+#include "Core/Debug.hpp"
 #include "Core/Types.hpp"
 
 #include "Renderer/Renderer.hpp"
 
 namespace c8emu {
 
-void Chip8::LoadROM(const ROM& rom) noexcept
+bool Chip8::LoadROM(const std::filesystem::path& filePath) noexcept
 {
-    m_RAM.LoadROM(rom);
+    if (!m_ROM.Load(filePath))
+    {
+        C8_LOG_ERROR("Failed to load ROM: {}", filePath.string());
+        return false;
+    }
+    
+    m_RAM.LoadROM(m_ROM);
     m_ROMLoaded = true;
+
+    return true;
 }
 
 void Chip8::OnEvent(const sf::Event& event) noexcept

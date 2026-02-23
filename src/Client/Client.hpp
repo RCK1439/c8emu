@@ -3,7 +3,6 @@
 #include "Core/Types.hpp"
 
 #include "Emulator/Chip8.hpp"
-#include "Emulator/ROM.hpp"
 
 #include "Renderer/Renderer.hpp"
 
@@ -30,7 +29,6 @@ private:
     Chip8            m_Chip8{};
     Renderer         m_Renderer{};
     sf::RenderWindow m_Window{};
-    ROM              m_ROM{};
     sf::Clock        m_Clock{};
     float            m_UpdateTime{};
     float            m_RenderTime{};
