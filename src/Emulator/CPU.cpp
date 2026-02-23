@@ -368,7 +368,7 @@ void Rnd(CPU& cpu, UNUSED RAM& ram, const OpCode& op) noexcept
 {
     C8_ENSURE_ADDR_MODE(op.addressMode, AddrMode::VX_BYTE);
     const auto [x, byte] = op.GetArgs<VxByte>();
-    cpu.m_Registers[x] = static_cast<u8>(Random::GetValue<i32>(0, 255)) & byte;
+    cpu.m_Registers[x] = Random::GetValue<u8>() & byte;
 }
 
 void Drw(CPU& cpu, RAM& ram, const OpCode& op) noexcept

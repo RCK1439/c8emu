@@ -52,10 +52,7 @@ void Client::Run() noexcept
     {
         const sf::Time t0 = m_Clock.getElapsedTime();
         while (const auto e = m_Window.pollEvent())
-        {
-            const sf::Event event = e.value();
-            OnEvent(event);
-        }
+            OnEvent(*e);
 
         OnUpdate();
         OnRender();
