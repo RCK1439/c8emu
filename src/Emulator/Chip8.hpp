@@ -15,13 +15,15 @@ class RenderContext;
 class Chip8 final
 {
 public:
+    constexpr Chip8() noexcept = default;
+    
     [[nodiscard]] bool LoadROM(const std::filesystem::path& filePath) noexcept;
 
     void OnEvent(const sf::Event& event) noexcept;
     void OnUpdate(float dt) noexcept;
     void OnRender(RenderContext& ctx) const noexcept;
 
-    [[nodiscard]] inline const ROM& GetROM() const { return m_ROM; }
+    [[nodiscard]] inline const ROM& GetROM() const noexcept { return m_ROM; }
 
 private:
     RAM   m_RAM{};

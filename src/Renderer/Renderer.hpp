@@ -12,7 +12,7 @@
 
 namespace c8emu {
 
-class RenderContext
+class RenderContext final
 {
 public:
     RenderContext() = delete;
@@ -33,9 +33,7 @@ public:
     }
 
 private:
-    friend class Renderer;
-
-    constexpr RenderContext(sf::RenderTexture& target, DebugOverlay& overlay, bool drawDebugOverlay) :
+    constexpr RenderContext(sf::RenderTexture& target, DebugOverlay& overlay, bool drawDebugOverlay) noexcept :
         m_Target(target),
         m_DebugOverlay(overlay),
         m_DrawDebugOverlay(drawDebugOverlay) {};
@@ -44,12 +42,14 @@ private:
     sf::RenderTexture& m_Target;
     DebugOverlay&      m_DebugOverlay;
     const bool         m_DrawDebugOverlay{};
+
+    friend class Renderer;
 };
 
 class Renderer final
 {
 public:
-    constexpr Renderer() = default;
+    constexpr Renderer() noexcept = default;
 
     void Init(sf::Vector2u windowSize, sf::Vector2u targetSize) noexcept;
     void Shutdown() noexcept;

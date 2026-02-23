@@ -3,31 +3,31 @@
 namespace c8emu {
 
 template<typename T>
-class Buffer
+class Buffer final
 {
 public:
-    constexpr Buffer() = default;
-    constexpr Buffer(size_t size) :
+    constexpr Buffer() noexcept = default;
+    constexpr Buffer(size_t size) noexcept :
         m_Ptr(new T[size]), m_Size(size) {}
     Buffer(const Buffer<T>&) = delete;
     Buffer(Buffer<T>&&) = delete;
 
-    constexpr ~Buffer() { delete[] m_Ptr; }
+    constexpr ~Buffer() noexcept { delete[] m_Ptr; }
 
-    constexpr void Reset(size_t size)
+    constexpr void Reset(size_t size) noexcept
     {
         delete[] m_Ptr;
         m_Ptr = new T[size];
         m_Size = size;
     }
 
-    constexpr const T* GetConstPtr() const { return m_Ptr; }
-    constexpr T* GetMutablePtr() { return m_Ptr; }
+    constexpr const T* GetConstPtr() const noexcept { return m_Ptr; }
+    constexpr T* GetMutPtr() noexcept { return m_Ptr; }
 
-    constexpr size_t GetSize() const { return m_Size; }
+    constexpr size_t GetSize() const noexcept { return m_Size; }
 
-    constexpr const T& operator[](size_t idx) const { return m_Ptr[idx]; }
-    constexpr T& operator[](size_t idx) { return m_Ptr[idx]; }
+    constexpr const T& operator[](size_t idx) const noexcept { return m_Ptr[idx]; }
+    constexpr T& operator[](size_t idx) noexcept { return m_Ptr[idx]; }
 
 private:
     T*     m_Ptr{};

@@ -40,7 +40,7 @@ static void Drw(CPUData& cpu, RAM& ram, const OpCode& op) noexcept;
 static void Skp(CPUData& cpu, RAM& ram, const OpCode& op) noexcept;
 static void Sknp(CPUData& cpu, RAM& ram, const OpCode& op) noexcept;
 
-using ExecProc = void(*)(CPUData&, RAM&, const OpCode&);
+using ExecProc = void(*)(CPUData&, RAM&, const OpCode&) noexcept;
 
 static constexpr ExecProc s_Executors[] = {
     Raw,

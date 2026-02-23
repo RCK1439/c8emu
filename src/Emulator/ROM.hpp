@@ -11,7 +11,6 @@ class ROM final
 {
 public:
     constexpr ROM() noexcept = default;
-    constexpr ~ROM() noexcept = default;
 
     [[nodiscard]] bool Load(const std::filesystem::path& filePath) noexcept;
 

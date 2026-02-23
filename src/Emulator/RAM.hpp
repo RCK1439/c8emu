@@ -8,23 +8,23 @@ namespace c8emu {
 
 class ROM;
 
-class RAM
+class RAM final
 {
 public:
     constexpr RAM() noexcept { LoadFont(); }
 
-    void LoadROM(const ROM& rom);
+    void LoadROM(const ROM& rom) noexcept;
 
-    [[nodiscard]] constexpr Byte& operator[](Address addr)
+    [[nodiscard]] constexpr Byte& operator[](Address addr) noexcept
     {
         addr &= 0x0FFF;
-        return m_Buffer.at(static_cast<size_t>(addr));
+        return m_Buffer[static_cast<size_t>(addr)];
     }
 
-    [[nodiscard]] constexpr const Byte& operator[](Address addr) const
+    [[nodiscard]] constexpr const Byte& operator[](Address addr) const noexcept
     {
         addr &= 0x0FFF;
-        return m_Buffer.at(static_cast<size_t>(addr));
+        return m_Buffer[static_cast<size_t>(addr)];
     }
 
 private:

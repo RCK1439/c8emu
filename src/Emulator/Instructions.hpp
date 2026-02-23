@@ -95,10 +95,12 @@ public:
     constexpr VxAddr(u16 raw) noexcept;
 };
 
-using Args = std::variant<Address, VxByte, VxVy, VxVyN, VxAddr, u8>;
 
 struct OpCode final
 {
+public:
+    using Args = std::variant<Address, VxByte, VxVy, VxVyN, VxAddr, u8>;
+
 public:
     Instr    instr{};
     AddrMode addressMode{};

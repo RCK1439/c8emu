@@ -2,37 +2,12 @@
 
 namespace c8emu {
 
-inline static constexpr u8 Instr(u16 raw) noexcept
-{
-    return static_cast<u8>((raw & 0xF000) >> 12);
-}
-
-inline static constexpr u8 X(u16 raw) noexcept
-{
-    return static_cast<u8>((raw & 0x0F00) >> 8);
-}
-
-inline static constexpr u8 Y(u16 raw) noexcept
-{
-    return static_cast<u8>((raw & 0x00F0) >> 4);
-}
-
-inline static constexpr u8 N(u16 raw) noexcept
-{
-    return static_cast<u8>(raw & 0x000F);
-}
-
-inline static constexpr u8 KK(u16 raw) noexcept
-{
-    return static_cast<u8>(raw & 0x00FF);
-}
-
-inline static constexpr u16 NNN(u16 raw) noexcept
-{
-    return raw & 0x0FFF;
-}
-
-using DecodeProc = void (*)(OpCode&, u16);
+static constexpr u8 Instr(u16 raw) { return static_cast<u8>((raw & 0xF000) >> 12); }
+static constexpr u8 X(u16 raw) { return static_cast<u8>((raw & 0x0F00) >> 8); }
+static constexpr u8 Y(u16 raw) { return static_cast<u8>((raw & 0x00F0) >> 4); }
+static constexpr u8 N(u16 raw) { return static_cast<u8>(raw & 0x000F); }
+static constexpr u8 KK(u16 raw) noexcept { return static_cast<u8>(raw & 0x00FF); }
+static constexpr u16 NNN(u16 raw) noexcept { return raw & 0x0FFF; }
 
 static void Decode0(OpCode& code, u16 raw) noexcept;
 static void Decode1(OpCode& code, u16 raw) noexcept;
@@ -50,6 +25,8 @@ static void DecodeC(OpCode& code, u16 raw) noexcept;
 static void DecodeD(OpCode& code, u16 raw) noexcept;
 static void DecodeE(OpCode& code, u16 raw) noexcept;
 static void DecodeF(OpCode& code, u16 raw) noexcept;
+
+using DecodeProc = void (*)(OpCode&, u16);
 
 static constexpr DecodeProc s_Decoders[] = {
     Decode0, Decode1, Decode2, Decode3,

@@ -45,7 +45,7 @@ private:
     RegisterBuffer m_Registers{};
 };
 
-struct CPUData
+struct CPUData final
 {
 public:
     using VideoBuffer = std::array<Byte, C8_SCREEN_BUFFER_WIDTH<size_t> * C8_SCREEN_BUFFER_HEIGHT<size_t>>;
@@ -65,12 +65,12 @@ public:
 class CPU
 {
 public:
-    constexpr CPU() = default;
+    constexpr CPU() noexcept = default;
     
     void Step(RAM& ram) noexcept;
     void SetKey(u8 key, u8 val) noexcept;
 
-    [[nodiscard]] inline const CPUData& GetData() const { return m_Data; }
+    [[nodiscard]] inline const CPUData& GetData() const noexcept { return m_Data; }
 
 private:
     CPUData m_Data{};

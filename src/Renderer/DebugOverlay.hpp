@@ -37,8 +37,7 @@ public:
     using RevIter = std::vector<DebugText>::reverse_iterator;
 
 public:
-    constexpr DebugOverlay() = default;
-    constexpr ~DebugOverlay() = default;
+    constexpr DebugOverlay() noexcept = default;
 
     constexpr void Clear() noexcept
     {
@@ -55,17 +54,17 @@ public:
     
     [[nodiscard]] constexpr size_t Size() const noexcept { return m_Buffer.size(); }
 
-    [[nodiscard]] constexpr ConstIter cbegin() const { return m_Buffer.cbegin(); }
-    [[nodiscard]] constexpr ConstIter cend() const { return m_Buffer.cend(); }
+    [[nodiscard]] constexpr ConstIter cbegin() const noexcept { return m_Buffer.cbegin(); }
+    [[nodiscard]] constexpr ConstIter cend() const noexcept { return m_Buffer.cend(); }
 
-    [[nodiscard]] constexpr Iter begin() { return m_Buffer.begin(); }
-    [[nodiscard]] constexpr Iter end() { return m_Buffer.end(); }
+    [[nodiscard]] constexpr Iter begin() noexcept { return m_Buffer.begin(); }
+    [[nodiscard]] constexpr Iter end() noexcept { return m_Buffer.end(); }
 
-    [[nodiscard]] constexpr RevConstIter crbegin() const { return m_Buffer.crbegin(); }
-    [[nodiscard]] constexpr RevConstIter crend() const { return m_Buffer.crend(); }
+    [[nodiscard]] constexpr RevConstIter crbegin() const noexcept { return m_Buffer.crbegin(); }
+    [[nodiscard]] constexpr RevConstIter crend() const noexcept { return m_Buffer.crend(); }
 
-    [[nodiscard]] constexpr RevConstIter rbegin() const { return m_Buffer.rbegin(); }
-    [[nodiscard]] constexpr RevConstIter rend() const { return m_Buffer.rend(); }
+    [[nodiscard]] constexpr RevConstIter rbegin() const noexcept { return m_Buffer.rbegin(); }
+    [[nodiscard]] constexpr RevConstIter rend() const noexcept { return m_Buffer.rend(); }
 
 private:
     std::vector<DebugText> m_Buffer{};
