@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Instructions.hpp"
-#include "RAM.hpp"
 #include "Spec.hpp"
 #include "CallStack.hpp"
 
@@ -10,6 +8,9 @@
 #include <array>
 
 namespace c8emu {
+
+// Forward decleration
+class RAM;
 
 enum class RegisterID : u8
 {
@@ -34,11 +35,11 @@ enum class RegisterID : u8
 class Registers final
 {
 public:
-    constexpr u8& operator[](u8 idx) { return m_Registers.at(static_cast<size_t>(idx)); }
-    constexpr const u8& operator[](u8 idx) const { return m_Registers.at(static_cast<size_t>(idx)); }
+    constexpr u8& operator[](u8 idx) noexcept { return m_Registers[static_cast<size_t>(idx)]; }
+    constexpr const u8& operator[](u8 idx) const noexcept { return m_Registers[static_cast<size_t>(idx)]; }
 
-    constexpr u8& operator[](RegisterID id) { return m_Registers.at(static_cast<size_t>(id)); }
-    constexpr const u8& operator[](RegisterID id) const { return m_Registers.at(static_cast<size_t>(id)); }
+    constexpr u8& operator[](RegisterID id) noexcept { return m_Registers[static_cast<size_t>(id)]; }
+    constexpr const u8& operator[](RegisterID id) const noexcept { return m_Registers[static_cast<size_t>(id)]; }
 
 private:
     using RegisterBuffer = std::array<u8, C8_NUM_REGISTERS>;
@@ -46,7 +47,24 @@ private:
     RegisterBuffer m_Registers{};
 };
 
-class CPU final
+struct CPUData
+{
+public:
+    using VideoBuffer = std::array<Byte, C8_SCREEN_BUFFER_WIDTH<size_t> * C8_SCREEN_BUFFER_HEIGHT<size_t>>;
+    using KeyPad      = std::array<u8, C8_NUM_KEYS>;
+
+public:
+    VideoBuffer Video{};
+    CallStack   CallStack{};
+    KeyPad      Keypad{};
+    Registers   Registers{};
+    u16         Idx{};
+    u16         PC{C8_ADDR_PC};
+    u8          DT{};
+    u8          ST{};
+};
+
+class CPU
 {
 public:
     constexpr CPU() = default;
@@ -54,42 +72,10 @@ public:
     void Step(RAM& ram) noexcept;
     void SetKey(u8 key, u8 val) noexcept;
 
-private:
-    using VideoBuffer = std::array<Byte, C8_SCREEN_BUFFER_WIDTH<size_t> * C8_SCREEN_BUFFER_HEIGHT<size_t>>;
-    using KeyPad      = std::array<u8, C8_NUM_KEYS>;
-
-    friend void Raw(CPU& cpu, RAM& ram, const OpCode& op) noexcept;
-    friend void Cls(CPU& cpu, RAM& ram, const OpCode& op) noexcept;
-    friend void Ret(CPU& cpu, RAM& ram, const OpCode& op) noexcept;
-    friend void Jp(CPU& cpu, RAM& ram, const OpCode& op) noexcept;
-    friend void Call(CPU& cpu, RAM& ram, const OpCode& op) noexcept;
-    friend void Se(CPU& cpu, RAM& ram, const OpCode& op) noexcept;
-    friend void Sne(CPU& cpu, RAM& ram, const OpCode& op) noexcept;
-    friend void Ld(CPU& cpu, RAM& ram, const OpCode& op) noexcept;
-    friend void Add(CPU& cpu, RAM& ram, const OpCode& op) noexcept;
-    friend void Or(CPU& cpu, RAM& ram, const OpCode& op) noexcept;
-    friend void And(CPU& cpu, RAM& ram, const OpCode& op) noexcept;
-    friend void Xor(CPU& cpu, RAM& ram, const OpCode& op) noexcept;
-    friend void Sub(CPU& cpu, RAM& ram, const OpCode& op) noexcept;
-    friend void Shr(CPU& cpu, RAM& ram, const OpCode& op) noexcept;
-    friend void Subn(CPU& cpu, RAM& ram, const OpCode& op) noexcept;
-    friend void Shl(CPU& cpu, RAM& ram, const OpCode& op) noexcept;
-    friend void Rnd(CPU& cpu, RAM& ram, const OpCode& op) noexcept;
-    friend void Drw(CPU& cpu, RAM& ram, const OpCode& op) noexcept;
-    friend void Skp(CPU& cpu, RAM& ram, const OpCode& op) noexcept;
-    friend void Sknp(CPU& cpu, RAM& ram, const OpCode& op) noexcept;
-
-    friend class Chip8;
+    [[nodiscard]] inline const CPUData& GetData() const { return m_Data; }
 
 private:
-    VideoBuffer  m_Video{};
-    CallStack    m_CallStack{};
-    KeyPad       m_Keypad{};
-    Registers    m_Registers{};
-    u16          m_Idx{};
-    u16          m_PC{C8_ADDR_PC};
-    u8           m_DT{};
-    u8           m_ST{};
+    CPUData m_Data{};
 };
 
 }
